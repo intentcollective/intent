@@ -27,7 +27,7 @@ const POST_ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbxYXhpRXvG3Uv
 
 // Soft client-side check only — see the note on this in js/discourse.js.
 // The Apps Script checks the password server-side; that's the real gate.
-const POST_PASSWORD = "intentcollectivedesign";
+const POST_PASSWORD = "intent";
 
 const stateEl = document.getElementById("state");
 const gridEl = document.getElementById("entry-grid");
