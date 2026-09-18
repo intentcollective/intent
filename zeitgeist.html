@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Discourse — Intent Collective</title>
-<meta name="description" content="Writing from Intent Collective fellows.">
+<title>News — Intent Collective</title>
+<meta name="description" content="Links and ideas shared by intent collective fellows.">
 <link rel="icon" href="assets/logo.png">
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -16,10 +16,10 @@
       <img src="assets/wordmark.png" alt="Intent Collective">
     </a>
     <nav class="site-nav">
-      <a href="index.html">Index</a>
+      <a href="index.html">Manifesto</a>
       <a href="structure.html">Structure</a>
-      <a href="discourse.html" aria-current="page">Discourse</a>
-      <a href="zeitgeist.html">Zeitgeist</a>
+      <a href="discourse.html">Discourse</a>
+      <a href="zeitgeist.html" aria-current="page">Zeitgeist</a>
     </nav>
   </div>
 </header>
@@ -27,10 +27,10 @@
 <main>
   <section class="page-head">
     <div class="wrap">
-      <div class="mark-label">Discourse</div>
-      <h1>Writing from the fellows.</h1>
+      <div class="mark-label">News</div>
+      <h1>Links and ideas from the fellows</h1>
       <p class="lede">
-        Click any entry to read it in full.
+        Click any card to read the preview in full, then follow the link out.
       </p>
     </div>
   </section>
@@ -38,7 +38,7 @@
   <div class="wrap">
 
     <div id="composer-region">
-      <button type="button" id="compose-toggle" class="compose-toggle">+ Share a post</button>
+      <button type="button" id="compose-toggle" class="compose-toggle">+ Share a link</button>
 
       <div id="composer" class="composer hidden">
         <div class="field">
@@ -48,27 +48,17 @@
 
         <div class="field">
           <label for="compose-title">Title</label>
-          <input type="text" id="compose-title" placeholder="Post title">
+          <input type="text" id="compose-title" placeholder="Headline of what you're sharing">
         </div>
 
         <div class="field">
-          <label for="rte-body">Content</label>
-          <div class="rte-toolbar" role="toolbar" aria-label="Formatting">
-            <button type="button" data-cmd="bold" title="Bold"><b>B</b></button>
-            <button type="button" data-cmd="italic" title="Italic"><i>I</i></button>
-            <button type="button" data-cmd="underline" title="Underline"><u>U</u></button>
-            <select id="rte-block" title="Paragraph style" aria-label="Paragraph style">
-              <option value="">Style…</option>
-              <option value="p">Paragraph</option>
-              <option value="h3">Heading</option>
-              <option value="blockquote">Quote</option>
-            </select>
-            <button type="button" data-cmd="insertUnorderedList" title="Bulleted list">• List</button>
-            <button type="button" data-cmd="insertOrderedList" title="Numbered list">1. List</button>
-            <button type="button" data-cmd="createLink" title="Insert link">Link</button>
-            <button type="button" data-cmd="removeFormat" title="Clear formatting">Clear</button>
-          </div>
-          <div id="rte-body" class="rte-body" contenteditable="true" aria-label="Post content"></div>
+          <label for="compose-link">Link</label>
+          <input type="text" id="compose-link" placeholder="https://…">
+        </div>
+
+        <div class="field">
+          <label for="compose-preview">Preview</label>
+          <textarea id="compose-preview" rows="4" placeholder="A couple of sentences describing it"></textarea>
         </div>
 
         <div class="composer-actions">
@@ -83,8 +73,8 @@
       <span class="count" id="entry-count" aria-live="polite"></span>
     </div>
 
-    <div id="state" class="state-msg">Loading entries…</div>
-        <article id="post-detail" class="post-detail" hidden></article>
+    <div id="state" class="state-msg">Loading links…</div>
+    <article id="post-detail" class="post-detail" hidden></article>
     <div id="entry-grid" class="entry-grid" hidden></div>
   </div>
 </main>
@@ -96,7 +86,7 @@
   </div>
 </footer>
 
-<script src="js/zeitgeist.js"></script>
+<script src="js/news.js"></script>
 <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 
 </body>
