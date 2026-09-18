@@ -34,8 +34,6 @@ const POST_PASSWORD = "intentcollectivedesign";
 
 const stateEl = document.getElementById("state");
 const gridEl = document.getElementById("entry-grid");
-const countEl = document.getElementById("entry-count");
-const toolbarEl = document.getElementById("discourse-toolbar");
 const composerRegionEl = document.getElementById("composer-region");
 const detailEl = document.getElementById("post-detail");
 
@@ -189,7 +187,6 @@ function renderEntries(entries) {
 
   if (!currentEntries.length) {
     setState("No entries yet — the first post added will show up here.");
-    countEl.textContent = "";
     return;
   }
 
@@ -213,38 +210,29 @@ function renderEntries(entries) {
 
   stateEl.hidden = true;
   gridEl.hidden = false;
-  countEl.textContent = `${currentEntries.length} ${currentEntries.length === 1 ? "entry" : "entries"}`;
 }
 
 /* ---------------- detail view + hash routing ---------------- */
 
 function showList() {
   detailEl.hidden = true;
-  toolbarEl.hidden = false;
   composerRegionEl.hidden = false;
   gridEl.hidden = currentEntries.length === 0;
   stateEl.hidden = currentEntries.length !== 0;
 }
 
 function showDetail(entry) {
-  toolbarEl.hidden = true;
   composerRegionEl.hidden = true;
   gridEl.hidden = true;
   stateEl.hidden = true;
 
   detailEl.hidden = false;
   detailEl.innerHTML = `
-    <a href="#" class="back-link" id="back-link">← All posts</a>
     <div class="mark-label">${entry.tag ? escapeHTML(entry.tag) : "Discourse"}</div>
     <h1>${escapeHTML(entry.title)}</h1>
     <div class="post-meta">${entry.name ? escapeHTML(entry.name) : "Anonymous"}${entry.date ? " · " + formatDate(entry.date) : ""}</div>
     <div class="post-body">${sanitizeHTML(entry.content)}</div>
   `;
-  document.getElementById("back-link").addEventListener("click", (ev) => {
-    ev.preventDefault();
-    history.pushState("", document.title, window.location.pathname + window.location.search);
-    showList();
-  });
   window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
 }
 
