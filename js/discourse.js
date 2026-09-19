@@ -30,7 +30,7 @@ const POST_ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbxgwEbqAZZH6x
 // NOT real security: this file is visible to anyone who views page source,
 // so the string is trivially readable. The Apps Script also checks the
 // password server-side before it will append a row — that's the real gate.
-const POST_PASSWORD = "intentcollectivedesign";
+const POST_PASSWORD = "intent";
 
 const stateEl = document.getElementById("state");
 const gridEl = document.getElementById("entry-grid");
