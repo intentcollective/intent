@@ -1,0 +1,477 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="_js/jquery-1.10.1.js"></script>
+
+<style type="text/css">    
+
+    body{   margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            font-family: Helvetica;
+
+    }
+
+    .gridOne {
+       
+        width:12.5%;
+        height: 4000px;
+        border-right: 1px solid rgba(51, 51, 51, .15);
+        float: left;
+    }
+        .gridTwo {
+        border-right: 1px solid rgba(51, 51, 51, .15);
+        width:25%;
+        height: 4000px;
+        float: left;
+        min-width: 200px;
+    }
+    .gridThree {
+        border-right: 1px solid rgba(51, 51, 51, .15);
+        width:25%;
+        height: 4000px;
+        float: left;
+        min-width: 200px;
+    }
+     .gridThree a {
+        color:#515151;
+        text-decoration: none;
+    }
+    .gridThree a:hover {
+        color:#999;
+        text-decoration: none;
+    }
+    .gridThree i {
+        margin-right:13px;
+    }
+    .gridFour {
+        border-right: 1px solid rgba(51, 51, 51, .15);
+        width:25%;
+        height: 4000px;
+        float: left;
+        min-width: 200px;
+    }
+     .gridFour i{
+       margin-right:13px;
+    }
+    .gridFive {
+        border-right: 1px solid rgba(51, 51, 51, .15);
+        width:12.5%;
+        height: 4000px;
+        float: left;
+    }
+    .holder {
+        background-color: #f5f5f5;
+        width:100%;
+        height: 2000px;
+        padding:40px 0 0 0;
+
+    }
+    .gridHolder{
+        position: absolute; 
+        z-index: 100; 
+        margin:0 0 0 0;
+        top: 0; 
+        left:0; 
+        right:0; 
+        bottom:0;
+    }
+    #overlayOne{
+        position: absolute; 
+        z-index: 130; 
+        margin:0 auto;
+        top: 110px; 
+        left:0; 
+        right:0; 
+        bottom:0;
+        display:none;
+        width: 100%;
+        height: 4000px;
+        background-color: rgba(255, 0, 0, 0.9)
+    }
+
+    #overlayTwo{
+        position: absolute; 
+        z-index: 130; 
+        margin:0 auto;
+        top: 0px; 
+        left:0; 
+        right:0; 
+        bottom:0;
+        display:none;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.95)
+    }
+
+    .manifesto {
+        font-size:22px; 
+        font-weight:bold; 
+        color:#fff; 
+        font-style: none; 
+        text-decoration: none;
+
+    }
+
+    .manifesto:hover {
+        text-decoration: underline;
+
+    }
+
+
+
+    #btn{
+position:absolute; z-index:121; margin:-20px 0 0 20px; top:90%; left:12.5%; padding:14px; background:#ff0000; width:160px; height:auto; font-family:Helvetica; font-size:13px; color:#fff; 
+-webkit-transition: background-color .5s, color .5s; /* For Safari 3.1 to 6.0 */
+    transition: background-color .5s, color .5s;
+    cursor: pointer;
+
+    }
+
+    #btn:hover{
+        background-color: #fff;
+            color: #ff0000;
+
+    }
+
+    #playBtn{
+position:opacity:.7; position:absolute; z-index:120; margin:-40px 0 0 -40px; top:50%; left:50%; opacity:.5;
+
+-webkit-transition: opacity .5s; /* For Safari 3.1 to 6.0 */
+    transition: opacity .5s;
+    cursor: pointer;
+
+    }
+
+    #playBtn:hover{
+       opacity:1;
+
+    }
+
+  
+
+
+
+  
+</style>
+
+<title></title>
+
+<script type='text/javascript'>
+
+
+
+//<![CDATA[
+$(window).load(function(){
+$(document).ready(function () {
+    $('.gridHolder').mousemove(function (e) {
+        parallax(e, this, .1);
+        parallax(e, document.getElementById('layer-two'), .25);
+        parallax(e, document.getElementById('layer-three'), .5);
+    });
+});
+
+function parallax(e, target, layer) {
+    var layer_coeff = 10 / layer;
+    var x = ($(window).width() - target.offsetWidth) / 2 - (e.pageX - ($(window).width() / 2)) / layer_coeff;
+    var y = ($(window).height() - target.offsetHeight) / 2 - (e.pageY - ($(window).height() / 2)) / layer_coeff;
+    $(target).offset({ top: y, left : x  });
+};
+});//]]> 
+</script>
+</head>
+<body>
+
+    <div class="header" style="height:110px; width:100%; background:#fff;">
+    </div>
+
+    <div class="holder">
+        <center>
+            <div style="min-height:50px; padding:0px 0 0px 0; position:relative;">
+              
+              <div style="position:absolute; z-index:120; width:320px; text-align:left; font-weight: normal; letter-spacing: 1px; font-size:21px; color: #fff; margin:-20px 0 0 20px; top:50%; left:12.5%;"> Evolving Theories, Ideologies, and Processes <br>of Visual Communication.</div>
+              <div id="playBtn"><img src="_img/PlayBTN.png" id="clickmetwo"></div>
+              <a href="http://amzn.to/2A62MLX" style="text-decoration:none;" target="_blank"  id="btn" >Order at Amazon.com</a>
+
+                <img src="_img/VideoPlayer.png" style="width:78%; height: auto;">
+            </div>
+        </center>
+        <div class="gridHolder" style="">
+            
+            <div class="gridOne">
+            </div>
+            
+            <div class="gridTwo">
+                <a text-decoration:none; href="http://graphicdesigndiscourse.com/index.html"><img src="_img/Headline.png" style="margin:20px 0 0 0; padding: 0 0 0 38px; float:left;"></a>
+                <div style="margin:839px 0 0 0; color:#ff0000; font-family:Helvetica; font-size: 18px; padding:0 20px 50px 38px; line-height:30px">
+                  <p><strong>If the aim of graphic design is to communicate meaning clearly, there's an irony that the field itself has struggled between two contradictory opposites: rote design resulting from a rigorous, fixed set of rules, and eccentric design that expresses the hand of the artist but fails to communicate with its audience. But what if designers focused on process and critical analysis over visual outcome? Through a carefully selected collection of more than seventy-five seminal texts spanning centuries and bridging the disciplines of art, architecture, design history, philosophy, and cultural theory, Graphic Design Discourse: Evolving Theories, Ideologies, and Processes of Visual Communication establishes a new paradigm for graphic design methodologies for the twenty-first century. This illuminating anthology is essential reading for practicing designers, educators, and students trying to understand how to design in a singular, expressive way without forgoing clear and concise visual communication.</strong></p>
+                  <p><strong>Most of existing design theory or history books are either based on 1. a single author&#8217;s personal view on history, 2. collection of designers&#8217; personal essays or 3. a single author&#8217;s personal interpretation of other disciplines such as semiotics or linguistics in vague design pragmatics. </strong></p>
+                  <strong> <br>
+Graphic Design Discourse is a collection of discourses; canonical ideologies and practices that have been observed, gathered, and recorded for the purpose of providing a new generation of designers with a collection of interpretative teachings—a design(ed) doctrine. <br>
+<br>
+A group of designers, critics, and historians came together to analyze over 500 articles and books by philosophers, designers, architects, artists and critics including Aristotle, Ren&eacute;  Descartes, Immanuel Kant, Hegel, Michele Foucault, Roland Barthe, Moholy–Nagy, Le Corbusier, Mies van der Rohe, Jan Tschichold, Katherine McCoy, Dieter Rams, Massimo Vignelli, DK Holland, Michael Rock, Experimental Jetset, Kenya hara and many more under designer and design educator Henry Kim, Associate Chair of Graphic Design at Savannah College of Art and Design in Atlanta, Georgia. <br>
+<br>
+Approximately 75 final texts have been selected and arranged based on the evolution of design discourses throughout history. Graphic Design Discourse presents a progression of  honest and in-depth dialogue in a sophisticated and theoretical manner. <br>
+<br>
+                  </strong>MEANING <br>
+                  <br>
+                  <strong>Graphic Design Discourse is not a proclamation of a singular truth, but rather an analysis of multiple understandings. As graphic designers, we must consider our role in this process more critically; we must broaden our scope of knowledge, and develop a clear theoretical understanding of what it means to communicate. <br>
+                  <br>
+Graphic Design Discourse is the manifestation of the pursuit of unity in knowledge—concrescence among philosophers, academics, and designers. It is a collection of expansive discourses that will aid in guiding us to a more critical and learned understanding of what it is that we do, and what our role in society will be in the future. We are not spontaneous beings; nothing is natural; everything is designed. It is our responsibility to fully understand the breadth and influence of our field, and in turn, derive our creativity from a comprehensive understanding of the discourse that surrounds it. <br>
+<br>
+We are not spontaneous beings; nothing is natural; everything is designed. It is our responsibility to fully understand the breadth and influence of our field, and in turn, derive our creativity from a comprehensive understanding of the discourse that surrounds it. <br>
+<br>
+We believe this is the right moment to create the ultimate archive and canon of design theories and discourses to ensure a bright and sophisticated future of design and its education. <br>
+<br>
+Everything is design.<br>
+We design everything.<br>
+Design is everything.</strong></div>
+            </div>
+            <div class="gridThree">
+            <div style="margin:844px 0 0 38px; color:#515151;  font-family:Helvetica; font-size: 13px; opacity:0.9; line-height:20px;">
+               <h1 style="font-family:Helvetica; font-size:19px; font-weight:normal; margin:0 0 20px 0;"><i>Contributors</i></h1>
+<i>0 1</i>      <a href="https://www.linkedin.com/in/myautumnsky" target="_blank">Henry Hongmin Kim</a> <br>
+<i>0 2</i>       <a href="https://www.linkedin.com/in/steff-geissbuhler-178b1a10" target="_blank">Steff Geissbuhler </a> <br>
+<i>0 3</i>       <a href="http://www.papress.com/" target="_blank">Princeton Architectural Press</a> <br>
+<i>0 4</i>       <a href="https://www.linkedin.com/in/jennifer-lippert-42b9175" target="_blank">Jennifer Lippert</a> <br>
+<i>0 5</i>       Simone Kaplan-Senchak <br>
+<i>0 6</i>       <a href="https://www.linkedin.com/in/john-waters-54b2615" target="_blank">John Waters</a>  <br>
+<i>0 7</i>       Bob Newman  <br>
+<i>0 8</i>       <a href="https://www.linkedin.com/in/douggrimmett" target="_blank">Doug Grimmett</a> <br>
+<i>0 9</i>       <a href="http://www.intergram.co.kr/" target="_blank">Dan Ahn</a> <br>
+<i>1 0</i>       <a href="https://www.linkedin.com/in/stephen-farrell-aa54807" target="_blank">Stephen Farrell</a> <br>
+<i>1 1</i>       <a href="https://www.linkedin.com/in/mlkdombeck" target="_blank">Megan King Dombeck</a> <br>
+<i>1 2</i>       <a href="https://www.linkedin.com/in/aaronsbrown" target="_blank">Aaron Brown</a> <br>
+<i>1 3</i>       <a href="https://www.linkedin.com/in/nancyryannix" target="_blank">Ryan Nix Glenn </a><br>
+<i>1 4</i>       <a href="https://www.linkedin.com/in/peter-wong-92bb4912" target="_blank">Peter Wong </a> <br>
+<i>1 5</i>       <a href="https://www.linkedin.com/in/elizabeth-mandel-38325a6" target="_blank">Elizabeth Mandel</a><br>
+<i>1 6</i>       <a href="https://www.linkedin.com/in/holly-quarzo-4670291" target="_blank">Holly Quarzo</a><br>
+<i>1 7</i>       <a href="https://www.linkedin.com/in/barry-roseman-0a31617" target="_blank">Barry Roseman</a><br>
+<i>1 8</i>       <a href="https://www.linkedin.com/in/hbuchanan" target="_blank">Heather Buchanan</a> <br>
+<i>1 9</i>       <a href="https://www.linkedin.com/in/courtney-garvin-6b84754" target="_blank">Courtney Garvin </a><br>
+<i>2 0</i>       <a href="https://www.linkedin.com/in/jan-lorenc-304448" target="_blank">Jan Lorenc </a><br>
+<i>2 1</i>       <a href="https://www.linkedin.com/in/chung-yoo-51618112" target="_blank">Chung Yoo</a><br>
+<i>2 2</i>       <a href="https://www.linkedin.com/in/yiwenlu" target="_blank">Yiwen Lu</a> <br>
+<i>2 3</i>       <a href="https://www.linkedin.com/in/brett-miotti-a1aaaa33" target="_blank">Brett Miotti</a> <br>
+<i>2 4</i>       <a href="https://www.linkedin.com/in/johnasandre" target="_blank">Johnas Andre</a> <br>
+<i>2 5</i>       <a href="https://www.linkedin.com/in/erkan-cetin-b06a66b3" target="_blank">Erkan Cetin</a><br>
+<i>2 6</i>       Connor Dwyer  <br>
+<i>2 7</i>       <a href="https://www.linkedin.com/in/yeon-jin-kim-9b8b5a34" target="_blank">Yeon Jin Kim</a> <br>
+<i>2 8</i>       <a href="https://www.linkedin.com/in/rceez" target="_blank">Roberto Castillo</a> <br>
+<i>2 9</i>       <a href="https://www.linkedin.com/in/robert-brown-7b292911" target="_blank">Robert Brown</a> <br>
+<i>3 0</i>       <a href="https://www.linkedin.com/in/so-hee-kwon-4b33a4a" target="_blank">Sohee Kwon</a><br>
+<i>3 1</i>       James Arnold<br>
+<i>3 2</i>       <a href="https://www.linkedin.com/in/idinesh" target="_blank">Dinesh Dave</a> <br>
+<i>3 3</i>       <a href="https://www.linkedin.com/in/theericbeatty" target="_blank">Eric Beatty</a> <br>
+<i>3 4</i>       <a href="https://www.linkedin.com/in/kendallkendallkendall" target="_blank">Kendall Henderson</a> <br>
+<i>3 5</i>       <a href="https://www.linkedin.com/in/mcgintymock" target="_blank">Rachele McGinty-Mock</a> <br>
+<i>3 6</i>       <a href="https://www.linkedin.com/in/sokaiokyoon" target="_blank">Thai Truong</a> <br>
+<i>3 7</i>       <a href="https://www.linkedin.com/in/ashleyrtipton" target="_blank">Ashley Tipton</a> <br>
+<i>3 8</i>       <a href="https://www.linkedin.com/in/heesoo-goh-70438215" target="_blank">Heesoo Goh</a> <br>
+<i>3 9</i>       <a href="https://www.linkedin.com/in/dosung-hwang-15966362" target="_blank">Dosung Hwang</a> <br>
+<i>4 0</i>       Jaemin Yoon<br>
+<i>4 1</i>       <a>Nina Pick</a> <br>
+				<br>
+				<br>
+				   <h1 style="font-family:Helvetica; font-size:19px; font-weight:normal; margin:0 0 20px 0;"><i>About the Editor</i></h1>
+				Henry Hongmin Kim is a Korean-born, US-based graphic designer, educator, and theorist. Currently the senior global design director at the Coca-Cola Company, 
+He received his MFA from SAIC (School of the Art Institute of Chicago). He taught at SAIC and SCAD (Savannah College of Art and Design), where he served as Associate Chair. 
+Before he started teaching full time Henry was a creative director at Pyrrha Studio where he worked on brand identity, packaging, posters and interactive design projects. He gave multiple presentations in national and international design conferences. 
+He is the founder and organizer of “Graphic Design Discourse”, a group of designers and educators formed within the Graphic Design department at SCAD in Atlanta.
+            </div>
+            </div>
+            
+            <div class="gridFour" >
+                <img id="clickme" src="_img/Manifesto.png" style="margin:71px 0 0 0; padding: 0 0 0 38px;  float:left; cursor: pointer;" ><br><br><br>
+
+               <div style="margin:71px 0 0 38px; color:#515151; font-family:Helvetica; font-size: 13px; opacity:0.9; line-height:20px;">
+                 <h1 style="font-family:Helvetica; font-size:19px; font-weight:normal; margin:0 0 20px 0;"><em>Designers and Philosphers</em></h1>
+                 <em> 0 1</em> Adolf Loos<br>
+               <em>0 2 </em> Adrian Frutiger <br>
+               <em>0 3</em> Alexander Rodchenko <br>
+               <em>0 4</em> Alexey Brodovitch <br>
+               <em>0 5</em> Alfred North Whitehead <br>
+               <em>0 6</em> Andre Bazin <br>
+               <em>0 7</em> Andrew Sarris <br>
+               <em>0 8</em> Antonio Sant’Elia <br>
+               <em>0 9</em> Antoine Pevsner <br>
+               <em>1 0</em> Aristotle <br>
+               <em>1 1</em> Beatrice Warde <br>
+               <em>1 2</em> Billy Childish <br>
+               <em>1 3</em> Carlo Carra <br>
+               <em>1 4</em> Charles Thomson <br>
+               <em>1 5</em> Clement Greenberg <br>
+               <em>1 6</em> Dieter Rams <br>
+               <em>1 7</em> DK Holland <br>
+               <em>1 8</em> Dziga Vertov <br>
+               <em>1 9</em> El Lissitzky <br>
+               <em>2 0</em> Emil Ruder <br>
+               <em>2 1</em> Experimental Jetset <br>
+               <em>2 2</em> F. T. Marinetti <br>
+               <em>2 3</em> Ferdinand de Saussure <br>
+               <em>2 4</em> Friedrich August von Hayek <br>
+               <em>2 5</em> Georg Wilhelm Friedrich Hegel <br>
+               <em>2 6</em> George Maciunas <br>
+               <em>2 7</em> Giacomo Balla <br>
+               <em>2 8</em> Gino Severini <br>
+               <em>2 9</em> Hannes Meyer <br>
+               <em>3 0</em> Henry Hongmin Kim <br>
+               <em>3 1</em> Henry van de Velde <br>
+               <em>3 2</em> Herbert Bayer <br>
+               <em>3 3</em> Hermann Muthesius <br>
+               <em>3 4</em> Imanuel Kant <br>
+               <em>3 5</em> Jacques Derrida <br>
+               <em>3 6</em> Jan Tschichold <br>
+               <em>3 7</em> Jan van Toorn <br>
+               <em>3 8</em> Jean Baudrillard <br>
+               <em>3 9</em> Jean Francois Lyotard <br>
+               <em>4 0</em> Jean-Paul Sartre <br>
+               <em>4 1</em> Josef Muller-Brockmann <br>
+               <em>4 2</em> Jurgen Habermas <br>
+               <em>4 3</em> Joseph Kosuth <br>
+               <em>4 4</em> Karl R. Popper <br>
+               <em>4 5</em> Katherine McCoy <br>
+               <em>4 6</em> Ken Garland <br>
+               <em>4 7</em> Kenya Hara <br>
+               <em>4 8</em> Lars von Trier <br>
+               <em>4 9</em> Laszlo Moholy-Nagy <br>
+               <em>5 0</em> Le Corbusier <br>
+               <em>5 1</em> Louis H. Sullivan <br>
+               <em>5 2</em> Ludwig Mies van der Rohe <br>
+               <em>5 3</em> Marshall McLuhan <br>
+               <em>5 4</em> Massimo Vignelli <br>
+               <em>5 5</em> Michael Rock <br>
+               <em>5 6</em> Michel Foucault <br>
+               <em>5 7</em> Milton Glaser <br>
+               <em>5 8</em> Naum Gabo <br>
+               <em>5 9</em> Noam Chomsky <br>
+               <em>6 0</em> Paul Rand <br>
+               <em>6 1</em> Paul Renner <br>
+               <em>6 2</em> Pierre Bourdieu <br>
+               <em>6 3</em> Rene Descartes <br>
+               <em>6 4</em> Robert Venturi <br>
+               <em>6 5</em> Roland Barthes <br>
+               <em>6 6</em> Situationist International <br>
+               <em>6 7</em> Theo van Doesburg <br>
+               <em>6 8</em> Theodor Adorno <br>
+               <em>6 9</em> Thomas Vinterberg <br>
+               <em>7 0</em> Tristan Tzara <br>
+               <em>7 1</em> Umberto Boccioni <br>
+               <em>7 2</em> Varvara Stepanova <br>
+               <em>7 3</em> Vladimir Ilyich Lenin <br>
+               <em>7 4</em> Walter Benjamin <br>
+               <em>7 5</em> Walter Groupius <br>
+               <em>7 6</em> Wim Crouwel <br>
+				   <br>
+				   <br>
+				   				   <h1 style="font-family:Helvetica; font-size:19px; font-weight:normal; margin:0 0 20px 0;"><i>Review</i></h1>
+				   "More than 75 of the greatest texts on art, philosophy, sociology, and design history gather to form a topically expansive, culturally rich anthology of graphic design theory and methodology. From Aristotle to Michel Foucault, Walter Gropius, Paul Rand and many more, this collection weaves centuries of design commentary and criticism into a discourse that chronologically traces the evolution of visual communication. Graphic Design Discourse is an excellently curated resource for designers and educators fascinated by the transformation of the industry's theories and ideologies." 
+				   <br>
+				   - Design Observer
+
+               </div>
+                
+            </div>
+            </div>
+        </div>
+    </div>
+<div id="overlayOne">
+<div class="gridOne" style="border:none; margin-right:38px"></div>
+<div style="color:#fff; Font-size:18px; font-weight:bold; width:850px; padding:30px 0 0 0; line-height:30px;">
+<a href="https://vimeo.com/179527615" target="_blank" class="manifesto"><div style="display:inline;">Watch the Manifesto</div><img src="_img/PlayBTN.png" style=" margin:0 0 -3px 10px; width:20px; height=auto;"></a> <br><br><br>
+Graphic design is a problem&ndash;solving methodology driven by analytical and structural thinking. A graphic designer is not merely a utilitarian visual mechanic, but a consilient transdiscursive auteur of the &#39;desire of the other&#39;. Our creativity comes from a critical analysis of communication and prehension processes through structural and poststructural understanding of discourses on ontology, epistemology, semiotics and linguistics. <br><br>
+
+Confrontation, which is a process of radical doubt (antithesis against a generic thesis) leads us to a constructive and productive synthesis. The visual outcome is simply a natural result of this evolution, but it is neither what graphic design is, nor what defines a graphic designer. <br><br>
+
+The process itself cannot be a solution either. The solution is the visual outcome, the signifier. Design is langue, visual language. Thus execution requires craftsmanship built upon a strong syntactical foundation. Neither language, nor design, can be self taught. <br><br>
+
+Thinking without pragmatics cannot be considered design.<br>A visual without thinking is just visual rubbish. <br><br>
+
+Screw design thinkers. <br>
+Screw visual polluters. <br>
+<br>
+It is all about process! <br>
+<br>
+Our faith in an engineered process of dissection and construction makes us enjoy every step and every moment of creative challenges with passion, enthusiasm, and excitement. We can imagine our livesas a continuous Stendhal syndrome of our own design, superject. <br>
+<br>
+Structural Process Designers of the World, Unite! 
+<br><br>
+Everything is design. <br>
+We design everything. <br>
+Design is everything.<br>
+</div>
+<!--<center><img src="_img/Manifesto-Overlay.png" style="margin:10px 0 0 0;"></center>-->
+</div>
+<div id="overlayTwo"> <a  style="text-decoration:none; color:#333; font-size:50px; margin:10px 0 0 10px; font-weight:normal; cursor:pointer;">X</a>
+<center><iframe id="testID" src="https://player.vimeo.com/video/255198788?autoplay=1&color=ffffff&title=0&byline=0&portrait=0" width="1000" height="563" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="padding:100px 0 0 0;" ></iframe></center>
+</div>
+
+
+<script>
+
+var poop = 1;
+//$(document).ready(function () {
+  $( document ).ready(function() {
+    $('#overlayOne').animate({opacity: 0},0);
+
+  });
+
+  $( "#clickme" ).click(function() {
+    if (poop != 1) {
+      $('#overlayOne').animate({opacity: 0},350, function() {
+      $('#overlayOne').css("display", "none");});
+
+      poop --;
+    
+    } else { 
+        $('#overlayOne').css("display", "inline");
+      $('#overlayOne').animate({opacity: 1},350);
+      poop ++;
+    }
+  });
+
+
+//------------------------------------------------------------
+var $frame = $('iframe#testID');
+var vidsrc = $frame.attr('src');
+
+var accounted = 1;
+//$(document).ready(function () {
+  $( document ).ready(function() {
+    $frame.attr('src',''); 
+    $('#overlayTwo').animate({opacity: 0},0);
+
+  });
+
+  $( "#clickmetwo, #overlayTwo " ).click(function() {
+    if (accounted != 1) {
+      $('#overlayTwo').animate({opacity: 0},350, function() {
+      $('#overlayTwo').css("display", "none");});
+       
+// sets the source to nothing, stopping the video
+$frame.attr('src',''); 
+
+// sets it back to the correct link so that it reloads immediately on the next window open
+
+
+      accounted --;
+    
+    } else { 
+        $('#overlayTwo').css("display", "inline");
+      $('#overlayTwo').animate({opacity: 1},350);
+      $frame.attr('src', vidsrc);
+
+      accounted ++;
+    }
+  });
+  
+
+
+</script>
+
+</body>
+</html>
+
+
+
