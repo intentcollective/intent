@@ -4,7 +4,7 @@
  * Full steps are in the README.
  *
  * Expects a sheet with this header row (exact names, any order):
- * Category | Type | Title | Description | ThumbnailPath | MainContent
+ * Category | Title | Description | ThumbnailPath | MainContent
  *
  * Row 1 = headers. The topmost DATA row (row 2) is treated as the
  * newest work — add new rows at the top, just under the header.
