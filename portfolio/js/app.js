@@ -3,7 +3,7 @@
    ============================================ */
 // Paste the "Web app" URL you get after deploying the Apps Script
 // (see /apps-script/Code.gs and the README) here:
-const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwKvdIPac6gEXZRs3qNni1L6b5CtrMvmJFdlKSRq3MsyRzF7p3MUMA6Fezd5IcBEZKb/exec";
+const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxu8Avf5BlFkENJDsSUpUJ2ixLEvhZlMxywQt8UnV_JEiryxFWr2HmlXREP2aCqnnIw/exec";
 
 const IMAGES_PATH = "images/works/";
 
