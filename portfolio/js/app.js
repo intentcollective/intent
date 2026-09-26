@@ -3,7 +3,7 @@
    ============================================ */
 // Paste the "Web app" URL you get after deploying the Apps Script
 // (see /apps-script/Code.gs and the README) here:
-const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbydBGZs_uReOlKYaAYjBUTQbEZj__6by1Tw8BdOXMRG9zab9YCIWUWJbve-jVqNO8mO/exec";
+const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwKvdIPac6gEXZRs3qNni1L6b5CtrMvmJFdlKSRq3MsyRzF7p3MUMA6Fezd5IcBEZKb/exec";
 
 const IMAGES_PATH = "images/works/";
 
@@ -13,10 +13,9 @@ const IMAGES_PATH = "images/works/";
 let allWorks = [];
 let activeCategory = "Design";
 
-// Image carousel state (used only when the open item has multiple images)
-let carouselImages = [];
+// Popup carousel state — slides can be a mix of images and videos
+let carouselSlides = [];
 let carouselIndex = 0;
-let carouselImgEl = null;
 let carouselAlt = "";
 let touchStartX = null;
 
@@ -64,7 +63,7 @@ function render() {
   }
   emptyMsg.hidden = true;
 
-  items.forEach((item, index) => {
+  items.forEach((item) => {
     const card = document.createElement("button");
     card.type = "button";
     card.className = "work-card";
@@ -80,13 +79,8 @@ function render() {
     title.className = "work-title";
     title.textContent = item.Title || "Untitled";
 
-    const type = document.createElement("p");
-    type.className = "work-type";
-    type.textContent = item.Type === "video" ? "Video" : "";
-
     card.appendChild(thumb);
     card.appendChild(title);
-    if (type.textContent) card.appendChild(type);
 
     card.addEventListener("click", () => openModal(item));
     grid.appendChild(card);
@@ -110,6 +104,40 @@ function setupNav() {
 }
 
 /* ============================================
+   MainContent -> slides
+   "image:a.jpg,image:b.jpg,video:https://youtube.com/watch?v=xxxx"
+   ============================================ */
+function parseSlides(mainContent) {
+  return (mainContent || "")
+    .split(",")
+    .map((entry) => entry.trim())
+    .filter(Boolean)
+    .map((entry) => {
+      const sep = entry.indexOf(":");
+      if (sep === -1) return null;
+      const type = entry.slice(0, sep).trim().toLowerCase();
+      const value = entry.slice(sep + 1).trim();
+      if ((type !== "image" && type !== "video") || !value) return null;
+      return { type, value };
+    })
+    .filter(Boolean);
+}
+
+function parseVideoEmbed(url) {
+  if (!url) return null;
+
+  const yt = url.match(
+    /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/
+  );
+  if (yt) return `https://www.youtube.com/embed/${yt[1]}`;
+
+  const vimeo = url.match(/vimeo\.com\/(?:.*\/)?(\d+)/);
+  if (vimeo) return `https://player.vimeo.com/video/${vimeo[1]}`;
+
+  return null;
+}
+
+/* ============================================
    Modal
    ============================================ */
 function setupModal() {
@@ -128,9 +156,9 @@ function setupModal() {
       closeModal();
       return;
     }
-    if (carouselImages.length > 1) {
-      if (e.key === "ArrowLeft") showPrevImage();
-      if (e.key === "ArrowRight") showNextImage();
+    if (carouselSlides.length > 1) {
+      if (e.key === "ArrowLeft") showPrevSlide();
+      if (e.key === "ArrowRight") showNextSlide();
     }
   });
 
@@ -143,12 +171,12 @@ function setupModal() {
     { passive: true }
   );
   content.addEventListener("touchend", (e) => {
-    if (touchStartX === null || carouselImages.length <= 1) return;
+    if (touchStartX === null || carouselSlides.length <= 1) return;
     const dx = e.changedTouches[0].clientX - touchStartX;
     touchStartX = null;
     const SWIPE_THRESHOLD = 40;
-    if (dx > SWIPE_THRESHOLD) showPrevImage();
-    else if (dx < -SWIPE_THRESHOLD) showNextImage();
+    if (dx > SWIPE_THRESHOLD) showPrevSlide();
+    else if (dx < -SWIPE_THRESHOLD) showNextSlide();
   });
 }
 
@@ -157,41 +185,20 @@ function openModal(item) {
   const content = document.getElementById("modal-content");
   content.innerHTML = "";
   clearCarouselArrows();
-  carouselImages = [];
+
+  carouselSlides = parseSlides(item.MainContent);
   carouselIndex = 0;
-  carouselImgEl = null;
   carouselAlt = item.Title || "";
 
-  if (item.Type === "video") {
-    const embedSrc = parseVideoEmbed((item.MainContent || "").trim());
-    const wrap = document.createElement("div");
-    wrap.className = "video-embed";
-    if (embedSrc) {
-      // No autoplay param -> loads with a click-to-play poster frame.
-      const iframe = document.createElement("iframe");
-      iframe.src = embedSrc;
-      iframe.allow = "autoplay; fullscreen; picture-in-picture";
-      iframe.allowFullscreen = true;
-      wrap.appendChild(iframe);
-    }
-    content.appendChild(wrap);
-  } else {
-    const files = (item.MainContent || "")
-      .split(",")
-      .map((f) => f.trim())
-      .filter(Boolean);
+  const slideHolder = document.createElement("div");
+  slideHolder.className = "carousel-slide";
+  slideHolder.id = "carousel-slide";
+  content.appendChild(slideHolder);
 
-    carouselImages = files;
+  renderSlide();
 
-    const img = document.createElement("img");
-    img.src = files.length ? IMAGES_PATH + files[0] : "";
-    img.alt = carouselAlt;
-    content.appendChild(img);
-    carouselImgEl = img;
-
-    if (files.length > 1) {
-      buildCarouselArrows(modal);
-    }
+  if (carouselSlides.length > 1) {
+    buildCarouselArrows(modal);
   }
 
   const title = document.createElement("p");
@@ -213,29 +220,58 @@ function closeModal() {
   modal.hidden = true;
   document.getElementById("modal-content").innerHTML = "";
   clearCarouselArrows();
-  carouselImages = [];
+  carouselSlides = [];
   document.body.style.overflow = "";
 }
 
 /* ============================================
-   Image carousel (loops both directions)
+   Carousel — renders whichever slide type is current
+   (loops both directions)
    ============================================ */
+function renderSlide() {
+  const holder = document.getElementById("carousel-slide");
+  if (!holder || carouselSlides.length === 0) return;
+
+  holder.innerHTML = "";
+  const slide = carouselSlides[carouselIndex];
+
+  if (slide.type === "video") {
+    const embedSrc = parseVideoEmbed(slide.value);
+    const wrap = document.createElement("div");
+    wrap.className = "video-embed";
+    if (embedSrc) {
+      // No autoplay param -> loads with a click-to-play poster frame.
+      const iframe = document.createElement("iframe");
+      iframe.src = embedSrc;
+      iframe.allow = "autoplay; fullscreen; picture-in-picture";
+      iframe.allowFullscreen = true;
+      wrap.appendChild(iframe);
+    }
+    holder.appendChild(wrap);
+  } else {
+    const img = document.createElement("img");
+    img.src = IMAGES_PATH + slide.value;
+    img.alt = carouselAlt;
+    holder.appendChild(img);
+  }
+}
+
 function buildCarouselArrows(modal) {
   const prev = document.createElement("button");
   prev.type = "button";
   prev.className = "modal-arrow modal-arrow-prev";
   prev.id = "modal-arrow-prev";
-  prev.setAttribute("aria-label", "Previous image");
+  prev.setAttribute("aria-label", "Previous");
   prev.innerHTML = "&#8592;";
-  prev.addEventListener("click", showPrevImage);
+  prev.addEventListener("click", showPrevSlide);
 
   const next = document.createElement("button");
   next.type = "button";
   next.className = "modal-arrow modal-arrow-next";
   next.id = "modal-arrow-next";
-  next.setAttribute("aria-label", "Next image");
+  next.setAttribute("aria-label", "Next");
   next.innerHTML = "&#8594;";
-  next.addEventListener("click", showNextImage);
+  next.addEventListener("click", showNextSlide);
 
   modal.appendChild(prev);
   modal.appendChild(next);
@@ -248,37 +284,14 @@ function clearCarouselArrows() {
   if (next) next.remove();
 }
 
-function showPrevImage() {
-  if (carouselImages.length <= 1) return;
-  carouselIndex = (carouselIndex - 1 + carouselImages.length) % carouselImages.length;
-  updateCarouselImage();
+function showPrevSlide() {
+  if (carouselSlides.length <= 1) return;
+  carouselIndex = (carouselIndex - 1 + carouselSlides.length) % carouselSlides.length;
+  renderSlide();
 }
 
-function showNextImage() {
-  if (carouselImages.length <= 1) return;
-  carouselIndex = (carouselIndex + 1) % carouselImages.length;
-  updateCarouselImage();
-}
-
-function updateCarouselImage() {
-  if (!carouselImgEl) return;
-  carouselImgEl.src = IMAGES_PATH + carouselImages[carouselIndex];
-  carouselImgEl.alt = carouselAlt;
-}
-
-/* ============================================
-   Video URL -> embed URL
-   ============================================ */
-function parseVideoEmbed(url) {
-  if (!url) return null;
-
-  const yt = url.match(
-    /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/
-  );
-  if (yt) return `https://www.youtube.com/embed/${yt[1]}`;
-
-  const vimeo = url.match(/vimeo\.com\/(?:.*\/)?(\d+)/);
-  if (vimeo) return `https://player.vimeo.com/video/${vimeo[1]}`;
-
-  return null;
+function showNextSlide() {
+  if (carouselSlides.length <= 1) return;
+  carouselIndex = (carouselIndex + 1) % carouselSlides.length;
+  renderSlide();
 }
