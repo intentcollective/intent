@@ -17,6 +17,44 @@ Already connected to your sheet. The CSV URL is set in `js/discourse.js`
 (`Link`/`Tag` optional). Clicking any entry opens it as a full post at
 `discourse.html#post-<slug>`.
 
+### Adding images and video to a post
+
+The `Content` cell can include real photos and embedded video, without
+writing any HTML — drop one of these anywhere in the text:
+
+```
+[img:https://example.com/path/to/image.jpg]
+[video:https://youtube.com/watch?v=xxxxxxxxxxx]
+```
+
+- `[img:URL]` — any direct image URL. Renders as a real `<img>`.
+- `[video:URL]` — a YouTube or Vimeo link (any common URL format —
+  `youtu.be` short links, `youtube.com/watch?v=`, `youtube.com/shorts/`,
+  Vimeo, including unlisted Vimeo links). Renders as an embedded,
+  click-to-play video.
+
+You can include more than one tag in a single post, in any order, mixed
+with your regular pasted text:
+
+```
+...your paragraph...[img:https://example.com/a.jpg][video:https://youtu.be/xxxxxxxxxxx]
+```
+
+This works whether you type the tag directly into the Sheet cell, or type
+it into the "+ Share a post" composer on the site itself.
+
+**Why not just paste an `<img>`/`<iframe>` tag directly?** Post content
+goes through an allow-list sanitizer before it's shown, which deliberately
+strips anything except basic text formatting (paragraphs, bold, links,
+etc.) — that's what keeps a careless or malicious sheet edit or post from
+injecting arbitrary embeds, since the "+ Share a post" composer is only
+password-gated, not a real login. The `[img:]`/`[video:]` tags are handled
+as a separate, controlled step *after* that sanitizing pass — they're the
+only way to add media so a raw pasted `<img>`/`<iframe>` still won't work.
+
+If a tag doesn't render, first hard-refresh the page (Cmd/Ctrl+Shift+R) —
+GitHub Pages can serve a cached copy of `js/discourse.js` for a bit.
+
 ## Discourse — enable posting from the site
 
 Posting a new entry needs to *write* to the sheet, which a published CSV
