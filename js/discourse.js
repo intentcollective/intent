@@ -110,9 +110,17 @@ function slugify(str) {
 }
 
 function stripTags(html) {
+  // Insert a space at block-element boundaries first, so text that was on
+  // separate lines/paragraphs in the source (e.g. a list of terms) doesn't
+  // collapse into one unbroken run-on word once tags are stripped — that's
+  // what causes an excerpt to overflow its card instead of wrapping.
+  const withBreaks = (html || "").replace(
+    /<\/(p|div|li|h[1-6]|blockquote|tr)>|<br\s*\/?>/gi,
+    " "
+  );
   const div = document.createElement("div");
-  div.innerHTML = html;
-  return div.textContent || "";
+  div.innerHTML = withBreaks;
+  return (div.textContent || "").replace(/\s+/g, " ").trim();
 }
 
 // Removes [img:...] / [video:...] tags from text used in plain-text
