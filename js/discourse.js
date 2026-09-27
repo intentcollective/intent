@@ -12,7 +12,10 @@
      Name    - fellow's name
      Title   - post title
      Date    - set automatically by the Apps Script when posting via the site
-     Content - the post body (may contain basic HTML from the editor)
+     Content - the post body (may contain basic HTML from the editor).
+               Drop [img:URL] or [video:URL] (YouTube or Vimeo link)
+               anywhere in the text to embed an image or video — see
+               expandMediaTags() below.
      Link    - optional URL to an external version of the piece
      Tag     - optional short tag/category
 
@@ -112,6 +115,13 @@ function stripTags(html) {
   return div.textContent || "";
 }
 
+// Removes [img:...] / [video:...] tags from text used in plain-text
+// contexts (like the card excerpt), so raw tag syntax never shows up
+// where it can't actually render as media.
+function stripMediaTags(str) {
+  return (str || "").replace(/\[img:[^\]]*\]/g, "").replace(/\[video:[^\]]*\]/g, "");
+}
+
 function excerpt(text, len) {
   if (text.length <= len) return text;
   return text.slice(0, len).replace(/\s+\S*$/, "") + "…";
@@ -129,10 +139,16 @@ function escapeHTML(str) {
   return div.innerHTML;
 }
 
+function escapeAttr(str) {
+  return String(str).replace(/"/g, "&quot;");
+}
+
 // Allow-list HTML sanitizer for post content coming out of the sheet.
 // Anything not in this list is unwrapped (its text/children kept, tag
 // dropped) rather than shown raw — protects the detail view from a
-// mistaken or malicious sheet cell.
+// mistaken or malicious sheet cell. Deliberately does NOT allow IMG or
+// IFRAME here — see expandMediaTags() below for how media actually gets
+// in, via a controlled tag syntax instead of raw HTML.
 const ALLOWED_TAGS = {
   P: [], DIV: [], BR: [], B: [], STRONG: [], I: [], EM: [], U: [],
   UL: [], OL: [], LI: [], BLOCKQUOTE: [], H2: [], H3: [], H4: [],
@@ -167,6 +183,75 @@ function cleanNode(node) {
       node.removeChild(child);
     }
   });
+}
+
+// Turns a YouTube/Vimeo URL into its embeddable form. Returns null if the
+// URL isn't recognized, so callers can skip embedding rather than build a
+// broken iframe.
+function parseVideoEmbed(url) {
+  let parsed;
+  try {
+    parsed = new URL((url || "").trim());
+  } catch {
+    return null;
+  }
+
+  const host = parsed.hostname.replace(/^www\.|^m\./, "");
+
+  if (host === "youtube.com" || host === "music.youtube.com") {
+    const parts = parsed.pathname.split("/").filter(Boolean);
+    let id = parsed.searchParams.get("v");
+    if (!id && (parts[0] === "embed" || parts[0] === "shorts" || parts[0] === "live")) {
+      id = parts[1];
+    }
+    return id ? `https://www.youtube.com/embed/${id}` : null;
+  }
+
+  if (host === "youtu.be") {
+    const id = parsed.pathname.split("/").filter(Boolean)[0];
+    return id ? `https://www.youtube.com/embed/${id}` : null;
+  }
+
+  if (host === "vimeo.com") {
+    const parts = parsed.pathname.split("/").filter(Boolean);
+    let id = null, hash = null;
+    if (parts.length === 2 && /^\d+$/.test(parts[0])) {
+      id = parts[0];
+      hash = parts[1];
+    } else {
+      for (let i = parts.length - 1; i >= 0; i--) {
+        if (/^\d+$/.test(parts[i])) { id = parts[i]; break; }
+      }
+    }
+    if (!id) return null;
+    return hash
+      ? `https://player.vimeo.com/video/${id}?h=${hash}`
+      : `https://player.vimeo.com/video/${id}`;
+  }
+
+  if (host === "player.vimeo.com") return parsed.href;
+
+  return null;
+}
+
+// Expands [img:URL] and [video:URL] tags into real, safe HTML. Runs AFTER
+// sanitizeHTML() — the tags are just plain text as far as the sanitizer is
+// concerned, so they survive it untouched, then get expanded here into
+// markup we build ourselves (never raw HTML pulled from the sheet cell).
+function expandMediaTags(html) {
+  return (html || "")
+    .replace(/\[img:([^\]]+)\]/g, (match, rawUrl) => {
+      const url = rawUrl.trim();
+      if (!/^https?:\/\//i.test(url)) return "";
+      return `<img src="${escapeAttr(url)}" alt="" loading="lazy" style="max-width:100%;display:block;margin:1rem 0;">`;
+    })
+    .replace(/\[video:([^\]]+)\]/g, (match, rawUrl) => {
+      const embedSrc = parseVideoEmbed(rawUrl.trim());
+      if (!embedSrc) return "";
+      return `<div style="position:relative;width:100%;padding-top:56.25%;margin:1rem 0;">` +
+        `<iframe src="${escapeAttr(embedSrc)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy" ` +
+        `style="position:absolute;inset:0;width:100%;height:100%;border:0;"></iframe></div>`;
+    });
 }
 
 /* ---------------- list view ---------------- */
@@ -204,7 +289,7 @@ function renderEntries(entries) {
         <span>${e.date ? formatDate(e.date) : ""}</span>
       </div>
       <h3>${escapeHTML(e.title)}</h3>
-      <p class="excerpt">${escapeHTML(excerpt(stripTags(e.content), 220))}</p>
+      <p class="excerpt">${escapeHTML(excerpt(stripTags(stripMediaTags(e.content)), 220))}</p>
       <div class="byline">${e.name ? "— " + escapeHTML(e.name) : ""}</div>
     `;
     card.addEventListener("click", () => { location.hash = "post-" + e.slug; });
@@ -238,7 +323,7 @@ function showDetail(entry) {
     <div class="mark-label">${entry.tag ? escapeHTML(entry.tag) : "Discourse"}</div>
     <h1>${escapeHTML(entry.title)}</h1>
     <div class="post-meta">${entry.name ? escapeHTML(entry.name) : "Anonymous"}${entry.date ? " · " + formatDate(entry.date) : ""}</div>
-    <div class="post-body">${sanitizeHTML(entry.content)}</div>
+    <div class="post-body">${expandMediaTags(sanitizeHTML(entry.content))}</div>
   `;
   document.getElementById("back-link").addEventListener("click", (ev) => {
     ev.preventDefault();
