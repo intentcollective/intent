@@ -119,8 +119,8 @@ button {
 }
 
 .contact-link.linkedin {
-  display: inline-flex;
-  color: var(--fg);
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 /* ============================================
