@@ -1,5 +1,5 @@
 /* ============================================
-   CONFIG — the only line you need to edit
+   CONFIG - the only line you need to edit
    ============================================ */
 // Paste the "Web app" URL you get after deploying the Apps Script
 // (see /apps-script/Code.gs and the README) here:
@@ -7,13 +7,16 @@ const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbzO56PZ7HjJ5atTfn
 
 const IMAGES_PATH = "images/works/";
 
+// File extensions treated as playable local/hosted video files
+const VIDEO_FILE_REGEX = /\.(mp4|webm|mov|m4v)(\?.*)?$/i;
+
 /* ============================================
    State
    ============================================ */
 let allWorks = [];
 let activeCategory = "Design";
 
-// Popup carousel state — slides can be a mix of images and videos
+// Popup carousel state - slides can be a mix of images and videos
 let carouselSlides = [];
 let carouselIndex = 0;
 let carouselAlt = "";
@@ -105,7 +108,9 @@ function setupNav() {
 
 /* ============================================
    MainContent -> slides
+   Examples:
    "image:a.jpg,image:b.jpg,video:https://youtube.com/watch?v=xxxx"
+   "galaxy_origami.mp4, origami_package1.jpg, origami_package2.jpg"
    ============================================ */
 function parseSlides(mainContent) {
   return (mainContent || "")
@@ -121,11 +126,12 @@ function parseSlides(mainContent) {
         return value ? { type: prefix, value } : null;
       }
 
-      // Legacy entry with no type prefix (from before mixed slides
-      // existed) — infer the type: a URL is a video, anything else
-      // is treated as an image filename.
+      // Entry with no type prefix - infer the type: a URL or a video
+      // file (.mp4 etc.) is a video, anything else is an image filename.
       if (!entry) return null;
-      const inferredType = /^https?:\/\//i.test(entry) ? "video" : "image";
+      const isUrl = /^https?:\/\//i.test(entry);
+      const isVideoFile = VIDEO_FILE_REGEX.test(entry);
+      const inferredType = isUrl || isVideoFile ? "video" : "image";
       return { type: inferredType, value: entry };
     })
     .filter(Boolean);
@@ -279,7 +285,7 @@ function closeModal() {
 }
 
 /* ============================================
-   Carousel — renders whichever slide type is current
+   Carousel - renders whichever slide type is current
    (loops both directions)
    ============================================ */
 function renderSlide() {
@@ -290,18 +296,33 @@ function renderSlide() {
   const slide = carouselSlides[carouselIndex];
 
   if (slide.type === "video") {
-    const embedSrc = parseVideoEmbed(slide.value);
-    const wrap = document.createElement("div");
-    wrap.className = "video-embed";
-    if (embedSrc) {
-      // No autoplay param -> loads with a click-to-play poster frame.
-      const iframe = document.createElement("iframe");
-      iframe.src = embedSrc;
-      iframe.allow = "autoplay; fullscreen; picture-in-picture";
-      iframe.allowFullscreen = true;
-      wrap.appendChild(iframe);
+    if (VIDEO_FILE_REGEX.test(slide.value)) {
+      // Video file: local (in images/works/) or a full URL to an mp4
+      const video = document.createElement("video");
+      video.src = /^https?:\/\//i.test(slide.value)
+        ? slide.value
+        : IMAGES_PATH + slide.value;
+      video.controls = true;
+      video.playsInline = true;
+      video.preload = "metadata";
+      video.style.maxWidth = "100%";
+      video.style.maxHeight = "75vh";
+      holder.appendChild(video);
+    } else {
+      // YouTube / Vimeo embed
+      const embedSrc = parseVideoEmbed(slide.value);
+      const wrap = document.createElement("div");
+      wrap.className = "video-embed";
+      if (embedSrc) {
+        // No autoplay param -> loads with a click-to-play poster frame.
+        const iframe = document.createElement("iframe");
+        iframe.src = embedSrc;
+        iframe.allow = "autoplay; fullscreen; picture-in-picture";
+        iframe.allowFullscreen = true;
+        wrap.appendChild(iframe);
+      }
+      holder.appendChild(wrap);
     }
-    holder.appendChild(wrap);
   } else {
     const img = document.createElement("img");
     img.src = IMAGES_PATH + slide.value;
