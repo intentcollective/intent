@@ -97,6 +97,7 @@ function rowsToEntries(rows) {
       link: iLink > -1 ? (r[iLink] || "").trim() : "",
       tag: iTag > -1 ? (r[iTag] || "").trim() : "",
       slug: slugify(title) + "-" + (date ? date.replace(/[^0-9]/g, "") : i),
+      order: i,
     };
   }).filter(e => e.title || e.content);
 }
@@ -277,7 +278,10 @@ function renderEntries(entries) {
   currentEntries.sort((a, b) => {
     const da = new Date(a.date), db = new Date(b.date);
     if (isNaN(da) || isNaN(db)) return 0;
-    return db - da;
+    if (db - da !== 0) return db - da;
+    // Same day (the sheet may store the date without a time): the row that
+    // sits lower in the sheet was added later, so it goes first.
+    return (b.order || 0) - (a.order || 0);
   });
 
   if (!currentEntries.length) {
@@ -476,6 +480,7 @@ try {
           date: new Date().toISOString(),
           link: "", tag: "",
           slug: slugify(title) + "-" + Date.now(),
+          order: Number.MAX_SAFE_INTEGER,
         };
         renderEntries([newEntry, ...currentEntries]);
 
