@@ -44,6 +44,14 @@ function doPost(e) {
     });
 
     sheet.appendRow(row);
+
+    // Display the Date cell as a date only. The cell still stores the full
+    // date and time underneath, so ordering is not affected.
+    var dateCol = header.indexOf("date");
+    if (dateCol > -1) {
+      sheet.getRange(sheet.getLastRow(), dateCol + 1).setNumberFormat("m/d/yyyy");
+    }
+
     return respond({ status: "ok" });
   } catch (err) {
     return respond({ status: "error", message: err.message });
