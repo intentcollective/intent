@@ -103,7 +103,7 @@ img { max-width: 100%; display: block; }
 .mark-label {
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.00em;
   text-transform: uppercase;
   color: var(--mark);
   display: flex;
@@ -112,8 +112,8 @@ img { max-width: 100%; display: block; }
   margin-bottom: 10px;
 }
 
-.mark-label::before { content: "["; color: var(--mark); }
-.mark-label::after { content: "]"; color: var(--mark); }
+.mark-label::before { content: "/"; color: var(--mark); }
+.mark-label::after { content: "/"; color: var(--mark); }
 
 h1, h2, h3 {
   font-family: var(--font);
