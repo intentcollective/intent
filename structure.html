@@ -1,346 +1,132 @@
-/* ==========================================================================
-   Intent Collective — shared design system
-   Single typeface: DM Sans. Hierarchy comes from weight, size, spacing,
-   and the printer's-red annotation mark — not from mixing type families.
-   ========================================================================== */
-
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&display=swap');
-
-:root {
-  --paper: #DEDFDA;
-  --paper-raised: #E8E9E4;
-  --ink: #1E1F1D;
-  --ink-soft: #52544F;
-  --mark: #C8281E;
-  --sage: #5E6A64;
-  --grid-line: #8FA6A340;
-  --grid-major: #6F8A8A47;
-  --rule: #1e1f1d26;
-
-  --font: 'DM Sans', sans-serif;
-
-  --max-w: 1080px;
-}
-
-* { box-sizing: border-box; }
-
-html { scroll-behavior: smooth; }
-
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-}
-
-body {
-  margin: 0;
-  background-color: var(--paper);
-  background-image:
-    linear-gradient(var(--grid-major) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
-    linear-gradient(var(--grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-  background-size: 160px 160px, 160px 160px, 32px 32px, 32px 32px;
-  color: var(--ink);
-  font-family: var(--font);
-  font-size: 18px;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-}
-
-a { color: inherit; text-decoration: none; }
-::selection { background: var(--mark); color: var(--paper); }
-:focus-visible { outline: 2px solid var(--mark); outline-offset: 3px; }
-img { max-width: 100%; display: block; }
-
-/* ---------- layout shell ---------- */
-
-.wrap { max-width: var(--max-w); margin: 0 auto; padding: 0 28px; }
-
-/* ---------- header / nav ---------- */
-
-.site-header {
-  border-bottom: 1px solid var(--rule);
-  background: var(--paper);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.site-header .wrap {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 18px;
-  padding-bottom: 18px;
-}
-
-.wordmark-link { display: inline-block; }
-.wordmark-link img { height: 20px; width: auto; }
-
-.site-nav {
-  display: flex;
-  gap: 28px;
-  font-size: 13px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.site-nav a { position: relative; padding-bottom: 3px; }
-
-.site-nav a::after {
-  content: "";
-  position: absolute;
-  left: 0; right: 100%; bottom: 0;
-  height: 1px;
-  background: var(--mark);
-  transition: right 0.2s ease;
-}
-
-.site-nav a:hover::after,
-.site-nav a[aria-current="page"]::after { right: 0; }
-.site-nav a[aria-current="page"] { color: var(--mark); }
-
-/* ---------- annotation mark (signature element) ---------- */
-
-/* Shared style for both label variants */
-.mark-label,
-.mark-label2 {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.00em;
-  text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-/* Variant 1: printer's red, double slashes */
-.mark-label { color: var(--mark); }
-
-/* Variant 2: black, single slashes (change var(--ink) to #000 for pure black) */
-.mark-label2 { color: var(--ink); }
-
-/* Slashes follow each label's own color, larger and bolder */
-.mark-label::before,
-.mark-label::after {
-  content: "//";
-  color: currentColor;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.mark-label2::before,
-.mark-label2::after {
-  content: "/";
-  color: currentColor;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1;
-}
-
-h1, h2, h3 {
-  font-family: var(--font);
-  font-weight: 700;
-  line-height: 1.12;
-  margin: 0 0 0.4em;
-  letter-spacing: -0.01em;
-}
-
-/* ---------- hero ---------- */
-
-.hero { padding: 80px 0 64px; border-bottom: 1px solid var(--rule); }
-
-.hero h1 {
-  font-size: clamp(2.4rem, 5vw, 4.2rem);
-  max-width: 15ch;
-}
-
-.logo-mark {
-  width: 120px;
-  height: auto;
-  margin-bottom: 32px;
-}
-
-/* ---------- manifesto ---------- */
-
-.manifesto { padding: 56px 0 96px; }
-
-.manifesto blockquote {
-  font-style: normal;
-  font-weight: 500;
-  font-size: clamp(1.4rem, 2.6vw, 1.9rem);
-  line-height: 1.45;
-  margin: 0 0 40px;
-  max-width: 34ch;
-  border-left: 3px solid var(--mark);
-  padding-left: 24px;
-}
-
-.manifesto p {
-  max-width: 68ch;
-  color: var(--ink);
-  font-size: 1.02rem;
-  margin-bottom: 1.1em;
-}
-
-.manifesto .signoff {
-  font-weight: 700;
-  margin-top: 1.6em;
-}
-
-/* ---------- footer ---------- */
-
-.site-footer {
-  border-top: 1px solid var(--rule);
-  padding: 32px 0 48px;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-}
-
-.site-footer .wrap {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-/* ---------- structure / fellowships / pillars page ---------- */
-
-.page-head { padding: 64px 0 32px; }
-
-.page-head p.lede {
-  max-width: 60ch;
-  font-size: 1.1rem;
-  color: var(--ink-soft);
-}
-
-.section-block { padding: 48px 0; border-top: 1px solid var(--rule); }
-
-.tier-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1px;
-  background: var(--rule);
-  border: 1px solid var(--rule);
-  margin-top: 32px;
-}
-
-.tier {
-  background: var(--paper-raised);
-  padding: 24px;
-}
-
-.tier h3 { font-size: 1.15rem; margin-bottom: 6px; }
-.tier p { font-size: 0.95rem; color: var(--ink-soft); margin: 0; }
-
-.pillar-list { margin-top: 32px; display: flex; flex-direction: column; }
-
-.pillar-row {
-  display: grid;
-  grid-template-columns: 56px 1fr auto;
-  gap: 20px;
-  align-items: baseline;
-  padding: 20px 0;
-  border-top: 1px solid var(--rule);
-}
-
-.pillar-row:last-child { border-bottom: 1px solid var(--rule); }
-
-.pillar-letter { font-weight: 700; color: var(--mark); font-size: 1.1rem; }
-.pillar-name { font-weight: 600; }
-.pillar-people {
-  font-size: 0.85rem;
-  color: var(--ink-soft);
-  text-align: right;
-  white-space: nowrap;
-}
-
-.triad {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 28px;
-  margin-top: 32px;
-}
-
-.triad-item .mark-label,
-.triad-item .mark-label2 { margin-bottom: 8px; }
-.triad-item p { color: var(--ink-soft); font-size: 0.98rem; margin: 0; }
-
-/* ---------- discourse & news shared card grid ---------- */
-
-.discourse-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-  padding-bottom: 32px;
-}
-
-.discourse-toolbar .count { font-size: 12px; color: var(--ink-soft); font-weight: 500; }
-
-.entry-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-  padding-bottom: 96px;
-}
-
-.entry-card {
-  background: var(--paper-raised);
-  border: 1px solid var(--rule);
-  padding: 22px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  transition: border-color 0.15s ease;
-  width: 100%;
-  text-align: left;
-  font: inherit;
-  color: inherit;
-  cursor: pointer;
-}
-
-.entry-card:hover { border-color: var(--mark); }
-
-.entry-meta {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--sage);
-  display: flex;
-  justify-content: space-between;
-}
-
-.entry-card h3 { font-size: 1.25rem; margin-bottom: 0; }
-
-.entry-card .excerpt { font-size: 0.98rem; color: var(--ink); flex-grow: 1; }
-
-.entry-card .byline {
-  font-size: 12px;
-  color: var(--ink-soft);
-  border-top: 1px dashed var(--rule);
-  padding-top: 10px;
-  font-weight: 500;
-}
-
-.state-msg { font-size: 13px; color: var(--ink-soft); padding: 40px 0; max-width: 50ch; }
-.state-msg.is-error { color: var(--mark); }
-
-/* ---------- compose form ---------- */
-
-.compose-toggle {
-  background: none;
-  border: none;
-  padding: 0 0 20px;
-  font-family: var(--font);
-  font-size: 12px;
-  font-weight: 700;
-  text-transform:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Structure — Intent Collective</title>
+<meta name="description" content="Fellowships and pillars of intent collective.">
+<link rel="icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a href="index.html" class="wordmark-link">
+      <img src="assets/wordmark.png" alt="Intent Collective">
+    </a>
+    <nav class="site-nav">
+      <a href="index.html">Manifesto</a>
+      <a href="structure.html" aria-current="page">Structure</a>
+      <a href="discourse.html">Discourse</a>
+      <a href="zeitgeist.html">Zeitgeist</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="page-head">
+    <div class="wrap">
+      <div class="mark-label">Structure</div>
+      <h1>Fellowships and pillars</h1>
+      <p class="lede">How the collective organizes its people, and the seven pillars each fellow's work sits under</p>
+    </div>
+  </section>
+
+  <section class="section-block">
+    <div class="wrap">
+      <div class="mark-label">Fellowships</div>
+      <div class="tier-grid">
+        <div class="tier">
+          <h3>Master Design Fellows</h3>
+          <p>Pillar leaders / Project initiators</p>
+        </div>
+        <div class="tier">
+          <h3>Principal Design Fellows</h3>
+          <p>Professional associates</p>
+        </div>
+        <div class="tier">
+          <h3>Design Fellows</h3>
+          <p>Junior members</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-block">
+    <div class="wrap">
+      <div class="mark-label">Pillars</div>
+      <div class="pillar-list">
+        <div class="pillar-row">
+          <div class="pillar-letter">A</div>
+          <div class="pillar-name">Design discourse and socio-cultural ethos</div>
+          <div class="pillar-people">H.K.</div>
+        </div>
+        <div class="pillar-row">
+          <div class="pillar-letter">B</div>
+          <div class="pillar-name">Linguistic typography systems</div>
+          <div class="pillar-people">P.W., H.K.</div>
+        </div>
+        <div class="pillar-row">
+          <div class="pillar-letter">C</div>
+          <div class="pillar-name">Visual communication systems</div>
+          <div class="pillar-people">P.W.</div>
+        </div>
+        <div class="pillar-row">
+          <div class="pillar-letter">D</div>
+          <div class="pillar-name">Physical communication systems</div>
+          <div class="pillar-people">F.H</div>
+        </div>
+        <div class="pillar-row">
+          <div class="pillar-letter">E</div>
+          <div class="pillar-name">Brand experience systems</div>
+          <div class="pillar-people">S.G., H.K</div>
+        </div>
+        <div class="pillar-row">
+          <div class="pillar-letter">F</div>
+          <div class="pillar-name">Human-centered experience systems</div>
+          <div class="pillar-people">J.L.</div>
+        </div>
+        <div class="pillar-row">
+          <div class="pillar-letter">G</div>
+          <div class="pillar-name">Pragmatics and professional praxis</div>
+          <div class="pillar-people">D.D., D.H., K.H., X.F.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-block">
+    <div class="wrap">
+      <div class="mark-label">Method</div>
+      <div class="triad">
+        <div class="triad-item">
+          <div class="mark-label2">Strategy</div>
+          <p>Intellectually sophisticated and<br>critically reasoned</p>
+        </div>
+        <div class="triad-item">
+          <div class="mark-label2">Process</div>
+          <p>Systematically structured and<br>methodologically persistent</p>
+        </div>
+        <div class="triad-item">
+          <div class="mark-label2">Execution</div>
+          <p>Aesthetically authentic and<br>experientially impactful</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>&copy; <span id="year"></span> intent collective&trade;</span>
+    <span><a href="mailto:intentcollectivedesign@gmail.com">intentcollectivedesign@gmail.com</a></span>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+
+</body>
+</html>
