@@ -100,20 +100,33 @@ img { max-width: 100%; display: block; }
 
 /* ---------- annotation mark (signature element) ---------- */
 
-.mark-label {
+/* Shared style for both label variants */
+.mark-label,
+.mark-label2 {
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.00em;
   text-transform: uppercase;
-  color: var(--mark);
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 10px;
 }
 
-.mark-label::before { content: "/"; color: var(--mark); }
-.mark-label::after { content: "/"; color: var(--mark); }
+/* Variant 1: brick red */
+.mark-label { color: var(--mark); }
+
+/* Variant 2: black (change var(--ink) to #000 for pure black) */
+.mark-label2 { color: var(--ink); }
+
+/* Slashes follow each label's own color */
+.mark-label::before,
+.mark-label::after,
+.mark-label2::before,
+.mark-label2::after {
+  content: "/";
+  color: currentColor;
+}
 
 h1, h2, h3 {
   font-family: var(--font);
@@ -242,7 +255,8 @@ h1, h2, h3 {
   margin-top: 32px;
 }
 
-.triad-item .mark-label { margin-bottom: 8px; }
+.triad-item .mark-label,
+.triad-item .mark-label2 { margin-bottom: 8px; }
 .triad-item p { color: var(--ink-soft); font-size: 0.98rem; margin: 0; }
 
 /* ---------- discourse & news shared card grid ---------- */
