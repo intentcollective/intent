@@ -145,9 +145,8 @@ h1, h2, h3 {
 .hero { padding: 80px 0 64px; border-bottom: 1px solid var(--rule); }
 
 .hero h1 {
-  font-size: clamp(2.4rem, 5vw, 4.2rem);
-  max-width: 32ch;
-  text-wrap: balance;
+  font-size: clamp(2rem, 5vw, 4.2rem);
+  max-width: 22ch;
 }
 
 .logo-mark {
