@@ -75,7 +75,7 @@ img { max-width: 100%; display: block; }
 }
 
 .wordmark-link { display: inline-block; }
-.wordmark-link img { height: 20px; width: auto; }
+.wordmark-link img { height: 24px; width: auto; }
 
 .site-nav {
   display: flex;
