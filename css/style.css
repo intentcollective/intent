@@ -1,20 +1,21 @@
 /* ==========================================================================
    Intent Collective — shared design system
    Single typeface: DM Sans. Hierarchy comes from weight, size, spacing,
-   and the brick-red annotation mark — not from mixing type families.
+   and the printer's-red annotation mark — not from mixing type families.
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&display=swap');
 
 :root {
-  --paper: #E4E1D6;
-  --paper-raised: #EDEAE0;
-  --ink: #211F1A;
-  --ink-soft: #55524A;
-  --mark: #B23A2E;
-  --sage: #5B6B5E;
+  --paper: #DEDFDA;
+  --paper-raised: #E8E9E4;
+  --ink: #1E1F1D;
+  --ink-soft: #52544F;
+  --mark: #C8281E;
+  --sage: #5E6A64;
   --grid-line: #8FA6A340;
-  --rule: #21201a26;
+  --grid-major: #6F8A8A47;
+  --rule: #1e1f1d26;
 
   --font: 'DM Sans', sans-serif;
 
@@ -34,9 +35,11 @@ body {
   margin: 0;
   background-color: var(--paper);
   background-image:
+    linear-gradient(var(--grid-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
     linear-gradient(var(--grid-line) 1px, transparent 1px),
     linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-  background-size: 32px 32px;
+  background-size: 160px 160px, 160px 160px, 32px 32px, 32px 32px;
   color: var(--ink);
   font-family: var(--font);
   font-size: 18px;
@@ -113,23 +116,29 @@ img { max-width: 100%; display: block; }
   margin-bottom: 10px;
 }
 
-/* Variant 1: brick red */
+/* Variant 1: printer's red, double slashes */
 .mark-label { color: var(--mark); }
 
-/* Variant 2: black (change var(--ink) to #000 for pure black) */
+/* Variant 2: black, single slashes (change var(--ink) to #000 for pure black) */
 .mark-label2 { color: var(--ink); }
 
-/* Slashes follow each label's own color */
+/* Slashes follow each label's own color, larger and bolder */
 .mark-label::before,
 .mark-label::after {
   content: "//";
   color: currentColor;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .mark-label2::before,
 .mark-label2::after {
   content: "/";
   color: currentColor;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
 }
 
 h1, h2, h3 {
