@@ -122,6 +122,9 @@ img { max-width: 100%; display: block; }
 /* Slashes follow each label's own color */
 .mark-label::before,
 .mark-label::after,
+  content: "//";
+  color: currentColor;
+}
 .mark-label2::before,
 .mark-label2::after {
   content: "/";
