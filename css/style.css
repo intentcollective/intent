@@ -72,7 +72,7 @@ img { max-width: 100%; display: block; }
 }
 
 .wordmark-link { display: inline-block; }
-.wordmark-link img { height: 26px; width: auto; }
+.wordmark-link img { height: 20px; width: auto; }
 
 .site-nav {
   display: flex;
@@ -100,37 +100,20 @@ img { max-width: 100%; display: block; }
 
 /* ---------- annotation mark (signature element) ---------- */
 
-/* Shared style for both label variants */
-.mark-label,
-.mark-label2 {
+.mark-label {
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.00em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  color: var(--mark);
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 10px;
 }
 
-/* Variant 1: brick red, double slashes */
-.mark-label { color: var(--mark); }
-
-/* Variant 2: black, single slashes (change var(--ink) to #000 for pure black) */
-.mark-label2 { color: var(--ink); }
-
-/* Slashes follow each label's own color */
-.mark-label::before,
-.mark-label::after {
-  content: "//";
-  color: currentColor;
-}
-
-.mark-label2::before,
-.mark-label2::after {
-  content: "/";
-  color: currentColor;
-}
+.mark-label::before { content: "["; color: var(--mark); }
+.mark-label::after { content: "]"; color: var(--mark); }
 
 h1, h2, h3 {
   font-family: var(--font);
@@ -145,14 +128,14 @@ h1, h2, h3 {
 .hero { padding: 80px 0 64px; border-bottom: 1px solid var(--rule); }
 
 .hero h1 {
-  font-size: clamp(2rem, 5vw, 4.2rem);
-  max-width: 22ch;
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  max-width: 15ch;
 }
 
 .logo-mark {
-  width: 150px;
+  width: 120px;
   height: auto;
-  margin-bottom: 25px;
+  margin-bottom: 32px;
 }
 
 /* ---------- manifesto ---------- */
@@ -160,7 +143,7 @@ h1, h2, h3 {
 .manifesto { padding: 56px 0 96px; }
 
 .manifesto blockquote {
-  font-style: normal;
+  font-style: italic;
   font-weight: 500;
   font-size: clamp(1.4rem, 2.6vw, 1.9rem);
   line-height: 1.45;
@@ -259,8 +242,7 @@ h1, h2, h3 {
   margin-top: 32px;
 }
 
-.triad-item .mark-label,
-.triad-item .mark-label2 { margin-bottom: 8px; }
+.triad-item .mark-label { margin-bottom: 8px; }
 .triad-item p { color: var(--ink-soft); font-size: 0.98rem; margin: 0; }
 
 /* ---------- discourse & news shared card grid ---------- */
@@ -292,6 +274,7 @@ h1, h2, h3 {
   gap: 12px;
   transition: border-color 0.15s ease;
   width: 100%;
+  min-width: 0;
   text-align: left;
   font: inherit;
   color: inherit;
@@ -312,7 +295,14 @@ h1, h2, h3 {
 
 .entry-card h3 { font-size: 1.25rem; margin-bottom: 0; }
 
-.entry-card .excerpt { font-size: 0.98rem; color: var(--ink); flex-grow: 1; }
+.entry-card .excerpt {
+  font-size: 0.98rem;
+  color: var(--ink);
+  flex-grow: 1;
+  overflow-wrap: anywhere;
+}
+
+.entry-card h3 { overflow-wrap: anywhere; }
 
 .entry-card .byline {
   font-size: 12px;
