@@ -112,8 +112,8 @@ img { max-width: 100%; display: block; }
   margin-bottom: 10px;
 }
 
-.mark-label::before { content: "["; color: var(--mark); }
-.mark-label::after { content: "]"; color: var(--mark); }
+.mark-label::before { content: "//"; color: var(--mark); }
+.mark-label::after { content: "//"; color: var(--mark); }
 
 h1, h2, h3 {
   font-family: var(--font);
@@ -213,26 +213,28 @@ h1, h2, h3 {
 .tier h3 { font-size: 1.15rem; margin-bottom: 6px; }
 .tier p { font-size: 0.95rem; color: var(--ink-soft); margin: 0; }
 
-.pillar-list { margin-top: 32px; display: flex; flex-direction: column; }
+.pillar-note { font-size: 0.95rem; color: var(--ink-soft); margin: 0; }
+
+.pillar-list { margin-top: 20px; display: flex; flex-direction: column; }
 
 .pillar-row {
   display: grid;
-  grid-template-columns: 56px 1fr auto;
+  grid-template-columns: 48px minmax(0, 1fr) minmax(140px, 240px);
   gap: 20px;
-  align-items: baseline;
+  align-items: start;
   padding: 20px 0;
   border-top: 1px solid var(--rule);
 }
 
 .pillar-row:last-child { border-bottom: 1px solid var(--rule); }
 
-.pillar-letter { font-weight: 700; color: var(--mark); font-size: 1.1rem; }
-.pillar-name { font-weight: 600; }
+.pillar-letter { font-weight: 700; color: var(--mark); font-size: 1.1rem; line-height: 1.4; }
+.pillar-name { font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
 .pillar-people {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
   color: var(--ink-soft);
   text-align: right;
-  white-space: nowrap;
 }
 
 .triad {
@@ -497,6 +499,6 @@ h1, h2, h3 {
   body { font-size: 16px; }
   .hero { padding: 56px 0 40px; }
   .site-nav { gap: 16px; font-size: 12px; }
-  .pillar-row { grid-template-columns: 32px 1fr; }
+  .pillar-row { grid-template-columns: 32px minmax(0, 1fr); gap: 6px 14px; }
   .pillar-people { grid-column: 2; text-align: left; }
 }
