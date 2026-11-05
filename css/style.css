@@ -213,7 +213,7 @@ h1, h2, h3 {
 .tier h3 { font-size: 1.15rem; margin-bottom: 6px; }
 .tier p { font-size: 0.95rem; color: var(--ink-soft); margin: 0; }
 
-.pillar-note { font-size: 0.95rem; color: var(--ink-soft); margin: 0; }
+.pillar-note { font-size: 13px; color: var(--ink-soft); margin: 0; }
 
 .pillar-list { margin-top: 20px; display: flex; flex-direction: column; }
 
