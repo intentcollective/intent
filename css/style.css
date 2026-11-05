@@ -103,7 +103,7 @@ img { max-width: 100%; display: block; }
 .mark-label {
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.00em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--mark);
   display: flex;
@@ -120,7 +120,7 @@ h1, h2, h3 {
   font-weight: 700;
   line-height: 1.12;
   margin: 0 0 0.4em;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.05em;
 }
 
 /* ---------- hero ---------- */
@@ -173,7 +173,7 @@ h1, h2, h3 {
   padding: 32px 0 48px;
   font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--ink-soft);
 }
@@ -325,7 +325,7 @@ h1, h2, h3 {
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   color: var(--sage);
   cursor: pointer;
 }
@@ -480,7 +480,7 @@ h1, h2, h3 {
   color: var(--ink-soft);
   margin-bottom: 32px;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
 }
 
 .post-body { max-width: 68ch; font-size: 1.05rem; }
@@ -597,7 +597,7 @@ h1, h2, h3 {
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   color: var(--sage);
   padding: 8px 0;
 }
