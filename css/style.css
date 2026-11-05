@@ -540,11 +540,18 @@ h1, h2, h3 {
 .apply-note {
   max-width: 62ch;
   margin: 32px 0 24px;
-  font-size: 1rem;
+  color: var(--ink-soft);
+  font-size: 0.98rem;
 }
 
 .apply-note a { color: var(--mark); text-decoration: underline; }
 
+.principle {
+  max-width: 62ch;
+  margin: 0 0 24px;
+  color: var(--ink);
+  font-size: 1rem;
+}
 .field-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
