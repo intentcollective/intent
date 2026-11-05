@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Intent Collective — News
+   Intent Collective — Zeitgeist
    A) Reads shared links from a Google Sheet published to the web as CSV
       and renders them as cards; clicking one opens an internal detail
       view with the full preview text and a button out to the link.
@@ -27,7 +27,7 @@ const POST_ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbxYXhpRXvG3Uv
 
 // Soft client-side check only — see the note on this in js/discourse.js.
 // The Apps Script checks the password server-side; that's the real gate.
-const POST_PASSWORD = "intentcollectivedesign";
+const POST_PASSWORD = "designeverything1234";
 
 const stateEl = document.getElementById("state");
 const gridEl = document.getElementById("entry-grid");
@@ -105,9 +105,15 @@ function excerpt(text, len) {
 }
 
 function formatDate(d) {
+  // Date only, as mm/dd/yyyy. Never shows a time.
   const parsed = new Date(d);
-  if (isNaN(parsed)) return d;
-  return parsed.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+  if (isNaN(parsed)) {
+    // Unparseable text: still drop any trailing time so none is shown.
+    return String(d).replace(/[T\s]+\d{1,2}:\d{2}(:\d{2})?(\.\d+)?\s*(AM|PM|Z)?$/i, "");
+  }
+  const mm = String(parsed.getMonth() + 1).padStart(2, "0");
+  const dd = String(parsed.getDate()).padStart(2, "0");
+  return mm + "/" + dd + "/" + parsed.getFullYear();
 }
 
 function escapeHTML(str) {
@@ -218,7 +224,7 @@ window.addEventListener("hashchange", handleHash);
 async function loadEntries() {
   if (!SHEET_CSV_URL || SHEET_CSV_URL.includes("PASTE_YOUR")) {
     setState(
-      "News isn't connected yet — paste your published Google Sheet CSV URL into js/news.js.",
+      "Zeitgeist isn't connected yet — paste your published Google Sheet CSV URL into js/zeitgeist.js.",
       true
     );
     return;
@@ -234,7 +240,7 @@ async function loadEntries() {
     handleHash();
   } catch (err) {
     setState(
-      "Couldn't load links from the sheet. Check that it's published to the web as CSV and that the URL in js/news.js is correct.",
+      "Couldn't load links from the sheet. Check that it's published to the web as CSV and that the URL in js/zeitgeist.js is correct.",
       true
     );
     console.error(err);
@@ -326,14 +332,14 @@ try {
         composeToggle.textContent = "+ Share a link";
         setComposerStatus("Published. (It may take a few minutes to also show up after the sheet's own refresh.)", "ok");
       } catch (err) {
-        setComposerStatus("Couldn't reach the posting service. Check POST_ENDPOINT_URL in js/news.js.", "error");
+        setComposerStatus("Couldn't reach the posting service. Check POST_ENDPOINT_URL in js/zeitgeist.js.", "error");
         console.error(err);
       }
       publishBtn.disabled = false;
     });
   }
 } catch (err) {
-  console.error("News composer failed to initialize:", err);
+  console.error("Zeitgeist composer failed to initialize:", err);
 }
 
 loadEntries();

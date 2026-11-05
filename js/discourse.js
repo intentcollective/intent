@@ -33,7 +33,7 @@ const POST_ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbxgwEbqAZZH6x
 // NOT real security: this file is visible to anyone who views page source,
 // so the string is trivially readable. The Apps Script also checks the
 // password server-side before it will append a row — that's the real gate.
-const POST_PASSWORD = "intentcollectivedesign";
+const POST_PASSWORD = "designeverything1234";
 
 const stateEl = document.getElementById("state");
 const gridEl = document.getElementById("entry-grid");
@@ -137,9 +137,15 @@ function excerpt(text, len) {
 }
 
 function formatDate(d) {
+  // Date only, as mm/dd/yyyy. Never shows a time.
   const parsed = new Date(d);
-  if (isNaN(parsed)) return d;
-  return parsed.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+  if (isNaN(parsed)) {
+    // Unparseable text: still drop any trailing time so none is shown.
+    return String(d).replace(/[T\s]+\d{1,2}:\d{2}(:\d{2})?(\.\d+)?\s*(AM|PM|Z)?$/i, "");
+  }
+  const mm = String(parsed.getMonth() + 1).padStart(2, "0");
+  const dd = String(parsed.getDate()).padStart(2, "0");
+  return mm + "/" + dd + "/" + parsed.getFullYear();
 }
 
 function escapeHTML(str) {
