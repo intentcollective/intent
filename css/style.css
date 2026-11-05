@@ -245,6 +245,65 @@ h1, h2, h3 {
 .triad-item p { color: var(--ink-soft); font-size: 0.98rem; margin: 0; }
 .triad-item p:first-child { color: var(--ink); margin-bottom: 6px; }
 
+/* ---------- structure page: framework + methodology ---------- */
+
+.sub-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+  margin: 32px 0 10px;
+}
+
+.mark-label + .sub-label { margin-top: 24px; }
+
+.principle {
+  max-width: 62ch;
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+}
+
+.method-list {
+  margin-top: 32px;
+  border-top: 1px solid var(--rule);
+}
+
+.method-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: 32px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.method-head h3 { font-size: 1.35rem; margin-bottom: 10px; }
+
+.method-line {
+  margin: 0 0 4px;
+  font-size: 0.98rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.method-trait {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--sage);
+}
+
+.method-body {
+  margin: 0;
+  max-width: 62ch;
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: var(--ink-soft);
+}
+
 /* ---------- discourse & news shared card grid ---------- */
 
 .discourse-toolbar {
@@ -618,4 +677,5 @@ h1, h2, h3 {
   .pillar-row { grid-template-columns: 10px minmax(0, 1fr); gap: 6px 14px; }
   .pillar-people { grid-column: 2; text-align: left; }
   .field-row { grid-template-columns: 1fr; }
+  .method-row { grid-template-columns: 1fr; gap: 14px; padding: 22px 0; }
 }
