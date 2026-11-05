@@ -222,7 +222,7 @@ h1, h2, h3 {
   grid-template-columns: 10px minmax(0, 1fr) minmax(140px, 240px);
   gap: 20px;
   align-items: start;
-  padding: 20px 0;
+  padding: 10px 0;
 }
 
 .pillar-letter { font-weight: 700; color: var(--mark); font-size: 1.1rem; line-height: 1.4; }
