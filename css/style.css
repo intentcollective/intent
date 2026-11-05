@@ -219,7 +219,7 @@ h1, h2, h3 {
 
 .pillar-row {
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr) minmax(140px, 240px);
+  grid-template-columns: 20px minmax(0, 1fr) minmax(140px, 240px);
   gap: 20px;
   align-items: start;
   padding: 20px 0;
@@ -615,7 +615,7 @@ h1, h2, h3 {
   body { font-size: 16px; }
   .hero { padding: 56px 0 40px; }
   .site-nav { gap: 16px; font-size: 12px; }
-  .pillar-row { grid-template-columns: 32px minmax(0, 1fr); gap: 6px 14px; }
+  .pillar-row { grid-template-columns: 20px minmax(0, 1fr); gap: 6px 14px; }
   .pillar-people { grid-column: 2; text-align: left; }
   .field-row { grid-template-columns: 1fr; }
 }
