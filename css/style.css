@@ -165,6 +165,8 @@ h1, h2, h3 {
   margin-top: 1.6em;
 }
 
+.wordmark-bottom { height: 24px; width: auto; margin-top: 48px; }
+
 /* ---------- footer ---------- */
 
 .site-footer {
@@ -612,6 +614,8 @@ h1, h2, h3 {
   body { font-size: 16px; }
   .hero { padding: 56px 0 40px; }
   .site-nav { gap: 16px; font-size: 12px; }
+  .wordmark-link { flex-shrink: 0; }
+  .site-header .wrap { flex-wrap: wrap; row-gap: 12px; }
   .pillar-row { grid-template-columns: 10px minmax(0, 1fr); gap: 6px 14px; }
   .pillar-people { grid-column: 2; text-align: left; }
   .field-row { grid-template-columns: 1fr; }
