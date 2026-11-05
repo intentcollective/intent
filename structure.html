@@ -1,11 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Intent Collective</title>
-<meta name="description" content="intent™ — a design collective founded on deliberate discourse in all things.">
+<title>Structure | Intent Collective</title>
+<meta name="description" content="Fellowships, pillars, and the debate schedule of Intent Collective.">
 <link rel="icon" href="assets/logo.png">
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -34,6 +33,59 @@
     </div>
   </section>
 
+  <!-- ===================== DEBATE SCHEDULE ===================== -->
+  <section class="section-block" id="debates">
+    <div class="wrap">
+      <div class="mark-label">Upcoming Debate Schedule</div>
+      <p class="section-note">Each Master Design Fellow hosts a one-hour online debate, open to everyone, about every three to four months. Sessions are usually held on Saturday mornings, US Eastern Time.</p>
+
+      <button type="button" id="debate-toggle" class="compose-toggle" hidden>+ Schedule a debate</button>
+
+      <div id="debate-composer" class="composer hidden">
+        <div class="field">
+          <label for="d-host">Host name</label>
+          <input type="text" id="d-host" placeholder="Your name" autocomplete="name">
+        </div>
+
+        <div class="field">
+          <label for="d-when">Date and time (US Eastern)</label>
+          <input type="datetime-local" id="d-when">
+          <p class="field-hint" id="d-when-preview" aria-live="polite"></p>
+        </div>
+
+        <div class="field">
+          <label for="d-subject">Subject</label>
+          <input type="text" id="d-subject" maxlength="200" placeholder="One sentence describing the debate">
+        </div>
+
+        <div class="field">
+          <label for="d-post">Discourse post</label>
+          <div class="post-picker">
+            <input type="text" id="d-post" autocomplete="off" placeholder="Search your Discourse posts, or paste a link">
+            <div id="d-post-results" class="post-results" role="listbox" hidden></div>
+          </div>
+          <p class="field-hint" id="d-post-chosen"></p>
+        </div>
+
+        <div class="field">
+          <label for="d-meeting">Online meeting link</label>
+          <input type="text" id="d-meeting" placeholder="https://zoom.us/j/…">
+        </div>
+
+        <div class="composer-actions">
+          <input type="password" id="d-password" placeholder="Password to publish" autocomplete="off">
+          <button type="button" id="d-submit" class="btn-primary">Schedule</button>
+          <span id="d-status" class="composer-status" aria-live="polite"></span>
+        </div>
+      </div>
+
+      <div id="debate-state" class="state-msg">Loading debates…</div>
+      <div id="debate-upcoming" class="debate-list" hidden></div>
+      <div id="debate-past" class="debate-past" hidden></div>
+    </div>
+  </section>
+
+  <!-- ===================== FELLOWSHIPS ===================== -->
   <section class="section-block">
     <div class="wrap">
       <div class="mark-label">Fellowships</div>
@@ -51,9 +103,58 @@
           <p>Junior members</p>
         </div>
       </div>
+
+      <p class="apply-note">Interested in becoming a fellow? Explore our praxis and discourse, collaborate with us, and become part of the Intent Collective community. Please contact us at <a href="mailto:intentcollectivedesign@gmail.com">intentcollectivedesign@gmail.com</a>.</p>
+
+      <button type="button" id="fellow-toggle" class="compose-toggle" hidden>+ Register a fellow</button>
+
+      <div id="fellow-composer" class="composer hidden">
+        <div class="field">
+          <label for="f-level">Fellowship</label>
+          <select id="f-level">
+            <option value="">Select a fellowship</option>
+            <option>Master Design Fellow</option>
+            <option>Principal Design Fellow</option>
+            <option>Design Fellow</option>
+          </select>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="f-first">First name</label>
+            <input type="text" id="f-first" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="f-last">Last name</label>
+            <input type="text" id="f-last" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="f-email">Email address</label>
+          <input type="email" id="f-email" autocomplete="off" placeholder="name@example.com">
+        </div>
+
+        <div class="field">
+          <label for="f-linkedin">LinkedIn profile link</label>
+          <input type="text" id="f-linkedin" autocomplete="off" placeholder="https://www.linkedin.com/in/…">
+        </div>
+
+        <div class="field">
+          <label for="f-recommender">Recommending fellow</label>
+          <input type="text" id="f-recommender" autocomplete="off">
+        </div>
+
+        <div class="composer-actions">
+          <input type="password" id="f-password" placeholder="Password to register" autocomplete="off">
+          <button type="button" id="f-submit" class="btn-primary">Register</button>
+          <span id="f-status" class="composer-status" aria-live="polite"></span>
+        </div>
+      </div>
     </div>
   </section>
 
+  <!-- ===================== PILLARS ===================== -->
   <section class="section-block">
     <div class="wrap">
       <div class="mark-label">Pillars</div>
@@ -103,6 +204,7 @@
     </div>
   </section>
 
+  <!-- ===================== METHOD ===================== -->
   <section class="section-block">
     <div class="wrap">
       <div class="mark-label">Method</div>
@@ -127,10 +229,11 @@
 <footer class="site-footer">
   <div class="wrap">
     <span>&copy; <span id="year"></span> intent collective&trade;</span>
-    <span>Est. Chicago</span>
+    <span><a href="mailto:intentcollectivedesign@gmail.com">intentcollectivedesign@gmail.com</a></span>
   </div>
 </footer>
 
+<script src="js/structure.js"></script>
 <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 
 </body>
