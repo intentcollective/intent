@@ -236,40 +236,35 @@ h1, h2, h3 {
   text-align: right;
 }
 
+/* ---------- framework, disciplines, methodology ----------
+   One shared treatment: names are bold h3s, every description is
+   regular weight, soft ink, same size. */
+
 .triad {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 28px;
-  margin-top: 32px;
+  margin-top: 24px;
 }
 
-.triad-item p { color: var(--ink-soft); font-size: 0.98rem; margin: 0; }
-.triad-item p:first-child { color: var(--ink); margin-bottom: 6px; }
-
-/* ---------- structure page: framework + methodology ---------- */
-
-.sub-label {
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--ink-soft);
-  margin: 32px 0 10px;
-}
-
-.mark-label + .sub-label { margin-top: 24px; }
-
-.principle {
-  max-width: 62ch;
-  margin: 0;
+.triad-item h3,
+.method-head h3 {
   font-size: 1.15rem;
-  font-weight: 600;
-  line-height: 1.5;
-  letter-spacing: -0.02em;
+  margin: 0 0 6px;
+}
+
+.triad-item p,
+.method-head p,
+.method-body {
+  margin: 0 0 4px;
+  font-size: 0.98rem;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--ink-soft);
 }
 
 .method-list {
-  margin-top: 32px;
+  margin-top: 28px;
   border-top: 1px solid var(--rule);
 }
 
@@ -281,29 +276,7 @@ h1, h2, h3 {
   border-bottom: 1px solid var(--rule);
 }
 
-.method-head h3 { font-size: 1.35rem; margin-bottom: 10px; }
-
-.method-line {
-  margin: 0 0 4px;
-  font-size: 0.98rem;
-  font-weight: 600;
-  line-height: 1.45;
-}
-
-.method-trait {
-  margin: 0;
-  font-size: 0.95rem;
-  line-height: 1.45;
-  color: var(--sage);
-}
-
-.method-body {
-  margin: 0;
-  max-width: 62ch;
-  font-size: 0.98rem;
-  line-height: 1.65;
-  color: var(--ink-soft);
-}
+.method-body { max-width: 62ch; margin: 0; }
 
 /* ---------- discourse & news shared card grid ---------- */
 
