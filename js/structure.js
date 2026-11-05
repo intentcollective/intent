@@ -17,13 +17,13 @@
    ========================================================================== */
 
 // Published CSV of the "Debate Schedule" tab (File > Share > Publish to web).
-const DEBATE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9ZJLaJ6cAp46DwDBtRw2M4VN6iZzUb3M94T71lmpiCi7niP7Qsxlnn8wIyrEJj2rxEtlhlKh49afy/pub?gid=1524155146&single=true&output=csv";
+const DEBATE_CSV_URL = "PASTE_YOUR_DEBATE_SCHEDULE_CSV_URL_HERE";
 
 // The Discourse sheet, used only to offer a searchable list of posts.
 const DISCOURSE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBQ1XXs9ML_5Bmydn824YJlm7xg-_ueJDw7YxhB4RuVVEfRi495R2E5zOLZ16QCoZQ5n8JXN-Gxo54/pub?output=csv";
 
 // Web app URL of the Fellows + Debate Apps Script.
-const POST_ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbwJsylXmVramfW8iNDgVPFtfQ-wBvzfQ9FiJ66OU-4Aejd1-JAqr0lCmQVSOWXc-fiBUw/exec";
+const POST_ENDPOINT_URL = "PASTE_YOUR_FELLOWS_DEBATE_APPS_SCRIPT_WEB_APP_URL_HERE";
 
 // Soft client-side check only, for instant feedback. The Apps Script checks
 // the password server-side; that is the real gate.
@@ -180,23 +180,24 @@ function rowsToDebates(rows) {
 
 function debateRowHTML(d, isPast) {
   const links = [];
-  if (d.discourse) links.push(`<a href="${escapeHTML(d.discourse)}">Read the discourse post &rarr;</a>`);
-  if (d.meeting && !isPast) links.push(`<a href="${escapeHTML(d.meeting)}" target="_blank" rel="noopener">Join online &rarr;</a>`);
+  if (d.discourse) links.push(`<a href="${escapeHTML(d.discourse)}">Read the discourse post &gt;&gt;</a>`);
+  if (d.meeting && !isPast) links.push(`<a href="${escapeHTML(d.meeting)}" target="_blank" rel="noopener">Join online &gt;&gt;</a>`);
 
-  const when = isPast
-    ? `<div class="debate-et">${escapeHTML(fmtZone(d.start, TZ_ET, false) + ", " + d.start.getFullYear())}</div>`
-    : `<div class="debate-et">${escapeHTML(fmtZone(d.start, TZ_ET, true))}</div>
-       <div class="debate-zone"><span class="zone-name">Seoul</span>${escapeHTML(fmtZone(d.start, TZ_SEOUL, false))}</div>
-       <div class="debate-zone"><span class="zone-name">London</span>${escapeHTML(fmtZone(d.start, TZ_LONDON, false))}</div>`;
+  const times = [fmtZone(d.start, TZ_ET, true)];
+  if (!isPast) {
+    times.push(fmtZone(d.start, TZ_SEOUL, false) + ", Seoul");
+    times.push(fmtZone(d.start, TZ_LONDON, false) + ", London");
+  }
 
   return `
-    <article class="debate-row">
-      <div class="debate-when">${when}</div>
-      <div class="debate-main">
-        <h3>${escapeHTML(d.subject)}</h3>
+    <article class="entry-card debate-card">
+      <div class="entry-meta"><span>Debate</span></div>
+      <h3>${escapeHTML(d.subject)}</h3>
+      <div class="debate-info">
         ${d.host ? `<div class="debate-host">Hosted by ${escapeHTML(d.host)}</div>` : ""}
-        ${links.length ? `<div class="debate-links">${links.join("")}</div>` : ""}
+        ${times.map(t => `<div>${escapeHTML(t)}</div>`).join("")}
       </div>
+      ${links.length ? `<div class="debate-links">${links.join("")}</div>` : ""}
     </article>`;
 }
 
@@ -458,7 +459,7 @@ function initForms() {
         }
       }
     } catch (err) {
-      setStatus(status, "Couldn't reach the posting service. Check POST_ENDPOINT_URL in js/structure.js.", "error");
+      setStatus(status, "Couldn't reach the posting service. In Apps Script, the deployment must be set to Who has access: Anyone. Also check POST_ENDPOINT_URL in js/structure.js.", "error");
       console.error(err);
     }
     btn.disabled = false;
@@ -506,7 +507,7 @@ function initForms() {
         setStatus(status, "Registered: " + firstName + " " + lastName + ".", "ok");
       }
     } catch (err) {
-      setStatus(status, "Couldn't reach the posting service. Check POST_ENDPOINT_URL in js/structure.js.", "error");
+      setStatus(status, "Couldn't reach the posting service. In Apps Script, the deployment must be set to Who has access: Anyone. Also check POST_ENDPOINT_URL in js/structure.js.", "error");
       console.error(err);
     }
     btn.disabled = false;
