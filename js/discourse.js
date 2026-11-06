@@ -12,10 +12,10 @@
      Name    - fellow's name
      Title   - post title
      Date    - set automatically by the Apps Script when posting via the site
-     Content - the post body (may contain basic HTML from the editor).
-               Drop [img:URL] or [video:URL] (YouTube or Vimeo link)
-               anywhere in the text to embed an image or video — see
-               expandMediaTags() below.
+     Content - the post body (simple HTML from the editor: p, b, i, u, a,
+               lists, quotes, headings). Drop [img:URL] or [video:URL]
+               (YouTube or Vimeo link) anywhere in the text to embed an
+               image or video. See expandMediaTags() below.
      Link    - optional URL to an external version of the piece
      Tag     - optional short tag/category
 
@@ -156,6 +156,60 @@ function escapeHTML(str) {
 
 function escapeAttr(str) {
   return String(str).replace(/"/g, "&quot;");
+}
+
+/* ---------------- HTML cleaning (used when saving and pasting) ---------------- */
+
+// Keeps only simple tags and drops every style, class and other attribute,
+// so the text stored in the sheet stays short and easy to edit by hand.
+// [img:...] and [video:...] markers are plain text and pass through as is.
+const CLEAN_ALLOWED = [
+  "P", "BR", "B", "STRONG", "I", "EM", "U", "A",
+  "UL", "OL", "LI", "BLOCKQUOTE", "H2", "H3", "H4",
+];
+
+function cleanHtml(dirty) {
+  const doc = new DOMParser().parseFromString(dirty || "", "text/html");
+
+  // Things that should never be stored
+  doc.querySelectorAll("script, style, iframe, object, embed").forEach(n => n.remove());
+
+  (function walk(node) {
+    Array.from(node.childNodes).forEach(child => {
+      if (child.nodeType === Node.COMMENT_NODE) { child.remove(); return; }
+      if (child.nodeType !== Node.ELEMENT_NODE) return; // text stays
+
+      walk(child);
+
+      const tag = child.tagName;
+
+      // Editors often use <div> for paragraphs; store them as <p>
+      if (tag === "DIV") {
+        const p = doc.createElement("p");
+        while (child.firstChild) p.appendChild(child.firstChild);
+        child.replaceWith(p);
+        return;
+      }
+
+      // Unknown tag (span, font, etc.): drop the wrapper, keep the text
+      if (!CLEAN_ALLOWED.includes(tag)) {
+        child.replaceWith(...Array.from(child.childNodes));
+        return;
+      }
+
+      // Allowed tag: remove every attribute, except a safe href on links
+      const href = tag === "A" ? child.getAttribute("href") : null;
+      Array.from(child.attributes).forEach(a => child.removeAttribute(a.name));
+      if (href && /^(https?:|mailto:)/i.test(href)) child.setAttribute("href", href);
+    });
+  })(doc.body);
+
+  return doc.body.innerHTML
+    .replace(/&nbsp;|\u00a0/g, " ")
+    .replace(/[ \t]{2,}/g, " ")
+    .replace(/<p>\s*(<br>)?\s*<\/p>/g, "")
+    .replace(/<\/p>\s*<p>/g, "</p>\n<p>") // one paragraph per line in the cell
+    .trim();
 }
 
 // Allow-list HTML sanitizer for post content coming out of the sheet.
@@ -436,6 +490,22 @@ try {
     document.execCommand("defaultParagraphSeparator", false, "p");
   });
 
+  // Clean whatever is pasted into the editor, so styles from Pages, Word
+  // or web pages never come along.
+  rteBody.addEventListener("paste", (e) => {
+    e.preventDefault();
+    const cd = e.clipboardData || window.clipboardData;
+    let html = cd.getData("text/html");
+    if (!html) {
+      html = cd.getData("text/plain")
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+        .split(/\n{2,}/)
+        .map(s => "<p>" + s.replace(/\n/g, "<br>") + "</p>")
+        .join("");
+    }
+    document.execCommand("insertHTML", false, cleanHtml(html));
+  });
+
   function setComposerStatus(message, kind) {
     composerStatus.textContent = message || "";
     composerStatus.classList.toggle("is-error", kind === "error");
@@ -450,7 +520,7 @@ try {
 
       const name = nameInput.value.trim();
       const title = titleInput.value.trim();
-      const content = rteBody.innerHTML.trim();
+      const content = cleanHtml(rteBody.innerHTML);
       const password = passwordInput.value;
 
       if (!name || !title || stripTags(content).trim().length === 0) {
