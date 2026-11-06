@@ -1,7 +1,8 @@
 /* ==========================================================================
-   Intent Collective — shared design system
+   Intent Collective: shared design system
    Single typeface: DM Sans. Hierarchy comes from weight, size, spacing,
-   and the brick-red annotation mark — not from mixing type families.
+   and the brick-red annotation mark, not from mixing type families.
+   Letter-spacing is left at the font's native default throughout.
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&display=swap');
@@ -80,7 +81,6 @@ img { max-width: 100%; display: block; }
   font-size: 13px;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.00em;
 }
 
 .site-nav a { position: relative; padding-bottom: 3px; }
@@ -103,7 +103,6 @@ img { max-width: 100%; display: block; }
 .mark-label {
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.00em;
   text-transform: uppercase;
   color: var(--mark);
   display: flex;
@@ -120,7 +119,6 @@ h1, h2, h3 {
   font-weight: 700;
   line-height: 1.12;
   margin: 0 0 0.4em;
-  letter-spacing: -0.00em;
 }
 
 /* ---------- hero ---------- */
@@ -130,7 +128,6 @@ h1, h2, h3 {
 .hero h1 {
   font-size: clamp(2.4rem, 5vw, 4.2rem);
   max-width: 15ch;
-  letter-spacing: -0.00em;
 }
 
 .logo-mark {
@@ -144,7 +141,7 @@ h1, h2, h3 {
 .manifesto { padding: 56px 0 96px; }
 
 .manifesto blockquote {
- font-family: 'EB Garamond', serif;
+  font-family: 'EB Garamond', serif;
   font-style: italic;
   font-weight: 400;
   font-size: clamp(1.8rem, 3.6vw, 2.6rem);
@@ -174,7 +171,6 @@ h1, h2, h3 {
   padding: 32px 0 48px;
   font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.00em;
   text-transform: uppercase;
   color: var(--ink-soft);
 }
@@ -236,7 +232,7 @@ h1, h2, h3 {
   text-align: right;
 }
 
-/* ---------- framework and disciplines ---------- */
+/* ---------- framework, disciplines, methodology ---------- */
 
 .triad {
   display: grid;
@@ -256,6 +252,28 @@ h1, h2, h3 {
   font-weight: 400;
   line-height: 1.6;
   color: var(--ink-soft);
+}
+
+.bullet-list {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+}
+
+.bullet-list li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 0.98rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.bullet-list li::before {
+  content: "\2022";
+  position: absolute;
+  left: 0;
+  color: var(--mark);
 }
 
 /* ---------- discourse & news shared card grid ---------- */
@@ -300,7 +318,6 @@ h1, h2, h3 {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.00em;
   color: var(--sage);
   display: flex;
   justify-content: space-between;
@@ -338,305 +355,4 @@ h1, h2, h3 {
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.00em;
   color: var(--sage);
-  cursor: pointer;
-}
-
-.compose-toggle:hover { color: var(--mark); }
-
-.composer {
-  background: var(--paper-raised);
-  border: 1px solid var(--rule);
-  padding: 28px;
-  margin-bottom: 40px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.composer.hidden { display: none; }
-
-.field label {
-  display: block;
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.00em;
-  color: var(--ink-soft);
-  margin-bottom: 6px;
-}
-
-.field input[type="text"],
-.field input[type="password"],
-.field input[type="email"],
-.field input[type="datetime-local"],
-.field select,
-.field textarea {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid var(--rule);
-  background: var(--paper);
-  font-family: var(--font);
-  font-size: 0.95rem;
-  color: var(--ink);
-}
-
-.field textarea { resize: vertical; min-height: 90px; }
-
-.field input:focus, .field textarea:focus, .field select:focus { outline: 2px solid var(--mark); outline-offset: 1px; }
-
-.rte-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  border: 1px solid var(--rule);
-  border-bottom: none;
-  background: var(--paper);
-  padding: 6px;
-}
-
-.rte-toolbar button {
-  background: none;
-  border: 1px solid transparent;
-  padding: 6px 10px;
-  font-family: var(--font);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-  cursor: pointer;
-}
-
-.rte-toolbar button:hover { border-color: var(--rule); }
-
-.rte-toolbar select {
-  font-family: var(--font);
-  font-size: 13px;
-  border: 1px solid var(--rule);
-  background: var(--paper);
-  padding: 4px 6px;
-  color: var(--ink);
-}
-
-.rte-body {
-  min-height: 180px;
-  border: 1px solid var(--rule);
-  background: var(--paper);
-  padding: 14px;
-  font-size: 0.98rem;
-  line-height: 1.6;
-}
-
-.rte-body:focus { outline: 2px solid var(--mark); outline-offset: -2px; }
-.rte-body p, .rte-body div { margin: 0 0 0.8em; }
-.rte-body ul, .rte-body ol { margin: 0 0 0.8em 1.2em; }
-.rte-body blockquote {
-  border-left: 3px solid var(--mark);
-  margin: 0 0 0.8em;
-  padding-left: 16px;
-  font-style: italic;
-}
-.rte-body a { color: var(--mark); text-decoration: underline; }
-
-.composer-actions {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-.composer-actions input[type="password"] { max-width: 220px; }
-
-.btn-primary {
-  background: var(--mark);
-  color: var(--paper);
-  border: none;
-  padding: 11px 22px;
-  font-family: var(--font);
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.00em;
-  cursor: pointer;
-}
-
-.btn-primary:hover { opacity: 0.9; }
-.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-
-.composer-status { font-size: 13px; font-weight: 500; }
-.composer-status.is-error { color: var(--mark); }
-.composer-status.is-ok { color: var(--sage); }
-
-/* ---------- post detail (blog view) ---------- */
-
-.post-detail { padding: 16px 0 96px; }
-
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.00em;
-  color: var(--sage);
-  margin-bottom: 28px;
-}
-
-.back-link:hover { color: var(--mark); }
-
-.post-detail h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); max-width: 24ch; }
-
-.post-meta {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--ink-soft);
-  margin-bottom: 32px;
-  text-transform: uppercase;
-  letter-spacing: 0.00em;
-}
-
-.post-body { max-width: 68ch; font-size: 1.05rem; }
-.post-body p, .post-body div { margin: 0 0 1.1em; }
-.post-body ul, .post-body ol { margin: 0 0 1.1em 1.4em; }
-.post-body blockquote {
-  border-left: 3px solid var(--mark);
-  padding-left: 20px;
-  margin: 0 0 1.1em;
-  font-style: italic;
-}
-.post-body a { color: var(--mark); text-decoration: underline; }
-
-
-/* ---------- structure page: debates, application, registration ---------- */
-
-.section-note {
-  max-width: 62ch;
-  color: var(--ink-soft);
-  font-size: 0.98rem;
-  margin: 0 0 24px;
-}
-
-.apply-note {
-  max-width: 62ch;
-  margin: 32px 0 24px;
-  color: var(--ink-soft);
-  font-size: 0.98rem;
-}
-
-.apply-note a { color: var(--mark); text-decoration: underline; }
-
-.principle {
-  max-width: 62ch;
-  margin: 0 0 24px;
-  color: var(--ink);
-  font-size: 1rem;
-}
-.field-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.field-hint {
-  font-size: 12px;
-  color: var(--ink-soft);
-  margin: 6px 0 0;
-  min-height: 1em;
-}
-
-.post-picker { position: relative; }
-
-.post-results {
-  position: absolute;
-  left: 0; right: 0; top: 100%;
-  z-index: 5;
-  background: var(--paper-raised);
-  border: 1px solid var(--rule);
-  border-top: none;
-  max-height: 280px;
-  overflow-y: auto;
-}
-
-.post-result {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  width: 100%;
-  text-align: left;
-  background: none;
-  border: none;
-  border-bottom: 1px solid var(--rule);
-  padding: 10px 12px;
-  font: inherit;
-  color: var(--ink);
-  cursor: pointer;
-}
-
-.post-result:hover, .post-result:focus-visible { background: var(--paper); }
-.post-result-title { font-weight: 600; font-size: 0.95rem; overflow-wrap: anywhere; }
-.post-result-meta { font-size: 12px; color: var(--ink-soft); }
-.post-result-empty { padding: 10px 12px; font-size: 12px; color: var(--ink-soft); }
-
-/* Debate cards reuse the .entry-card look (solid fill, same border, red
-   outline on hover) so Structure matches Discourse and Zeitgeist. */
-.debate-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-.debate-card { cursor: default; }
-
-.debate-card .debate-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex-grow: 1;
-  font-size: 0.98rem;
-  color: var(--ink);
-}
-
-.debate-card .debate-host { color: var(--ink-soft); margin-bottom: 6px; }
-
-.debate-card .debate-links {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  border-top: 1px dashed var(--rule);
-  padding-top: 10px;
-}
-
-.debate-card .debate-links a { font-size: 0.95rem; font-weight: 600; color: var(--mark); }
-.debate-card .debate-links a:hover { text-decoration: underline; }
-
-.debate-past { margin-top: 32px; }
-
-.debate-past summary {
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.00em;
-  color: var(--sage);
-  padding: 8px 0;
-}
-
-.debate-past summary:hover { color: var(--mark); }
-.debate-past .past-year { margin: 4px 0 8px 16px; }
-.debate-past .debate-list { margin-top: 12px; }
-.debate-past .past-year summary { color: var(--ink-soft); }
-
-/* ---------- responsive ---------- */
-
-@media (max-width: 640px) {
-  body { font-size: 16px; }
-  .hero { padding: 56px 0 40px; }
-  .site-nav { gap: 16px; font-size: 12px; }
-  .wordmark-link { flex-shrink: 0; }
-  .site-header .wrap { flex-wrap: wrap; row-gap: 12px; }
-  .pillar-row { grid-template-columns: 10px minmax(0, 1fr); gap: 6px 14px; }
-  .pillar-people { grid-column: 2; text-align: left; }
-  .field-row { grid-template-columns: 1fr; }
-  .method-row { grid-template-columns: 1fr; gap: 14px; padding: 22px 0; }
-}
