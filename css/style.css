@@ -167,6 +167,16 @@ h1, h2, h3 {
 
 .wordmark-bottom { height: 24px; width: auto; margin-top: 48px; }
 
+/* Footnote: same style as the "A-Z" note on the Structure page, in italic.
+   Written as .manifesto .footnote so it overrides the .manifesto p rule. */
+.manifesto .footnote {
+  max-width: 68ch;
+  margin: 32px 0 0;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--ink-soft);
+}
+
 /* ---------- footer ---------- */
 
 .site-footer {
