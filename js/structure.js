@@ -6,6 +6,8 @@
       lets a host add a session; the Apps Script then emails every fellow.
    B) Fellow registration: a password-gated form that adds a row to the
       private "Fellows" sheet. Nothing from that sheet is ever shown here.
+      The email address must be typed twice and its domain must be able to
+      receive mail, so a typo can't create endless bounce notices.
 
    Both forms post to the same Apps Script Web App
    (google-apps-script-fellows-debate.gs). See README.md, "Fellows and
@@ -102,6 +104,34 @@ function setStatus(el, message, kind) {
   el.textContent = message || "";
   el.classList.toggle("is-error", kind === "error");
   el.classList.toggle("is-ok", kind === "ok");
+}
+
+/* ---------------- email checks ---------------- */
+
+// Checks that the email's domain has a real mail server (an MX record that
+// points to an actual host name). This catches typos in the domain, such as
+// "adasd.com". It cannot prove the mailbox itself exists, which is why the
+// form also asks for the address twice.
+// If the DNS lookup itself fails, the address is let through so that a
+// network hiccup never blocks a real fellow. The Apps Script should check too.
+async function emailDomainOk(email) {
+  const domain = email.split("@")[1];
+  if (!domain) return false;
+  try {
+    const res = await fetch(
+      "https://dns.google/resolve?name=" + encodeURIComponent(domain) + "&type=MX"
+    );
+    const j = await res.json();
+    if (j.Status !== 0 || !j.Answer) return false;
+    return j.Answer.some(a => {
+      if (a.type !== 15) return false;
+      const host = String(a.data).replace(/^\d+\s+/, "").trim();
+      return /[a-z0-9-]+\.[a-z]{2,}\.?$/i.test(host);
+    });
+  } catch (err) {
+    console.error("Email domain check failed, letting it through:", err);
+    return true;
+  }
 }
 
 /* ---------------- time zones ---------------- */
@@ -476,6 +506,7 @@ function initForms() {
     const firstName = $("f-first").value.trim();
     const lastName = $("f-last").value.trim();
     const email = $("f-email").value.trim();
+    const email2 = $("f-email2").value.trim();
     const linkedin = $("f-linkedin").value.trim();
     const recommendedBy = $("f-recommender").value.trim();
     const password = $("f-password").value;
@@ -483,8 +514,11 @@ function initForms() {
     if (!fellowship || !firstName || !lastName || !email) {
       setStatus(status, "Fellowship, first name, last name, and email are required.", "error"); return;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
       setStatus(status, "Enter a valid email address.", "error"); return;
+    }
+    if (email.toLowerCase() !== email2.toLowerCase()) {
+      setStatus(status, "The two email addresses don't match.", "error"); return;
     }
     if (linkedin && !safeUrl(linkedin)) {
       setStatus(status, "The LinkedIn link must start with http:// or https://", "error"); return;
@@ -494,6 +528,13 @@ function initForms() {
     }
 
     btn.disabled = true;
+    setStatus(status, "Checking email\u2026", null);
+    if (!(await emailDomainOk(email))) {
+      setStatus(status, "That email's domain can't receive mail. Please check for typos.", "error");
+      btn.disabled = false;
+      return;
+    }
+
     setStatus(status, "Registering\u2026", null);
     try {
       const data = await postJSON({
@@ -502,7 +543,7 @@ function initForms() {
       if (data.status !== "ok") {
         setStatus(status, data.message || "Something went wrong. Try again.", "error");
       } else {
-        ["f-first", "f-last", "f-email", "f-linkedin", "f-recommender", "f-password"].forEach(id => { $(id).value = ""; });
+        ["f-first", "f-last", "f-email", "f-email2", "f-linkedin", "f-recommender", "f-password"].forEach(id => { $(id).value = ""; });
         $("f-level").value = "";
         setStatus(status, "Registered: " + firstName + " " + lastName + ".", "ok");
       }
