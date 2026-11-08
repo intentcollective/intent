@@ -1,39 +1,42 @@
 /* ==========================================================================
-   Intent Collective — Discourse
+   Intent Collective: Discourse
    A) Reads posts from a Google Sheet published to the web as CSV and
       renders them as cards; clicking a card opens the full post.
    B) Lets a fellow publish a new post from the page itself. Posting goes
       through a Google Apps Script Web App (not the CSV, which is read-only)
-      so a new row can actually be appended to the sheet. See README.md.
+      so a new row can actually be added to the sheet. See README.md.
+      Corrections to an existing post are made directly in the sheet.
 
-   SETUP — reading
+   SETUP: reading
    Sheet's first row must be a header row with these columns
    (case-insensitive, any order):
      Name    - fellow's name
      Title   - post title
      Date    - set automatically by the Apps Script when posting via the site
      Content - the post body (simple HTML from the editor: p, b, i, u, a,
-               lists, quotes, headings). Drop [img:URL] or [video:URL]
-               (YouTube or Vimeo link) anywhere in the text to embed an
-               image or video. See expandMediaTags() below.
+               hr, quotes, headings, lists). [img:URL] or [video:URL]
+               (YouTube or Vimeo link) anywhere in the text embeds an image
+               or video. See expandMediaTags() below.
      Link    - optional URL to an external version of the piece
      Tag     - optional short tag/category
 
-   SETUP — posting
+   SETUP: posting
    See README.md, "Enable posting from the site", to create the Apps Script
    Web App and paste its URL into POST_ENDPOINT_URL below.
    ========================================================================== */
 
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBQ1XXs9ML_5Bmydn824YJlm7xg-_ueJDw7YxhB4RuVVEfRi495R2E5zOLZ16QCoZQ5n8JXN-Gxo54/pub?output=csv";
 
-// Web app URL from the Apps Script that appends new posts to the sheet.
+// Web app URL from the Apps Script that adds new posts to the sheet.
 const POST_ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbxgwEbqAZZH6x0Y5CRAVuKaZjPZx4g16IaBn-Cv3k2URO_y_d-8U4Xkde9HVxxiIOGWRA/exec";
 
-// Soft client-side check only — gives instant feedback in the UI. It is
+// Soft client-side check only, for instant feedback in the UI. It is
 // NOT real security: this file is visible to anyone who views page source,
 // so the string is trivially readable. The Apps Script also checks the
-// password server-side before it will append a row — that's the real gate.
+// password server-side before it will add a row. That is the real gate.
 const POST_PASSWORD = "designeverything1234";
+
+const ENDPOINT_READY = Boolean(POST_ENDPOINT_URL) && !POST_ENDPOINT_URL.includes("PASTE_YOUR");
 
 const stateEl = document.getElementById("state");
 const gridEl = document.getElementById("entry-grid");
@@ -113,10 +116,10 @@ function slugify(str) {
 function stripTags(html) {
   // Insert a space at block-element boundaries first, so text that was on
   // separate lines/paragraphs in the source (e.g. a list of terms) doesn't
-  // collapse into one unbroken run-on word once tags are stripped — that's
+  // collapse into one unbroken run-on word once tags are stripped. That is
   // what causes an excerpt to overflow its card instead of wrapping.
   const withBreaks = (html || "").replace(
-    /<\/(p|div|li|h[1-6]|blockquote|tr)>|<br\s*\/?>/gi,
+    /<\/(p|div|li|h[1-6]|blockquote|tr)>|<br\s*\/?>|<hr\s*\/?>/gi,
     " "
   );
   const div = document.createElement("div");
@@ -158,13 +161,21 @@ function escapeAttr(str) {
   return String(str).replace(/"/g, "&quot;");
 }
 
+// Full escape for values we build into attributes ourselves.
+function attr(str) {
+  return String(str).replace(/&/g, "&amp;").replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
 /* ---------------- HTML cleaning (used when saving and pasting) ---------------- */
 
 // Keeps only simple tags and drops every style, class and other attribute,
 // so the text stored in the sheet stays short and easy to edit by hand.
 // [img:...] and [video:...] markers are plain text and pass through as is.
+// Lists and headings stay allowed so older posts keep their formatting,
+// even though the editor no longer offers buttons for them.
 const CLEAN_ALLOWED = [
-  "P", "BR", "B", "STRONG", "I", "EM", "U", "A",
+  "P", "BR", "B", "STRONG", "I", "EM", "U", "A", "HR",
   "UL", "OL", "LI", "BLOCKQUOTE", "H2", "H3", "H4",
 ];
 
@@ -214,12 +225,12 @@ function cleanHtml(dirty) {
 
 // Allow-list HTML sanitizer for post content coming out of the sheet.
 // Anything not in this list is unwrapped (its text/children kept, tag
-// dropped) rather than shown raw — protects the detail view from a
+// dropped) rather than shown raw. This protects the detail view from a
 // mistaken or malicious sheet cell. Deliberately does NOT allow IMG or
-// IFRAME here — see expandMediaTags() below for how media actually gets
+// IFRAME here. See expandMediaTags() below for how media actually gets
 // in, via a controlled tag syntax instead of raw HTML.
 const ALLOWED_TAGS = {
-  P: [], DIV: [], BR: [], B: [], STRONG: [], I: [], EM: [], U: [],
+  P: [], DIV: [], BR: [], HR: [], B: [], STRONG: [], I: [], EM: [], U: [],
   UL: [], OL: [], LI: [], BLOCKQUOTE: [], H2: [], H3: [], H4: [],
   A: ["href", "target", "rel"],
 };
@@ -236,8 +247,8 @@ function cleanNode(node) {
       cleanNode(child);
       const tag = child.tagName;
       if (ALLOWED_TAGS[tag]) {
-        Array.from(child.attributes).forEach(attr => {
-          if (!ALLOWED_TAGS[tag].includes(attr.name)) child.removeAttribute(attr.name);
+        Array.from(child.attributes).forEach(a => {
+          if (!ALLOWED_TAGS[tag].includes(a.name)) child.removeAttribute(a.name);
         });
         if (tag === "A") {
           const href = child.getAttribute("href") || "";
@@ -304,7 +315,7 @@ function parseVideoEmbed(url) {
 }
 
 // Expands [img:URL] and [video:URL] tags into real, safe HTML. Runs AFTER
-// sanitizeHTML() — the tags are just plain text as far as the sanitizer is
+// sanitizeHTML(). The tags are just plain text as far as the sanitizer is
 // concerned, so they survive it untouched, then get expanded here into
 // markup we build ourselves (never raw HTML pulled from the sheet cell).
 function expandMediaTags(html) {
@@ -321,6 +332,38 @@ function expandMediaTags(html) {
         `<iframe src="${escapeAttr(embedSrc)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy" ` +
         `style="position:absolute;inset:0;width:100%;height:100%;border:0;"></iframe></div>`;
     });
+}
+
+/* ---------------- editor media blocks ---------------- */
+
+// In the editor, an image or video is shown as a real preview block. It is
+// not editable text. On save, each block turns back into its [img:URL] or
+// [video:URL] tag, so the sheet and the public page work exactly as before.
+function mediaBlockHTML(kind, url) {
+  const tag = "[" + kind + ":" + url + "]";
+  let preview;
+  if (kind === "img") {
+    preview = `<img src="${attr(url)}" alt="">`;
+  } else {
+    const src = parseVideoEmbed(url);
+    preview = src
+      ? `<div class="rte-video"><iframe src="${attr(src)}" loading="lazy" tabindex="-1"></iframe></div>`
+      : `<div class="rte-media-note">${escapeHTML(tag)}</div>`;
+  }
+  return `<div class="rte-media" contenteditable="false" data-tag="${attr(tag)}">` +
+    preview +
+    `<button type="button" class="rte-media-remove" contenteditable="false" aria-label="Remove">×</button></div>`;
+}
+
+// Editor HTML -> stored content (preview blocks become tags).
+function editorToContent(html) {
+  const doc = new DOMParser().parseFromString(html || "", "text/html");
+  doc.querySelectorAll(".rte-media").forEach(el => {
+    const p = doc.createElement("p");
+    p.textContent = el.getAttribute("data-tag") || "";
+    el.replaceWith(p);
+  });
+  return cleanHtml(doc.body.innerHTML);
 }
 
 /* ---------------- list view ---------------- */
@@ -345,7 +388,7 @@ function renderEntries(entries) {
   });
 
   if (!currentEntries.length) {
-    setState("No entries yet — the first post added will show up here.");
+    setState("No entries yet. The first post added will show up here.");
     countEl.textContent = "";
     return;
   }
@@ -362,7 +405,7 @@ function renderEntries(entries) {
       </div>
       <h3>${escapeHTML(e.title)}</h3>
       <p class="excerpt">${escapeHTML(excerpt(stripTags(stripMediaTags(e.content)), 220))}</p>
-      <div class="byline">${e.name ? "— " + escapeHTML(e.name) : ""}</div>
+      <div class="byline">${e.name ? escapeHTML(e.name) : ""}</div>
     `;
     card.addEventListener("click", () => { location.hash = "post-" + e.slug; });
     gridEl.appendChild(card);
@@ -422,7 +465,7 @@ window.addEventListener("hashchange", handleHash);
 async function loadEntries() {
   if (!SHEET_CSV_URL || SHEET_CSV_URL.includes("PASTE_YOUR")) {
     setState(
-      "Discourse isn't connected yet — paste your published Google Sheet CSV URL into js/discourse.js.",
+      "Discourse isn't connected yet. Paste your published Google Sheet CSV URL into js/discourse.js.",
       true
     );
     return;
@@ -453,8 +496,11 @@ try {
   const rteBody = document.getElementById("rte-body");
   const composerStatus = document.getElementById("composer-status");
   const publishBtn = document.getElementById("publish-btn");
+  const nameInput = document.getElementById("compose-name");
+  const titleInput = document.getElementById("compose-title");
+  const passwordInput = document.getElementById("compose-password");
 
-  if (!POST_ENDPOINT_URL || POST_ENDPOINT_URL.includes("PASTE_YOUR")) {
+  if (!ENDPOINT_READY) {
     composeToggle.hidden = true;
   } else {
     composeToggle.addEventListener("click", () => {
@@ -463,28 +509,94 @@ try {
     });
   }
 
-  // Rich text toolbar — basic Google-Docs-style formatting via execCommand.
+  function setComposerStatus(message, kind) {
+    composerStatus.textContent = message || "";
+    composerStatus.classList.toggle("is-error", kind === "error");
+    composerStatus.classList.toggle("is-ok", kind === "ok");
+  }
+
+  /* ----- editor toolbar ----- */
+
+  // Remember where the cursor was, so a dialog (link, image, video) can
+  // put its result back in the right place.
+  let savedRange = null;
+  function saveRange() {
+    const sel = window.getSelection();
+    savedRange = sel.rangeCount && rteBody.contains(sel.anchorNode)
+      ? sel.getRangeAt(0).cloneRange()
+      : null;
+  }
+  function restoreRange() {
+    rteBody.focus();
+    if (savedRange) {
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(savedRange);
+    }
+  }
+
+  function insertMedia(kind, url) {
+    restoreRange();
+    document.execCommand("insertHTML", false, mediaBlockHTML(kind, url) + "<p><br></p>");
+  }
+
   document.querySelectorAll(".rte-toolbar [data-cmd]").forEach(btn => {
+    // Keep the cursor in the editor when a toolbar button is pressed.
+    btn.addEventListener("mousedown", (ev) => ev.preventDefault());
+
     btn.addEventListener("click", () => {
       rteBody.focus();
       const cmd = btn.getAttribute("data-cmd");
+
       if (cmd === "createLink") {
-        const url = prompt("Link URL (including https://)");
-        if (url) document.execCommand("createLink", false, url);
-      } else {
-        document.execCommand(cmd, false, null);
+        saveRange();
+        const url = (prompt("Link URL (including https://)") || "").trim();
+        if (!url) return;
+        if (!/^(https?:|mailto:)/i.test(url)) {
+          alert("The link must start with https://, http:// or mailto:");
+          return;
+        }
+        restoreRange();
+        document.execCommand("createLink", false, url);
+        return;
       }
+
+      if (cmd === "image") {
+        saveRange();
+        const url = (prompt("Image URL (a direct link to the image file)") || "").trim();
+        if (!url) return;
+        if (!/^https?:\/\/\S+$/i.test(url) || url.includes("]")) {
+          alert("The image link must start with https:// or http://");
+          return;
+        }
+        const probe = new Image();
+        probe.onload = () => insertMedia("img", url);
+        probe.onerror = () => alert("That image could not be loaded. Use a direct link to an image file, such as one ending in .jpg, .png, .gif or .webp.");
+        probe.src = url;
+        return;
+      }
+
+      if (cmd === "video") {
+        saveRange();
+        const url = (prompt("YouTube or Vimeo link") || "").trim();
+        if (!url) return;
+        if (!/^https?:\/\/\S+$/i.test(url) || url.includes("]") || !parseVideoEmbed(url)) {
+          alert("Use a YouTube or Vimeo link, for example https://youtu.be/… or https://vimeo.com/…");
+          return;
+        }
+        insertMedia("video", url);
+        return;
+      }
+
+      document.execCommand(cmd, false, null);
     });
   });
 
-  const blockSelect = document.getElementById("rte-block");
-  if (blockSelect) {
-    blockSelect.addEventListener("change", () => {
-      rteBody.focus();
-      document.execCommand("formatBlock", false, blockSelect.value);
-      blockSelect.selectedIndex = 0;
-    });
-  }
+  // The remove button on an image or video block.
+  rteBody.addEventListener("click", (ev) => {
+    const remove = ev.target.closest(".rte-media-remove");
+    if (remove) remove.closest(".rte-media").remove();
+  });
 
   rteBody.addEventListener("focus", () => {
     document.execCommand("defaultParagraphSeparator", false, "p");
@@ -506,21 +618,20 @@ try {
     document.execCommand("insertHTML", false, cleanHtml(html));
   });
 
-  function setComposerStatus(message, kind) {
-    composerStatus.textContent = message || "";
-    composerStatus.classList.toggle("is-error", kind === "error");
-    composerStatus.classList.toggle("is-ok", kind === "ok");
+  /* ----- publish ----- */
+
+  function clearComposer() {
+    nameInput.value = "";
+    titleInput.value = "";
+    passwordInput.value = "";
+    rteBody.innerHTML = "";
   }
 
   if (publishBtn) {
     publishBtn.addEventListener("click", async () => {
-      const nameInput = document.getElementById("compose-name");
-      const titleInput = document.getElementById("compose-title");
-      const passwordInput = document.getElementById("compose-password");
-
       const name = nameInput.value.trim();
       const title = titleInput.value.trim();
-      const content = cleanHtml(rteBody.innerHTML);
+      const content = editorToContent(rteBody.innerHTML);
       const password = passwordInput.value;
 
       if (!name || !title || stripTags(content).trim().length === 0) {
@@ -560,10 +671,7 @@ try {
         };
         renderEntries([newEntry, ...currentEntries]);
 
-        nameInput.value = "";
-        titleInput.value = "";
-        passwordInput.value = "";
-        rteBody.innerHTML = "";
+        clearComposer();
         composer.classList.add("hidden");
         composeToggle.textContent = "+ Share a post";
         setComposerStatus("Published. (It may take a few minutes to also show up after the sheet's own refresh.)", "ok");
@@ -576,7 +684,7 @@ try {
   }
 } catch (err) {
   // A missing element or unexpected DOM state here should never blank the
-  // whole page — the read-only feed above still works either way.
+  // whole page. The read-only feed above still works either way.
   console.error("Discourse composer failed to initialize:", err);
 }
 
