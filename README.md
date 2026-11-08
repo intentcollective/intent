@@ -61,6 +61,19 @@ Header row, any order: `Name, Title, Date, Content, Link, Tag` (`Link` and `Tag`
 
 Posting from the site: already deployed. The "+ Share a post" toggle appears because `POST_ENDPOINT_URL` is set in `js/discourse.js`. The script stores the date as a date only; the time is kept underneath so ordering still works.
 
+### The editor
+
+Buttons: **B**, *I*, <u>U</u>, **Line** (a horizontal rule), **Link**, **Image** and **Video**. Image and Video ask for a URL and show a real preview inside the editor. A small x on the preview removes it. Behind the scenes each one is saved as the `[img:URL]` or `[video:URL]` tag described below, so the sheet and the public page work as before. Older posts that contain lists or headings still display correctly; the editor just no longer has buttons for them.
+
+### Correcting a published post
+
+The page has no edit button on purpose. The password is readable in the page source, so a page-based edit could let anyone change a fellow's writing. Corrections are made in the Google Sheet instead, which only the sheet's owner can open:
+
+1. Open the Discourse sheet and find the post's row.
+2. Edit the `Title` or `Content` cell. Content is simple HTML (`<p>`, `<b>`, `<i>`, `<u>`, `<a href>`, `<hr>`) plus the `[img:URL]` and `[video:URL]` tags.
+3. Wait a few minutes for Google to refresh the published sheet, then hard refresh the page.
+4. Changing a title changes that post's link (it is built from the title and date), so old shared links to it will stop working.
+
 ### Images and video in a post
 
 Type either tag anywhere in the Content text, in the Sheet cell or in the composer:
