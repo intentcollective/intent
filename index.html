@@ -1,11 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Intent Collective</title>
-<meta name="description" content="INTENT COLLECTIVE™ advances design through collective intelligence, critical ,debate, and continuous learning.">
+<meta name="description" content="INTENT COLLECTIVE&trade; is a global collective for live debate among designers. Free and open to everyone.">
 <link rel="icon" href="assets/logo.png">
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -17,24 +16,125 @@
       <img src="assets/wordmark.png" alt="Intent Collective">
     </a>
     <nav class="site-nav">
-      <a href="index.html" aria-current="page">Manifesto</a>
-      <a href="structure.html">Structure</a>
-      <a href="discourse.html">Discourse</a>
-      <a href="zeitgeist.html">Zeitgeist</a>
+      <a href="index.html#manifesto" aria-label="Manifesto" aria-current="page">M<span class="glyph glyph--a" aria-hidden="true"><svg viewBox="0 0 103 100" fill="none" stroke="currentColor" stroke-width="14" focusable="false"><path d="M51.5 9 98 91H5Z"/></svg></span>NIFESTO</a>
+      <a href="structure.html" aria-label="Structure">STRUCTUR<span class="glyph glyph--e" aria-hidden="true"><svg viewBox="0 0 86 100" fill="none" stroke="currentColor" stroke-width="14" focusable="false"><path d="M4 8H82M4 50H82M4 92H82"/></svg></span></a>
+      <a href="discourse.html" aria-label="Discourse">DISC<span class="glyph glyph--o" aria-hidden="true"><svg viewBox="0 0 106 100" focusable="false"><circle cx="53" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="14"/><circle cx="53" cy="50" r="18" fill="currentColor"/></svg></span>URSE</a>
+      <a href="zeitgeist.html" aria-label="Zeitgeist">ZEI<span class="glyph glyph--t" aria-hidden="true"><svg viewBox="0 0 83 100" fill="none" stroke="currentColor" stroke-width="14" focusable="false"><path d="M41.5 96V8M8 40 41.5 6 75 40"/></svg></span>GEIST</a>
     </nav>
   </div>
 </header>
 
 <main>
+  <!-- ===================== HERO ===================== -->
   <section class="hero">
     <div class="wrap">
       <img class="logo-mark" src="assets/logo.png" alt="Intent Collective mark">
-      <h1>Advancing design<br>through<br>collective intelligence.</h1>
-      <p>INTENT COLLECTIVE™ invites designers around the world to engage in critical <b>debate</b>, intellectual exchange, and continuous learning grounded in professional experience. By questioning assumptions and challenging perspectives, we learn from one another to advance design thinking and practice.</p>
+      <h1>A global collective for live debate among designers.</h1>
+      <p>INTENT COLLECTIVE&trade; brings designers together to question assumptions, challenge perspectives, and exchange professional knowledge through live debate. Through collective intelligence and deliberate discourse, we seek to advance design thinking and practice.</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="#debate">Explore Upcoming Debates</a>
+        <a class="btn-secondary" href="#participate">How to Participate</a>
+      </div>
+      <p class="hero-note">Free and open to everyone. No invitation or Fellowship required.</p>
     </div>
   </section>
 
-  <section class="manifesto">
+  <!-- ===================== NEXT LIVE DEBATE ===================== -->
+  <section class="section-block" id="debate">
+    <div class="wrap">
+      <div class="mark-label">Next Live Debate</div>
+      <p class="section-note">Live debate is the collective's main activity: a one-hour online conversation among designers about a defined question. It is free and open to everyone.</p>
+      <div id="next-debate-state" class="state-msg">Loading the next debate&hellip;</div>
+      <div id="next-debate" class="debate-list" hidden></div>
+      <p class="section-note debate-help" id="next-debate-help" hidden>To take part, use the Join online link on the debate. No Fellowship or invitation is needed. How you take part, speaking or listening, depends on the debate.</p>
+      <p class="pillar-note" id="next-debate-more" hidden></p>
+      <p class="card-link-row"><a class="text-link" href="structure.html#debates">How live debate works, and all debates &gt;&gt;</a></p>
+    </div>
+  </section>
+
+  <!-- ===================== WHY PARTICIPATE ===================== -->
+  <section class="section-block" id="why">
+    <div class="wrap">
+      <div class="mark-label">Why Participate</div>
+      <div class="triad">
+        <div class="triad-item">
+          <h3>Challenge assumptions</h3>
+          <p>Each debate starts from a defined question and a Discourse post that frames it. Question the premise and examine other perspectives in real time.</p>
+        </div>
+        <div class="triad-item">
+          <h3>Exchange experience</h3>
+          <p>Hear how experienced designers reason through real professional questions, and bring your own view from a different discipline or culture.</p>
+        </div>
+        <div class="triad-item">
+          <h3>Sharpen your argument</h3>
+          <p>Test your own position against the strongest opposing arguments, and build the critical thinking to state and defend a professional view.</p>
+        </div>
+        <div class="triad-item">
+          <h3>Add to the record</h3>
+          <p>The conversation continues in Discourse, adding to a growing body of knowledge that advances design thinking and practice.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PROFESSIONAL EXPERIENCE ===================== -->
+  <section class="section-block" id="experience">
+    <div class="wrap">
+      <div class="mark-label">Professional Experience</div>
+      <p class="section-note">Our Principal Design Fellows bring professional experience from leading global organizations across design, technology, entertainment, and creative industries.</p>
+      <ul class="credential-list" aria-label="Organizations where Principal Design Fellows have worked">
+        <li>Apple</li>
+        <li>Samsung</li>
+        <li>Meta</li>
+        <li>Coca-Cola</li>
+        <li>PlayStation</li>
+        <li>Pixar</li>
+        <li>Nickelodeon</li>
+        <li>Wieden+Kennedy</li>
+        <li>Autodesk</li>
+        <li>SAP</li>
+        <li>Atlassian</li>
+      </ul>
+      <p class="pillar-note credential-note">Individual professional experience of Principal Design Fellows. Not an endorsement, sponsorship, or affiliation.</p>
+    </div>
+  </section>
+
+  <!-- ===================== HOW TO PARTICIPATE ===================== -->
+  <section class="section-block" id="participate">
+    <div class="wrap">
+      <div class="mark-label">How to Participate</div>
+      <div class="tier-grid">
+        <div class="tier">
+          <h3>Public Participation</h3>
+          <p>Open to anyone interested in design. Free.</p>
+          <ul class="bullet-list">
+            <li>Discover upcoming live debates</li>
+            <li>Join a debate online with its Join link</li>
+            <li>Exchange ideas and professional perspectives</li>
+            <li>Engage with designers around the world</li>
+            <li>Read the Discourse posts that frame each debate</li>
+          </ul>
+          <p>No Fellowship appointment or invitation is required.</p>
+          <p class="card-link"><a href="#debate">See the next debate &gt;&gt;</a></p>
+        </div>
+        <div class="tier">
+          <h3>Design Fellowship</h3>
+          <p>A selective appointment for designers who demonstrate professional merit, intellectual contribution, and commitment to the collective.</p>
+          <ul class="bullet-list">
+            <li>Contribute to the collective's intellectual direction</li>
+            <li>Share professional knowledge and experience</li>
+            <li>Propose debate subjects and contribute to Discourse</li>
+            <li>Support the collective's ongoing development</li>
+            <li>Take on leadership responsibilities that fit the role</li>
+          </ul>
+          <p class="card-link"><a href="structure.html#fellowship">How Fellowship works &gt;&gt;</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== MANIFESTO ===================== -->
+  <section class="section-block manifesto" id="manifesto">
     <div class="wrap">
       <div class="mark-label">Manifesto</div>
 
@@ -42,25 +142,42 @@
         Design is the manifestation of human intent.
       </blockquote>
 
-      <p>INTENT COLLECTIVE™ is an independent design collective founded on deliberate discourse and critical debate. Every expression, structure, and experience begins with defined intent. Its approach to design is grounded in intellectual inquiry, purposeful thinking, and the examination of ideas. Purpose precedes expression.</p>
+      <p>INTENT COLLECTIVE&trade; is an independent design collective founded on deliberate discourse and critical debate. Every expression, structure, and experience begins with defined intent. Its approach to design is grounded in intellectual inquiry, purposeful thinking, and the examination of ideas. Purpose precedes expression.</p>
 
-      <p>Designers come together to exchange knowledge, challenge perspectives, and advance collective intelligence. Every member contributes to a shared understanding of design, learning from others while continually questioning and developing their own perspectives. Design is understood as a consequential practice with the capacity to shape human experience and socio-cultural understanding.</p>
+      <details class="manifesto-more" id="manifesto-full">
+        <summary><span class="when-closed">Read the full manifesto</span><span class="when-open">Close the manifesto</span></summary>
 
-      <p>Process is systematic. Methodology is disciplined. Strategy informs structure. Structure shapes experience. Intent provides direction, while critical inquiry and discernment guide the translation of ideas into meaningful expression.</p>
+        <p>Designers come together to exchange knowledge, challenge perspectives, and advance collective intelligence. Every member contributes to a shared understanding of design, learning from others while continually questioning and developing their own perspectives. Design is understood as a consequential practice with the capacity to shape human experience and socio-cultural understanding.</p>
 
-      <p>Three interconnected disciplines define the intellectual foundation of the collective. Strategy establishes intent, direction, and meaning. Literacy develops the structural and communicative fluency through which intent becomes legible. Synthesis integrates critical inquiry, discernment, and resolution to bring meaning and expression into coherence. Together, they establish a foundation for understanding and advancing design.</p>
+        <p>Process is systematic. Methodology is disciplined. Strategy informs structure. Structure shapes experience. Intent provides direction, while critical inquiry and discernment guide the translation of ideas into meaningful expression.</p>
 
-      <p>INTENT COLLECTIVE™ advances education as a school of design, where design is understood not only as a professional practice but also as a way of questioning, thinking, learning, and living. The fellowship brings members together through shared inquiry and collective inspiration. Intellectual rigor, critical thinking, and principled execution are cultivated through continuous exchange and mutual learning.</p>
+        <p>Three interconnected disciplines define the intellectual foundation of the collective. Strategy establishes intent, direction, and meaning. Literacy develops the structural and communicative fluency through which intent becomes legible. Synthesis integrates critical inquiry, discernment, and resolution to bring meaning and expression into coherence. Together, they establish a foundation for understanding and advancing design.</p>
 
-      <p>The educational philosophy is advanced through three complementary modes of inquiry and practice. Discourse opens the exchange of ideas. Debate challenges assumptions and examines competing perspectives. Praxis extends inquiry through making and doing. Together, they cultivate collective intelligence, continuous learning, and the advancement of design.</p>
+        <p>INTENT COLLECTIVE&trade; advances education as a school of design, where design is understood not only as a professional practice but also as a way of questioning, thinking, learning, and living. The fellowship brings members together through shared inquiry and collective inspiration. Intellectual rigor, critical thinking, and principled execution are cultivated through continuous exchange and mutual learning.</p>
 
-      <p class="signoff">Design is intentional. Structured. Consequential.</p>
+        <p>The educational philosophy is advanced through three complementary modes of inquiry and practice. Discourse opens the exchange of ideas. Debate challenges assumptions and examines competing perspectives. Praxis extends inquiry through making and doing. Together, they cultivate collective intelligence, continuous learning, and the advancement of design.</p>
 
-      <p>Everything is design.<br>We design everything.<br>Design is everything.</p>
+        <p class="signoff">Design is intentional. Structured. Consequential.</p>
 
-      <img class="wordmark-bottom" src="assets/wordmark.png" alt="Intent Collective">
+        <p>Everything is design.<br>We design everything.<br>Design is everything.</p>
 
-      <p class="footnote">* Deucalion and Pyrrha. Engraving by Virgil Solis for Ovid’s Metamorphoses Book I, 347-415. Fol. 7v, image 11. 1563</p>
+        <img class="wordmark-bottom" src="assets/wordmark.png" alt="Intent Collective">
+
+        <p class="footnote">* Deucalion and Pyrrha. Engraving by Virgil Solis for Ovid&rsquo;s Metamorphoses Book I, 347-415. Fol. 7v, image 11. 1563</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ===================== CLOSING INVITATION ===================== -->
+  <section class="section-block" id="join">
+    <div class="wrap">
+      <div class="mark-label">Join In</div>
+      <h2 class="closing-title">The next live debate is open to everyone.</h2>
+      <p class="section-note">Bring a question or an argument. The collective is built through the participation and intellectual contribution of designers.</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="#debate">Explore Upcoming Debates</a>
+        <a class="btn-secondary" href="structure.html">How the Collective Works</a>
+      </div>
     </div>
   </section>
 </main>
@@ -72,6 +189,7 @@
   </div>
 </footer>
 
+<script src="js/index.js"></script>
 <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 
 </body>

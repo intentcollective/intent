@@ -4,7 +4,7 @@ Static site, no build step. Four pages:
 
 | Page | File | Data |
 |---|---|---|
-| Manifesto | `index.html` | none |
+| Home and Manifesto | `index.html` + `js/index.js` | Debate Schedule sheet (read only) |
 | Structure | `structure.html` + `js/structure.js` | Fellows sheet (private), Debate Schedule sheet |
 | Discourse | `discourse.html` + `js/discourse.js` | Discourse sheet |
 | Zeitgeist | `zeitgeist.html` + `js/zeitgeist.js` | Zeitgeist sheet |
@@ -192,6 +192,25 @@ Why bounces happen: every debate notice goes to every address in the `Fellows` t
 3. **Automatic cleanup.** `flagBouncedFellows()` reads recent delivery-failure notices in Gmail and marks the matching fellows `bounced`. Run it by hand from the Apps Script editor, or add a daily trigger: **Triggers (clock icon) > Add Trigger > `flagBouncedFellows` > Time-driven > Day timer**. To email someone again after fixing their address, clear their `Status` cell.
 
 Gmail keeps retrying a failed message for about a day and sends a "Delivery incomplete" notice, then a final failure notice. Notices already on their way will stop by themselves. If a bad row is already in the sheet, delete it or set its `Status` to `skip`.
+
+---
+
+## 5g. How the Index and Structure pages are organized
+
+**Index** introduces the collective and invites people in. Top to bottom: headline and what the collective does, the next live debate (read from the Debate Schedule sheet by `js/index.js`; if nothing is scheduled it shows the most recent past debate), why participate, professional experience of Principal Design Fellows, how to participate (public participation vs Fellowship), the manifesto, and a closing invitation.
+
+**Structure** explains how it works: operating model, live critical debate with the full schedule and the host form, Fellowship (Principal Design Fellows, Design Fellows, and the pillars), intellectual foundation (Strategy, Literacy, Synthesis), methodology (Discourse, Debate, Praxis), becoming a Design Fellow with the registration form, and a path back to the debates.
+
+Things to keep in mind:
+
+- Public participation is open and free. Fellowship is a selective appointment and is never required to attend a debate.
+- The manifesto stays on the Index. Its first paragraph shows by default and the rest opens with "Read the full manifesto". The Manifesto link in the navigation (`index.html#manifesto`) opens it automatically.
+- The professional experience row is plain text on purpose. It lists organizations where Principal Design Fellows have worked, with a line stating it is not an endorsement or affiliation. Edit the list in `index.html` (`<ul class="credential-list">`). Only list organizations that a current Principal Design Fellow has actually worked for.
+- The next-debate card needs the same published Debate Schedule CSV as the Structure page. If you ever change `DEBATE_CSV_URL` in `js/structure.js`, change it in `js/index.js` too.
+
+### Navigation labels
+
+The four navigation labels replace one letter with a drawn glyph (M&#9651;NIFESTO, STRUCTUR&#8801;, DISC&#9673;URSE, ZEI&#8593;GEIST). The glyphs are small inline SVGs in the header of each page, and each link keeps the real page name as its accessible label. The same header block must be used on every page. When you add a page, copy the `<nav class="site-nav">` block from an existing page and move `aria-current="page"` to the right link.
 
 ---
 
