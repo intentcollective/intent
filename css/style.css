@@ -137,19 +137,19 @@ h1, h2, h3 {
 
 /* ---------- hero ---------- */
 
-.hero { padding: 80px 0 64px; border-bottom: 1px solid var(--rule); }
+.hero { padding: 56px 0 56px; border-bottom: 1px solid var(--rule); }
 
 .hero h1 {
-  font-size: clamp(2.4rem, 5vw, 4.2rem);
-  max-width: 15ch;
+  font-size: clamp(2.2rem, 4.6vw, 3.6rem);
+  max-width: 20ch;
 }
 
 .hero p { max-width: var(--measure); }
 
 .logo-mark {
-  width: 150px;
+  width: 112px;
   height: auto;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 /* ---------- manifesto ---------- */
@@ -723,3 +723,120 @@ h1, h2, h3 {
 }
 
 .rte-media-remove:hover { background: var(--mark); opacity: 1; }
+
+/* ==========================================================================
+   Revised Index and Structure pages
+   ========================================================================== */
+
+/* ---------- navigation glyphs ----------
+   One letter in each nav label is replaced by a drawn glyph that matches
+   the DM Sans cap height and stroke weight. The real page name stays the
+   link's accessible label. */
+
+.site-nav .glyph {
+  display: inline-block;
+  height: 0.7em;
+  margin: 0 0.03em;
+  vertical-align: baseline;
+}
+
+.site-nav .glyph svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.site-nav .glyph--a { width: 0.72em; }
+.site-nav .glyph--o { width: 0.74em; }
+.site-nav .glyph--e { width: 0.6em; }
+.site-nav .glyph--t { width: 0.58em; }
+
+/* ---------- anchors under the sticky header ---------- */
+
+.section-block, .manifesto { scroll-margin-top: 72px; }
+
+/* ---------- calls to action ---------- */
+
+a.btn-primary, a.btn-secondary {
+  display: inline-block;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.btn-secondary {
+  background: none;
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  padding: 10px 21px;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.btn-secondary:hover { color: var(--mark); border-color: var(--mark); }
+
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+.hero-note { margin: 16px 0 0; font-size: 13px; color: var(--ink-soft); }
+
+.text-link { font-size: 0.95rem; font-weight: 600; color: var(--mark); }
+.text-link:hover { text-decoration: underline; }
+.card-link-row { margin: 20px 0 0; }
+
+/* ---------- index: debate help, credentials, closing ---------- */
+
+.debate-help { margin: 20px 0 0; }
+
+.credential-list {
+  list-style: none;
+  margin: 20px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+}
+
+.credential-list li { font-size: 1.05rem; font-weight: 600; line-height: 1.4; }
+.credential-note { margin-top: 16px; }
+
+.closing-title {
+  font-size: clamp(1.6rem, 3.2vw, 2.3rem);
+  max-width: 22ch;
+  margin: 0 0 16px;
+}
+
+.sub-head { font-size: 1.15rem; margin: 40px 0 12px; }
+
+/* ---------- fellowship cards: bullets and links ---------- */
+
+.tier .bullet-list { list-style: none; margin: 12px 0 0; padding: 0; }
+
+.tier .bullet-list li {
+  position: relative;
+  margin: 0 0 4px;
+  padding-left: 0.9em;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.tier .bullet-list li::before { content: "\00B7"; position: absolute; left: 0; }
+.tier .bullet-list + p { margin-top: 12px; }
+
+.tier p.card-link { margin-top: 16px; font-weight: 600; }
+.tier p.card-link a { color: var(--mark); }
+.tier p.card-link a:hover { text-decoration: underline; }
+
+/* ---------- manifesto: collapsed by default ---------- */
+
+.manifesto-more { margin-top: 8px; }
+
+.manifesto-more summary {
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--sage);
+  padding: 8px 0;
+}
+
+.manifesto-more summary:hover { color: var(--mark); }
+.manifesto-more[open] summary { margin-bottom: 16px; }
+.manifesto-more:not([open]) .when-open { display: none; }
+.manifesto-more[open] .when-closed { display: none; }
