@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Discourse — Intent Collective</title>
+<title>Discourse | Intent Collective</title>
 <meta name="description" content="Writing from Intent Collective fellows.">
 <link rel="icon" href="assets/logo.png">
 <link rel="stylesheet" href="css/style.css">
@@ -57,16 +57,10 @@
             <button type="button" data-cmd="bold" title="Bold"><b>B</b></button>
             <button type="button" data-cmd="italic" title="Italic"><i>I</i></button>
             <button type="button" data-cmd="underline" title="Underline"><u>U</u></button>
-            <select id="rte-block" title="Paragraph style" aria-label="Paragraph style">
-              <option value="">Style…</option>
-              <option value="p">Paragraph</option>
-              <option value="h3">Heading</option>
-              <option value="blockquote">Quote</option>
-            </select>
-            <button type="button" data-cmd="insertUnorderedList" title="Bulleted list">• List</button>
-            <button type="button" data-cmd="insertOrderedList" title="Numbered list">1. List</button>
+            <button type="button" data-cmd="insertHorizontalRule" title="Horizontal line">Line</button>
             <button type="button" data-cmd="createLink" title="Insert link">Link</button>
-            <button type="button" data-cmd="removeFormat" title="Clear formatting">Clear</button>
+            <button type="button" data-cmd="image" title="Insert an image from a URL">Image</button>
+            <button type="button" data-cmd="video" title="Insert a YouTube or Vimeo video from a URL">Video</button>
           </div>
           <div id="rte-body" class="rte-body" contenteditable="true" aria-label="Post content"></div>
         </div>
@@ -84,7 +78,7 @@
     </div>
 
     <div id="state" class="state-msg">Loading entries…</div>
-        <article id="post-detail" class="post-detail" hidden></article>
+    <article id="post-detail" class="post-detail" hidden></article>
     <div id="entry-grid" class="entry-grid" hidden></div>
   </div>
 </main>
