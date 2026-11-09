@@ -208,7 +208,7 @@ function rowsToDebates(rows) {
   }).filter(d => d.subject && d.start && !isNaN(d.start.getTime()));
 }
 
-function debateRowHTML(d, isPast) {
+function debateRowHTML(d, isPast, isNext) {
   const links = [];
   if (d.discourse) links.push(`<a href="${escapeHTML(d.discourse)}">Read the discourse post &gt;&gt;</a>`);
   if (d.meeting && !isPast) links.push(`<a href="${escapeHTML(d.meeting)}" target="_blank" rel="noopener">Join online &gt;&gt;</a>`);
@@ -220,8 +220,8 @@ function debateRowHTML(d, isPast) {
   }
 
   return `
-    <article class="entry-card debate-card">
-      <div class="entry-meta"><span>Debate</span></div>
+    <article class="entry-card debate-card${isNext ? " is-next" : ""}">
+      <div class="entry-meta"><span>${isPast ? "Debate" : (isNext ? "Next debate" : "Upcoming debate")}</span></div>
       <h3>${escapeHTML(d.subject)}</h3>
       <div class="debate-info">
         ${d.host ? `<div class="debate-host">Hosted by ${escapeHTML(d.host)}</div>` : ""}
@@ -245,7 +245,7 @@ function renderDebates() {
     .sort((a, b) => b.start - a.start);
 
   if (upcoming.length) {
-    upEl.innerHTML = upcoming.map(d => debateRowHTML(d, false)).join("");
+    upEl.innerHTML = upcoming.map((d, n) => debateRowHTML(d, false, n === 0)).join("");
     upEl.hidden = false;
     stateEl.hidden = true;
   } else {
