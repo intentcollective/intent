@@ -1,10 +1,12 @@
 /* ==========================================================================
    Intent Collective: Index page
-   A) Shows the next scheduled live debate, read from the same published
-      Debate Schedule sheet the Structure page uses. If nothing is scheduled,
-      it shows the most recent past debate instead.
+   A) Shows every upcoming live debate, soonest first, read from the same
+      published Debate Schedule sheet the Structure page uses. The next one
+      is highlighted with a red outline. If nothing is scheduled, it shows
+      the most recent past debate instead, without the highlight.
    B) Opens the full manifesto when the page is reached through the
-      Manifesto link in the navigation (index.html#manifesto).
+      Manifesto link in the navigation (index.html#manifesto). Scrolling
+      to the section is handled by js/anchors.js.
 
    Nothing here writes data. Debates are scheduled on the Structure page.
    Keep DEBATE_CSV_URL the same as in js/structure.js.
@@ -131,7 +133,7 @@ function rowsToDebates(rows) {
 
 /* ---------------- next debate ---------------- */
 
-function debateCardHTML(d, label, isPast) {
+function debateCardHTML(d, label, isPast, isNext) {
   const links = [];
   if (d.discourse) links.push(`<a href="${escapeHTML(d.discourse)}">Read the discourse post &gt;&gt;</a>`);
   if (d.meeting && !isPast) links.push(`<a href="${escapeHTML(d.meeting)}" target="_blank" rel="noopener">Join online &gt;&gt;</a>`);
@@ -143,7 +145,7 @@ function debateCardHTML(d, label, isPast) {
   }
 
   return `
-    <article class="entry-card debate-card">
+    <article class="entry-card debate-card${isNext ? " is-next" : ""}">
       <div class="entry-meta"><span>${escapeHTML(label)}</span></div>
       <h3>${escapeHTML(d.subject)}</h3>
       <div class="debate-info">
@@ -158,7 +160,6 @@ function showNextDebate(debates) {
   const stateEl = $("next-debate-state");
   const cardEl = $("next-debate");
   const helpEl = $("next-debate-help");
-  const moreEl = $("next-debate-more");
   const now = Date.now();
 
   const upcoming = debates
@@ -169,15 +170,12 @@ function showNextDebate(debates) {
     .sort((a, b) => b.start - a.start);
 
   if (upcoming.length) {
-    cardEl.innerHTML = debateCardHTML(upcoming[0], "Next debate", false);
+    cardEl.innerHTML = upcoming
+      .map((d, i) => debateCardHTML(d, i === 0 ? "Next debate" : "Upcoming debate", false, i === 0))
+      .join("");
     cardEl.hidden = false;
     helpEl.hidden = false;
     stateEl.hidden = true;
-    if (upcoming.length > 1) {
-      const n = upcoming.length - 1;
-      moreEl.textContent = n + (n === 1 ? " more debate is scheduled." : " more debates are scheduled.");
-      moreEl.hidden = false;
-    }
     return;
   }
 
@@ -186,7 +184,7 @@ function showNextDebate(debates) {
   stateEl.classList.remove("is-error");
   if (past.length) {
     stateEl.textContent = "No debate is scheduled right now. Here is the most recent one.";
-    cardEl.innerHTML = debateCardHTML(past[0], "Most recent debate", true);
+    cardEl.innerHTML = debateCardHTML(past[0], "Most recent debate", true, false);
     cardEl.hidden = false;
   } else {
     stateEl.textContent = "No debates are scheduled right now. The next one will appear here.";
@@ -215,8 +213,6 @@ function openManifestoIfLinked() {
   if (location.hash !== "#manifesto") return;
   const full = $("manifesto-full");
   if (full) full.open = true;
-  const section = $("manifesto");
-  if (section) section.scrollIntoView();
 }
 
 window.addEventListener("hashchange", openManifestoIfLinked);
