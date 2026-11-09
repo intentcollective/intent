@@ -197,15 +197,19 @@ Gmail keeps retrying a failed message for about a day and sends a "Delivery inco
 
 ## 5g. How the Index and Structure pages are organized
 
-**Index** introduces the collective and invites people in. Top to bottom: headline and what the collective does, the next live debate (read from the Debate Schedule sheet by `js/index.js`; if nothing is scheduled it shows the most recent past debate), why participate, professional experience of Principal Design Fellows, how to participate (public participation vs Fellowship), the manifesto, and a closing invitation.
+**Index** introduces the collective and invites people in. Top to bottom: the headline and what the collective does; **Next Live Debate** (free and open, with every upcoming debate read from the Debate Schedule sheet by `js/index.js`, soonest first, the next one outlined in red; if nothing is scheduled it shows the most recent past debate without the outline); Why Participate; Professional Experience (organizations where Principal Design Fellows have worked, A-Z); and the Manifesto with the image caption at the bottom.
 
-**Structure** explains how it works: operating model, live critical debate with the full schedule and the host form, Fellowship (Principal Design Fellows, Design Fellows, and the pillars), intellectual foundation (Strategy, Literacy, Synthesis), methodology (Discourse, Debate, Praxis), becoming a Design Fellow with the registration form, and a path back to the debates.
+**Structure** explains how it works: a short overview, Live Debate (with the full schedule and the host form), Fellowship (Principal Design Fellows and Design Fellows, where Principal Design Fellows have worked, and email notices), Pillars, Becoming a Design Fellow (criteria, contact email and the registration form), Intellectual Foundation, and Methodology. A row of jump links under the title leads to each section.
 
 Things to keep in mind:
 
-- Public participation is open and free. Fellowship is a selective appointment and is never required to attend a debate.
+- Public participation is open and free. Fellowship is a selective appointment and is never required to attend a debate. Fellows receive the email notice of each scheduled debate (section 5f).
+- Keep at least one future debate in the Debate Schedule sheet. When none is upcoming, the Index shows the most recent past debate instead.
 - The manifesto stays on the Index. Its first paragraph shows by default and the rest opens with "Read the full manifesto". The Manifesto link in the navigation (`index.html#manifesto`) opens it automatically.
-- The professional experience row is plain text on purpose. It lists organizations where Principal Design Fellows have worked, with a line stating it is not an endorsement or affiliation. Edit the list in `index.html` (`<ul class="credential-list">`). Only list organizations that a current Principal Design Fellow has actually worked for.
+- Anchor links (such as `index.html#manifesto` or `structure.html#fellowship`) are kept flush under the sticky header by `js/anchors.js`, which re-aligns the section while the debate card and schedule finish loading. Load it on any page that has `#` links to its own sections.
+- The professional experience lists are plain text on purpose. Edit them in `index.html` and `structure.html` (`<ul class="credential-list">`), keep them in A-Z order, and only list organizations where a current Principal Design Fellow has actually worked. The note under the list states that this is not an endorsement or affiliation.
+- The Pillars list is in `structure.html` (`<div class="pillar-list">`), in A-Z order with fellow initials.
+- Section rules are 2px lines drawn inside the text column (see `.section-block > .wrap::before` in `css/style.css`). Change `--rule-strong` to adjust their strength.
 - The next-debate card needs the same published Debate Schedule CSV as the Structure page. If you ever change `DEBATE_CSV_URL` in `js/structure.js`, change it in `js/index.js` too.
 
 ### Navigation labels
