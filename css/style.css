@@ -928,3 +928,20 @@ a.btn-primary, a.btn-secondary {
   border-color: var(--mark);
   box-shadow: 0 0 0 1px var(--mark);
 }
+
+/* ---------- heading glyphs ---------- */
+
+/* Drawn rings for Principal Design Fellows and Design Fellows, so the pair
+   has the same size and weight in every browser. */
+.hg {
+  display: inline-block;
+  width: 0.78em;
+  height: 0.78em;
+  margin-left: 0.1em;
+  vertical-align: -0.06em;
+}
+
+.hg svg { display: block; width: 100%; height: 100%; }
+
+/* Text glyphs in regular weight, so none looks heavier than the others. */
+.gt { font-weight: 400; }
