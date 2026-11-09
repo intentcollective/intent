@@ -840,3 +840,91 @@ a.btn-primary, a.btn-secondary {
 .manifesto-more[open] summary { margin-bottom: 16px; }
 .manifesto-more:not([open]) .when-open { display: none; }
 .manifesto-more[open] .when-closed { display: none; }
+
+/* ==========================================================================
+   Second revision: section rules, jump links, simpler lists, next debate
+   ========================================================================== */
+
+:root { --rule-strong: #21201a80; }
+
+/* Section rules: thicker, and drawn inside the text column so they line up
+   with the content instead of running to the edge of the window. */
+.section-block { padding: 0 0 48px; border-top: none; }
+
+.section-block > .wrap::before {
+  content: "";
+  display: block;
+  height: 2px;
+  background: var(--rule-strong);
+  margin-bottom: 48px;
+}
+
+.hero { border-bottom: none; }
+
+.site-footer { border-top: none; padding-top: 0; }
+.site-footer .wrap { position: relative; padding-top: 32px; }
+
+.site-footer .wrap::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 28px;
+  right: 28px;
+  height: 2px;
+  background: var(--rule-strong);
+}
+
+/* A linked section lands flush under the sticky header. js/anchors.js keeps
+   it there while the page settles. */
+.section-block, .manifesto { scroll-margin-top: 61px; }
+
+/* Jump links under the Structure title */
+.jump-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  margin-top: 24px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.jump-links a { color: var(--sage); }
+.jump-links a:hover { color: var(--mark); }
+
+/* Simple one-column bullet list */
+.bullets {
+  list-style: none;
+  margin: 0 0 24px;
+  padding: 0;
+  max-width: var(--measure);
+}
+
+.bullets li {
+  position: relative;
+  margin: 0 0 4px;
+  padding-left: 0.9em;
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.bullets li::before { content: "\00B7"; position: absolute; left: 0; }
+
+/* Small italic note, the same style as the manifesto footnote */
+.footnote {
+  max-width: var(--measure);
+  margin: 16px 0 0;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--ink-soft);
+}
+
+/* Links under a section */
+.card-link-row { display: flex; flex-wrap: wrap; gap: 6px 24px; }
+
+/* The next upcoming debate on the Index gets a bold red outline */
+.debate-card.is-next {
+  border-color: var(--mark);
+  box-shadow: 0 0 0 1px var(--mark);
+}
