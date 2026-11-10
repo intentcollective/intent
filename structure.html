@@ -29,7 +29,7 @@
     <div class="wrap">
       <div class="mark-label">Structure</div>
       <h1>Fellowship, pillars, and debate.</h1>
-      <p class="lede">How INTENT COLLECTIVE&trade; works: live debate that is open to everyone, led by a selective Fellowship.</p>
+      <p class="lede">Live debate that is open to everyone, led by a selective Fellowship.</p>
       <nav class="jump-links" aria-label="On this page">
         <a href="#debates">Debate</a>
         <a href="#schedule">Schedule</a>
@@ -45,8 +45,8 @@
   <!-- ===================== HOW IT WORKS ===================== -->
   <section class="section-block" id="how">
     <div class="wrap">
-      <div class="mark-label">How the Collective Works</div>
-      <p class="section-note">INTENT COLLECTIVE&trade; brings designers together through open public participation and a selective Fellowship. Its primary activity is live debate. Strategy, Literacy, and Synthesis are the disciplines it examines design through, and Discourse, Debate, and Praxis are the methods it works by. Principal Design Fellows lead the pillars and host the debates, and Design Fellows contribute across them.</p>
+      <div class="mark-label">How We Work</div>
+      <p class="section-note">We bring designers together through open live debate and a selective Fellowship. Principal Design Fellows lead the pillars and host the debates, and Design Fellows contribute across them. Strategy, Literacy, and Synthesis are what we examine. Discourse, Debate, and Praxis are how we work.</p>
     </div>
   </section>
 
@@ -120,6 +120,34 @@
 
       <div id="debate-state" class="state-msg">Loading debates…</div>
       <div id="debate-upcoming" class="debate-list" hidden></div>
+      <div class="notice-signup">
+        <button type="button" id="sub-toggle" class="compose-toggle" hidden>+ Get debate notices by email</button>
+        <div id="sub-composer" class="composer hidden">
+          <p class="section-note">Get an email when a live debate is scheduled. You confirm by email first, and every notice has an unsubscribe link.</p>
+          <div class="field-row">
+            <div class="field">
+              <label for="sub-first">First name</label>
+              <input type="text" id="sub-first" autocomplete="given-name">
+            </div>
+            <div class="field">
+              <label for="sub-last">Last name</label>
+              <input type="text" id="sub-last" autocomplete="family-name">
+            </div>
+          </div>
+          <div class="field">
+            <label for="sub-email">Email address</label>
+            <input type="email" id="sub-email" autocomplete="email" placeholder="name@example.com">
+          </div>
+          <div class="field hp" aria-hidden="true">
+            <label for="sub-website">Leave this empty</label>
+            <input type="text" id="sub-website" tabindex="-1" autocomplete="off">
+          </div>
+          <div class="composer-actions">
+            <button type="button" id="sub-submit" class="btn-primary">Subscribe</button>
+            <span id="sub-status" class="composer-status" aria-live="polite"></span>
+          </div>
+        </div>
+      </div>
       <div id="debate-past" class="debate-past" hidden></div>
     </div>
   </section>
@@ -146,13 +174,15 @@
 
       <p class="section-note debate-help">Fellows receive an email notice of every upcoming debate. For now, Principal Design Fellows lead the debates. As the fellowship grows, Design Fellows will be able to reach out to pillar leaders to propose one.</p>
 
-      <h3 class="sub-head">Where Principal Design Fellows have worked</h3>
+      <h3 class="sub-head">Where Fellows have worked</h3>
       <p class="pillar-note">A-Z</p>
       <ul class="credential-list" aria-label="Organizations where Principal Design Fellows have worked, in alphabetical order">
+        <li>AKQA</li>
         <li>Apple</li>
         <li>Atlassian</li>
         <li>Autodesk</li>
         <li>Coca-Cola</li>
+        <li>Hallmark</li>
         <li>Meta</li>
         <li>Nickelodeon</li>
         <li>Pixar</li>
@@ -160,9 +190,10 @@
         <li>Samsung</li>
         <li>SAP</li>
         <li>Wieden+Kennedy</li>
+        <li>Wilson</li>
         <li>and more</li>
       </ul>
-      <p class="footnote">* Individual professional experience of Principal Design Fellows. Not an endorsement, sponsorship, or affiliation.</p>
+      <p class="footnote">* Individual professional experience of Fellows. Not an endorsement, sponsorship, or affiliation.</p>
     </div>
   </section>
 
@@ -349,6 +380,7 @@
 
 <script src="js/anchors.js"></script>
 <script src="js/structure.js"></script>
+<script src="js/subscribe.js"></script>
 <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 
 </body>

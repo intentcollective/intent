@@ -4,7 +4,7 @@ Static site, no build step. Four pages:
 
 | Page | File | Data |
 |---|---|---|
-| Home and Manifesto | `index.html` + `js/index.js` | Debate Schedule sheet (read only) |
+| Home and Manifesto | `index.html` + `js/index.js` + `js/anchors.js` + `js/subscribe.js` | Debate Schedule sheet (read only) |
 | Structure | `structure.html` + `js/structure.js` | Fellows sheet (private), Debate Schedule sheet |
 | Discourse | `discourse.html` + `js/discourse.js` | Discourse sheet |
 | Zeitgeist | `zeitgeist.html` + `js/zeitgeist.js` | Zeitgeist sheet |
@@ -130,6 +130,14 @@ Fellowship | First Name | Last Name | Email | LinkedIn | Recommended By | Added 
 Host | Date | Subject | Discourse | Meeting | Added
 ```
 
+**Tab `Subscribers`** (private, never published). You do not need to create it: the script creates it the first time someone signs up for debate notices. Its columns are:
+
+```
+First Name | Last Name | Email | Added | Status | Token
+```
+
+`Status` is `pending` until the person clicks the confirmation link, then `confirmed`. It becomes `unsubscribed` if they unsubscribe, or `bounced` if their address fails. `Token` is a private code used in the confirm and unsubscribe links. Leave it alone.
+
 Column order does not matter, but the header names must match. The `Fellowship` column holds `Principal Design Fellow` or `Design Fellow`. If older rows say `Master Design Fellow` or `Principal Design Fellow` from the earlier three-tier version, edit them to match. Nothing in the script depends on those names.
 
 `Status` is optional. Leave it empty for normal fellows. Put `skip` to stop emailing someone. The script writes `bounced` there automatically (see section 5f). If you do not add the column, it is created the first time `flagBouncedFellows` runs.
@@ -156,7 +164,7 @@ Do not publish the `Fellows` tab. It contains emails and LinkedIn links, and a p
 2. Replace the code with `google-apps-script-fellows-debate.gs`.
 3. Check the tab names at the top match your tabs. Set `SEND_EMAIL_NOTICE = false` if you want to turn off the email notice.
 4. Save.
-5. **Approve permissions before deploying.** In the function dropdown pick `flagBouncedFellows`, click **Run**, and approve when Google asks. The script needs: your spreadsheets, sending email, one outside web request (the email domain check), and reading Gmail (the bounce cleanup). This is your own script on your own sheet.
+5. **Approve permissions before deploying.** In the function dropdown pick `flagBouncedFellows`, click **Run**, and approve when Google asks. The script needs: your spreadsheets, sending email, outside web requests (the email domain check and fetching the wordmark for emails), reading Gmail (the bounce cleanup), and showing a web page (the confirm and unsubscribe links). This is your own script on your own sheet.
 6. Deploy:
    - **First time:** **Deploy > New deployment > type: Web app**. Execute as: **Me**. Who has access: **Anyone**. Click **Deploy**, then copy the Web app URL (ends in `/exec`) into `js/structure.js`, in `POST_ENDPOINT_URL`.
    - **Every later change:** **Deploy > Manage deployments**, click the pencil icon, set **Version** to **New version**, then **Deploy**. The URL stays the same. Do not use "New deployment" again, since that creates a second deployment with a different URL.
@@ -171,25 +179,37 @@ On the Structure page, the two small toggles appear once `POST_ENDPOINT_URL` is 
 - **+ Register a fellow:** fellowship (Principal Design Fellow or Design Fellow), first name, last name, email, confirm email, LinkedIn link, recommending fellow, and the password. LinkedIn and recommending fellow are optional. The row is added to the `Fellows` tab.
   - The email must be typed twice, and its domain must be able to receive mail. This is checked on the page and again in the script, so a typo such as `name@adasd.com` is rejected instead of being saved.
   - The domain check proves the domain has a mail server, not that the mailbox exists. The second email field is what catches typos at a real domain.
+- **+ Get debate notices by email** (on the Index and on the Structure page, under the upcoming debates): anyone can enter first name, last name and email, with no password. They get a confirmation email and only start receiving notices after clicking its link. The script checks the address, ignores bots with a hidden field, and always gives the same reply so the form never reveals who is on the list.
 - **+ Schedule a debate:** host name, date and time in US Eastern, a one-sentence subject, the Discourse post, the meeting link, and the password.
   - The page previews Seoul and London times as you pick the date, and notes if the day is not a Saturday.
   - For the Discourse post, type to search the Discourse sheet. Once a host name is entered, that host's posts are listed first. You can also paste any link.
-  - The row is added to `Debate Schedule`, then every fellow in the `Fellows` tab gets one email with the subject, host, Eastern, Seoul and London times, and both links.
+  - The row is added to `Debate Schedule`, then every Fellow and every confirmed Subscriber gets one email with the subject, host, Eastern, Seoul and London times, and both links.
 
 The schedule shows upcoming debates soonest first, each with Eastern, Seoul and London times. A session moves to **Past debates** two hours after it starts. Past debates are collapsed, grouped by year, and the newest year opens first, so the page stays short as history grows.
 
-### 5f. About the email notice and bounces
+### 5f. About the email notice, subscribers and bounces
 
-- Recipients are sent as BCC, so fellows cannot see each other's addresses.
-- Gmail accounts can send to about 100 recipients per day (Google Workspace accounts, about 1,500). The script reports an error if you have more fellows than the daily limit.
+- **Who gets a notice:** every Fellow in the `Fellows` tab and every Subscriber whose `Status` is `confirmed`. Anyone marked `bounced`, `skip` or `unsubscribed` is left out, and so are duplicate and invalid addresses.
+- **One email each.** Notices are sent individually, not as one BCC, so a Subscriber's email carries their own unsubscribe link. Fellows' emails say they are sent because they are Fellows and give the contact address to stop them.
+- **Look:** the emails use the site's colors (paper background, a thin-bordered box like the debate cards, red labels) and carry the wordmark from `assets/wordmark.png`, attached inside the email so it shows in every mail app. If the image cannot be fetched, the email shows the name as text. Fonts fall back to Helvetica or Arial, since mail apps do not load DM Sans.
+- **Confirm and unsubscribe links** open a small page in the site's colors, served by the same script. They only work while the web app is deployed with Who has access: Anyone.
+- **Daily limit.** A regular Gmail account can send to about 100 recipients per day (Google Workspace, about 1,500). Confirmation emails count too. If a debate has more recipients than the day's remaining allowance, Fellows are served first, and the page tells you how many notices went out. When the list nears 100 people, move the script to a Google Workspace account or a mailing service.
 - If the email fails, the debate is still saved and the page shows why.
-- Duplicate and invalid addresses are skipped, and so is anyone whose `Status` is `bounced` or `skip`.
 
-Why bounces happen: every debate notice goes to every address in the `Fellows` tab. One bad address bounces back to the sending account each time a debate is scheduled. Three layers prevent this:
+### Privacy for Subscribers
+
+Subscribers are members of the public, so keep their details private and honor their choices:
+
+- Never publish the `Subscribers` tab, and share the spreadsheet only with people who manage the collective.
+- Every notice has an unsubscribe link. Unsubscribing is instant and permanent until the person signs up again and confirms.
+- Do not use the list for anything other than debate notices.
+- To delete someone entirely on request, delete their row.
+
+Why bounces happen: every debate notice goes to every address in the `Fellows` and confirmed `Subscribers` lists. One bad address bounces back to the sending account each time a debate is scheduled. Three layers prevent this:
 
 1. **Check at registration.** The page and the script reject bad formats and domains that cannot receive mail.
-2. **Skip list.** Any fellow with `Status` set to `bounced` or `skip` is never emailed.
-3. **Automatic cleanup.** `flagBouncedFellows()` reads recent delivery-failure notices in Gmail and marks the matching fellows `bounced`. Run it by hand from the Apps Script editor, or add a daily trigger: **Triggers (clock icon) > Add Trigger > `flagBouncedFellows` > Time-driven > Day timer**. To email someone again after fixing their address, clear their `Status` cell.
+2. **Skip list.** Anyone with `Status` set to `bounced`, `skip` or `unsubscribed` is never emailed. Subscribers also must confirm by email before they are ever emailed a notice.
+3. **Automatic cleanup.** `flagBouncedFellows()` reads recent delivery-failure notices in Gmail and marks the matching people `bounced` in both the Fellows and Subscribers tabs. Run it by hand from the Apps Script editor, or add a daily trigger: **Triggers (clock icon) > Add Trigger > `flagBouncedFellows` > Time-driven > Day timer**. To email someone again after fixing their address, clear their `Status` cell.
 
 Gmail keeps retrying a failed message for about a day and sends a "Delivery incomplete" notice, then a final failure notice. Notices already on their way will stop by themselves. If a bad row is already in the sheet, delete it or set its `Status` to `skip`.
 
@@ -203,7 +223,7 @@ Gmail keeps retrying a failed message for about a day and sends a "Delivery inco
 
 Things to keep in mind:
 
-- Public participation is open and free. Fellowship is a selective appointment and is never required to attend a debate. Fellows receive the email notice of each scheduled debate (section 5f).
+- Public participation is open and free. Fellowship is a selective appointment and is never required to attend a debate. Fellows receive the email notice of each scheduled debate automatically, and anyone can sign up for the same notices with the form under the upcoming debates (section 5f).
 - Keep at least one future debate in the Debate Schedule sheet. When none is upcoming, the Index shows the most recent past debate instead.
 - The manifesto stays on the Index. Its first paragraph shows by default and the rest opens with "Read the full manifesto". The Manifesto link in the navigation (`index.html#manifesto`) opens it automatically.
 - Anchor links (such as `index.html#manifesto` or `structure.html#fellowship`) are kept flush under the sticky header by `js/anchors.js`, which re-aligns the section while the debate card and schedule finish loading. Load it on any page that has `#` links to its own sections.
