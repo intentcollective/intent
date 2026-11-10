@@ -19,7 +19,7 @@
    ========================================================================== */
 
 // Published CSV of the "Debate Schedule" tab (File > Share > Publish to web).
-const DEBATE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9ZJLaJ6cAp46DwDBtRw2M4VN6iZzUb3M94T71lmpiCi7niP7Qsxlnn8wIyrEJj2rxEtlhlKh49afy/pub?gid=1524155146&single=true&output=csv";
+const DEBATE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9ZJLaJ6cAp46DwDBtRw2M4VN6iZzUb3M94T71lmpiCi7niP7Qsxlnn8wIyrEJj2rxEtlhlKh49afy/pub?gid=335122004&single=true&output=csv";
 
 // The Discourse sheet, used only to offer a searchable list of posts.
 const DISCOURSE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBQ1XXs9ML_5Bmydn824YJlm7xg-_ueJDw7YxhB4RuVVEfRi495R2E5zOLZ16QCoZQ5n8JXN-Gxo54/pub?output=csv";
