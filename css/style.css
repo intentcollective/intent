@@ -945,3 +945,31 @@ a.btn-primary, a.btn-secondary {
 
 /* Text glyphs in regular weight, so none looks heavier than the others. */
 .gt { font-weight: 400; }
+
+/* ==========================================================================
+   Third revision: one type scale, brand name, notice sign-up
+   ========================================================================== */
+
+/* The name in capitals sits a little smaller so it matches the lowercase
+   text around it. Wrap every INTENT COLLECTIVE in running text with it. */
+.brand { font-size: 0.9em; }
+
+/* Lead text: the hero statement and page intros. */
+.hero p { font-size: 1.1rem; line-height: 1.55; color: var(--ink); }
+
+/* Body text: one size for notes, manifesto, columns and lists. */
+.section-note,
+.apply-note,
+.principle,
+.manifesto p,
+.triad-item p,
+.triad-item .bullet-list li,
+.bullets li { font-size: 1rem; }
+
+/* Notice sign-up */
+.notice-signup { margin-top: 24px; }
+.notice-signup .composer { margin-bottom: 0; }
+.composer .section-note { margin: 0; }
+
+/* Honeypot: hidden from people, visible to bots */
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
