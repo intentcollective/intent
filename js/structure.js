@@ -524,7 +524,7 @@ function initForms() {
         } else if (data.queued > 0) {
           setStatus(status, "Scheduled. " + data.emailed + " notices were sent, and " + data.queued + " more will go out automatically as the daily email limit allows.", "ok");
         } else if (data.emailed > 0) {
-          setStatus(status, "Scheduled. A notice was emailed to " + data.emailed + (data.emailed === 1 ? " fellow." : " fellows."), "ok");
+          setStatus(status, "Scheduled. A notice was emailed to " + data.emailed + (data.emailed === 1 ? " Fellow." : " Fellows."), "ok");
         } else {
           setStatus(status, "Scheduled.", "ok");
         }
