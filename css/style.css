@@ -184,7 +184,7 @@ h1, h2, h3 {
 /* Footnote: same style as the "A-Z" note on the Structure page, in italic.
    Written as .manifesto .footnote so it overrides the .manifesto p rule. */
 .manifesto .footnote {
-  max-width: var(--measure);
+  max-width: calc(var(--measure) * 1.2308); /* 16px / 13px: ch scales with font size */
   margin: 32px 0 0;
   font-size: 13px;
   font-style: italic;
@@ -913,7 +913,7 @@ a.btn-primary, a.btn-secondary {
 
 /* Small italic note, the same style as the manifesto footnote */
 .footnote {
-  max-width: var(--measure);
+  max-width: calc(var(--measure) * 1.2308); /* 16px / 13px: ch scales with font size */
   margin: 16px 0 0;
   font-size: 13px;
   font-style: italic;
