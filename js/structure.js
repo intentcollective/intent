@@ -19,7 +19,7 @@
    ========================================================================== */
 
 // Published CSV of the "Debate Schedule" tab (File > Share > Publish to web).
-const DEBATE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9ZJLaJ6cAp46DwDBtRw2M4VN6iZzUb3M94T71lmpiCi7niP7Qsxlnn8wIyrEJj2rxEtlhlKh49afy/pub?gid=335122004&single=true&output=csv";
+const DEBATE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9ZJLaJ6cAp46DwDBtRw2M4VN6iZzUb3M94T71lmpiCi7niP7Qsxlnn8wIyrEJj2rxEtlhlKh49afy/pub?gid=1524155146&single=true&output=csv";
 
 // The Discourse sheet, used only to offer a searchable list of posts.
 const DISCOURSE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBQ1XXs9ML_5Bmydn824YJlm7xg-_ueJDw7YxhB4RuVVEfRi495R2E5zOLZ16QCoZQ5n8JXN-Gxo54/pub?output=csv";
@@ -186,6 +186,43 @@ function fmtZone(date, tz, withZoneName) {
   return new Intl.DateTimeFormat("en-US", opts).format(date);
 }
 
+
+/* ---------------- Join link: opens one hour before the debate ---------------- */
+
+// The meeting link is shown only from this long before the start. Zoom itself
+// should also have "Join before host" turned off and the waiting room on.
+const JOIN_OPENS_MS = 60 * 60 * 1000;
+
+function joinSlotHTML(d) {
+  const url = String(d.meeting).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+  return `<span class="join-slot" data-start="${d.start.toISOString()}" data-meeting="${url}"></span>`;
+}
+
+// Fills each slot with the Join link or a note, and flips it by itself when
+// the hour arrives. Called after drawing and every 30 seconds.
+function updateJoinSlots() {
+  const now = Date.now();
+  document.querySelectorAll(".join-slot").forEach(slot => {
+    const open = now >= new Date(slot.dataset.start).getTime() - JOIN_OPENS_MS;
+    const state = open ? "open" : "closed";
+    if (slot.dataset.state === state) return;
+    slot.dataset.state = state;
+    slot.classList.toggle("join-note", !open);
+    if (open && /^https?:\/\//i.test(slot.dataset.meeting)) {
+      const a = document.createElement("a");
+      a.href = slot.dataset.meeting;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.textContent = "Join online >>";
+      slot.replaceChildren(a);
+    } else {
+      slot.textContent = "Join link opens one hour before the debate.";
+    }
+  });
+}
+
+setInterval(updateJoinSlots, 30000);
+
 /* ---------------- debate schedule: load + render ---------------- */
 
 function rowsToDebates(rows) {
@@ -211,7 +248,7 @@ function rowsToDebates(rows) {
 function debateRowHTML(d, isPast, isNext) {
   const links = [];
   if (d.discourse) links.push(`<a href="${escapeHTML(d.discourse)}">Read the discourse post &gt;&gt;</a>`);
-  if (d.meeting && !isPast) links.push(`<a href="${escapeHTML(d.meeting)}" target="_blank" rel="noopener">Join online &gt;&gt;</a>`);
+  if (d.meeting && !isPast) links.push(joinSlotHTML(d));
 
   const times = [fmtZone(d.start, TZ_ET, true)];
   if (!isPast) {
@@ -276,6 +313,7 @@ function renderDebates() {
     pastEl.hidden = true;
     pastEl.innerHTML = "";
   }
+  updateJoinSlots();
 }
 
 async function loadDebates() {
@@ -482,6 +520,8 @@ function initForms() {
         $("d-when-preview").textContent = "";
         if (data.emailError) {
           setStatus(status, "Scheduled. The email notice could not be sent: " + data.emailError, "ok");
+        } else if (data.queued > 0) {
+          setStatus(status, "Scheduled. " + data.emailed + " notices were sent, and " + data.queued + " more will go out automatically as the daily email limit allows.", "ok");
         } else if (data.emailed > 0) {
           setStatus(status, "Scheduled. A notice was emailed to " + data.emailed + (data.emailed === 1 ? " fellow." : " fellows."), "ok");
         } else {

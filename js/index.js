@@ -12,7 +12,7 @@
    Keep DEBATE_CSV_URL the same as in js/structure.js.
    ========================================================================== */
 
-const DEBATE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9ZJLaJ6cAp46DwDBtRw2M4VN6iZzUb3M94T71lmpiCi7niP7Qsxlnn8wIyrEJj2rxEtlhlKh49afy/pub?gid=335122004&single=true&output=csv";
+const DEBATE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9ZJLaJ6cAp46DwDBtRw2M4VN6iZzUb3M94T71lmpiCi7niP7Qsxlnn8wIyrEJj2rxEtlhlKh49afy/pub?gid=1524155146&single=true&output=csv";
 
 const TZ_ET = "America/New_York";
 const TZ_SEOUL = "Asia/Seoul";
@@ -131,12 +131,49 @@ function rowsToDebates(rows) {
   }).filter(d => d.subject && d.start && !isNaN(d.start.getTime()));
 }
 
+
+/* ---------------- Join link: opens one hour before the debate ---------------- */
+
+// The meeting link is shown only from this long before the start. Zoom itself
+// should also have "Join before host" turned off and the waiting room on.
+const JOIN_OPENS_MS = 60 * 60 * 1000;
+
+function joinSlotHTML(d) {
+  const url = String(d.meeting).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+  return `<span class="join-slot" data-start="${d.start.toISOString()}" data-meeting="${url}"></span>`;
+}
+
+// Fills each slot with the Join link or a note, and flips it by itself when
+// the hour arrives. Called after drawing and every 30 seconds.
+function updateJoinSlots() {
+  const now = Date.now();
+  document.querySelectorAll(".join-slot").forEach(slot => {
+    const open = now >= new Date(slot.dataset.start).getTime() - JOIN_OPENS_MS;
+    const state = open ? "open" : "closed";
+    if (slot.dataset.state === state) return;
+    slot.dataset.state = state;
+    slot.classList.toggle("join-note", !open);
+    if (open && /^https?:\/\//i.test(slot.dataset.meeting)) {
+      const a = document.createElement("a");
+      a.href = slot.dataset.meeting;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.textContent = "Join online >>";
+      slot.replaceChildren(a);
+    } else {
+      slot.textContent = "Join link opens one hour before the debate.";
+    }
+  });
+}
+
+setInterval(updateJoinSlots, 30000);
+
 /* ---------------- next debate ---------------- */
 
 function debateCardHTML(d, label, isPast, isNext) {
   const links = [];
   if (d.discourse) links.push(`<a href="${escapeHTML(d.discourse)}">Read the discourse post &gt;&gt;</a>`);
-  if (d.meeting && !isPast) links.push(`<a href="${escapeHTML(d.meeting)}" target="_blank" rel="noopener">Join online &gt;&gt;</a>`);
+  if (d.meeting && !isPast) links.push(joinSlotHTML(d));
 
   const times = [fmtZone(d.start, TZ_ET, true)];
   if (!isPast) {
@@ -176,6 +213,7 @@ function showNextDebate(debates) {
     cardEl.hidden = false;
     helpEl.hidden = false;
     stateEl.hidden = true;
+    updateJoinSlots();
     return;
   }
 
