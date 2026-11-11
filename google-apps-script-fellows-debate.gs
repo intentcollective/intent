@@ -48,7 +48,9 @@
  *   event when a debate is scheduled, and the hourly timer keeps the calendar
  *   in step with the tab: edit a row and the event follows, delete the row of
  *   a future debate and its event is removed. The event never contains the
- *   meeting link. Run syncDebateCalendar() by hand to sync right away.
+ *   meeting link, and has no location, because calendars offer map
+ *   directions for a location. Notice emails and the "You're subscribed"
+ *   page link to the whole calendar. Run syncDebateCalendar() by hand to sync right away.
  *
  * SENDING ORDER:
  *   Principal Design Fellows first, then Design Fellows, then Subscribers.
@@ -107,6 +109,16 @@ var REMINDER_HOURS = 24; // a reminder is sent this long before each debate
 // account that deploys this script must own the calendar, or have "Make
 // changes to events" permission on it.
 var DEBATE_CALENDAR_ID = "3729e8fbea5bb9d3e3fb53472411ca5c4c8b501deff3b56945bc158dbd5c150a@group.calendar.google.com";
+
+// Links that subscribe someone to the whole calendar, so every future debate
+// appears by itself. webcal:// makes Apple Calendar and Outlook subscribe
+// instead of importing a one-time copy.
+var CAL_SUBSCRIBE_GOOGLE = DEBATE_CALENDAR_ID
+  ? "https://calendar.google.com/calendar/u/0?cid=" + Utilities.base64Encode(DEBATE_CALENDAR_ID).replace(/=+$/, "")
+  : "";
+var CAL_SUBSCRIBE_ICAL = DEBATE_CALENDAR_ID
+  ? "webcal://calendar.google.com/calendar/ical/" + encodeURIComponent(DEBATE_CALENDAR_ID) + "/public/basic.ics"
+  : "";
 
 // Anyone with one of these statuses is never emailed.
 var SKIP_STATUSES = ["bounced", "skip", "unsubscribed"];
@@ -288,7 +300,12 @@ function handleConfirm(token) {
   }
   return {
     title: "You're subscribed",
-    message: "You will get an email when Intent Collective schedules a live debate. Every notice has an unsubscribe link."
+    message: "You will get an email when Intent Collective schedules a live debate. Every notice has an unsubscribe link.",
+    note: CAL_SUBSCRIBE_GOOGLE ? "You can also put every debate on your calendar, automatically:" : "",
+    links: CAL_SUBSCRIBE_GOOGLE ? [
+      { label: "Google Calendar", url: CAL_SUBSCRIBE_GOOGLE },
+      { label: "Apple or Outlook", url: CAL_SUBSCRIBE_ICAL }
+    ] : []
   };
 }
 
@@ -619,7 +636,6 @@ function syncDebateCalendar() {
       var end = new Date(start.getTime() + 60 * 60 * 1000);
       var title = "Intent Collective: " + subject;
       var desc = calendarDescription(data);
-      var where = "Online: " + debatePageUrl();
 
       var id = String(r[idCol - 1] || "").trim();
       var ev = null;
@@ -629,9 +645,9 @@ function syncDebateCalendar() {
         if (ev.getTitle() !== title) ev.setTitle(title);
         if (ev.getStartTime().getTime() !== start.getTime() || ev.getEndTime().getTime() !== end.getTime()) ev.setTime(start, end);
         if (ev.getDescription() !== desc) ev.setDescription(desc);
-        if (ev.getLocation() !== where) ev.setLocation(where);
+        if (ev.getLocation()) ev.setLocation("");   // no location: calendars offer map directions for it
       } else {
-        ev = cal.createEvent(title, start, end, { description: desc, location: where });
+        ev = cal.createEvent(title, start, end, { description: desc });
         ev.setTag(CAL_TAG, "1");
         sheet.getRange(i + 2, idCol).setValue(ev.getId());
       }
@@ -788,8 +804,7 @@ function googleCalendarUrl(data) {
   return "https://calendar.google.com/calendar/render?action=TEMPLATE" +
     "&text=" + encodeURIComponent("Intent Collective: " + data.subject) +
     "&dates=" + icsStamp(t.start) + "/" + icsStamp(t.end) +
-    "&details=" + encodeURIComponent(calendarDescription(data)) +
-    "&location=" + encodeURIComponent("Online: " + debatePageUrl());
+    "&details=" + encodeURIComponent(calendarDescription(data));
 }
 
 function icsEscape(s) {
@@ -813,7 +828,6 @@ function buildIcsBlob(data) {
     "DTEND:" + icsStamp(t.end),
     "SUMMARY:" + icsEscape("Intent Collective: " + data.subject),
     "DESCRIPTION:" + icsEscape(calendarDescription(data)),
-    "LOCATION:" + icsEscape("Online: " + debatePageUrl()),
     "URL:" + debatePageUrl(),
     "END:VEVENT",
     "END:VCALENDAR"
@@ -845,7 +859,12 @@ function buildNoticeEmail(data, timeLines, recipient, hasLogo, type) {
   var below = 'The Join link appears on the debate page one hour before the start. ' +
     (gcal ? 'For Apple Calendar or Outlook, open the attached calendar file. ' : '') +
     'Debates are one hour, online, and open to everyone. ' +
-    '<a href="' + esc(SITE_STRUCTURE_URL) + '" style="' + link + '">All debates &gt;&gt;</a>';
+    '<a href="' + esc(SITE_STRUCTURE_URL) + '" style="' + link + '">All debates &gt;&gt;</a>' +
+    (CAL_SUBSCRIBE_GOOGLE
+      ? '<br>Every debate on your calendar, automatically: ' +
+        '<a href="' + esc(CAL_SUBSCRIBE_GOOGLE) + '" style="' + link + '">Google Calendar &gt;&gt;</a> ' +
+        '<a href="' + esc(CAL_SUBSCRIBE_ICAL) + '" style="' + link + '">Apple or Outlook &gt;&gt;</a>'
+      : '');
 
   var footerHtml;
   var footerText;
@@ -869,8 +888,12 @@ function buildNoticeEmail(data, timeLines, recipient, hasLogo, type) {
     (gcal ? "Add to Google Calendar: " + gcal + "\n" : "") +
     "\nThe Join link appears on the debate page one hour before the start. " +
     "Debates are one hour, online, and open to everyone.\n" +
-    "All debates: " + SITE_STRUCTURE_URL + "\n\n" +
-    footerText;
+    "All debates: " + SITE_STRUCTURE_URL + "\n" +
+    (CAL_SUBSCRIBE_GOOGLE
+      ? "Every debate on your calendar, automatically: Google Calendar " + CAL_SUBSCRIBE_GOOGLE +
+        " | Apple or Outlook " + CAL_SUBSCRIBE_ICAL + "\n"
+      : "") +
+    "\n" + footerText;
 
   return {
     text: text,
@@ -1132,6 +1155,10 @@ function messagePage(o) {
     '<div style="background:' + C_RAISED + ';border:1px solid ' + C_LINE + ';padding:28px;">' +
     '<div style="font-size:24px;line-height:1.2;font-weight:700;margin:0 0 12px 0;">' + esc(o.title) + '</div>' +
     '<div style="font-size:16px;line-height:1.6;color:' + C_SOFT + ';">' + esc(o.message) + '</div>' +
+    (o.note ? '<div style="font-size:16px;line-height:1.6;color:' + C_SOFT + ';margin-top:12px;">' + esc(o.note) + '</div>' : '') +
+    (o.links || []).map(function (l) {
+      return '<div style="margin-top:8px;"><a href="' + esc(l.url) + '" style="color:' + C_MARK + ';font-weight:700;text-decoration:none;">' + esc(l.label) + ' &gt;&gt;</a></div>';
+    }).join('') +
     '<div style="margin-top:20px;"><a href="' + esc(SITE_URL) + '" style="color:' + C_MARK + ';font-weight:700;text-decoration:none;">intentcollective.design &gt;&gt;</a></div>' +
     '</div></div></div>';
   return HtmlService.createHtmlOutput(html).setTitle(o.title);
