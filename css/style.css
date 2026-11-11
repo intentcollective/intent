@@ -790,6 +790,11 @@ details[open] > summary::before { transform: rotate(90deg); }
 .debate-links .join-slot a:hover { opacity: 0.9; text-decoration: none; }
 .join-slot.join-note { color: var(--ink-soft); }
 
+/* Add to calendar line on a debate card: label in soft ink, links in red */
+.cal-links .cal-label,
+.cal-links .cal-sep { color: var(--ink-soft); }
+.debate-links .cal-links a { white-space: nowrap; }
+
 /* Highlight: the one place a red outline is used */
 .debate-card.is-next { border: 3px solid var(--mark); padding: 20px; }
 

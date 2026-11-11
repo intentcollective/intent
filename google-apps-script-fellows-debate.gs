@@ -806,7 +806,7 @@ function calendarTimes(data) {
 }
 
 function calendarDescription(data) {
-  return "Live debate hosted by " + data.host + ".\n" +
+  return "Live debate hosted by " + String(data.host).replace(/\.+$/, "") + ".\n" +
     "Read the discourse post: " + data.discourse + "\n" +
     "The Join link appears on the debate page one hour before the start: " + debatePageUrl();
 }
