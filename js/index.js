@@ -9,10 +9,10 @@
       to the section is handled by js/anchors.js.
 
    Nothing here writes data. Debates are scheduled on the Structure page.
-   Keep DEBATE_CSV_URL the same as in js/structure.js.
+   The schedule address is set in js/config.js.
    ========================================================================== */
 
-const DEBATE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9ZJLaJ6cAp46DwDBtRw2M4VN6iZzUb3M94T71lmpiCi7niP7Qsxlnn8wIyrEJj2rxEtlhlKh49afy/pub?gid=1524155146&single=true&output=csv";
+const DEBATE_CSV_URL = (window.IC_CONFIG && window.IC_CONFIG.DEBATE_CSV_URL) || "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9ZJLaJ6cAp46DwDBtRw2M4VN6iZzUb3M94T71lmpiCi7niP7Qsxlnn8wIyrEJj2rxEtlhlKh49afy/pub?gid=335122004&single=true&output=csv";
 
 const TZ_ET = "America/New_York";
 const TZ_SEOUL = "Asia/Seoul";

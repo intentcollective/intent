@@ -8,11 +8,11 @@
    ids (sub-toggle, sub-composer, sub-first, sub-last, sub-email, sub-website,
    sub-submit, sub-status).
 
-   Keep ENDPOINT the same as POST_ENDPOINT_URL in js/structure.js.
+   The endpoint address is set in js/config.js.
    ========================================================================== */
 
 (function () {
-  const ENDPOINT = "https://script.google.com/macros/s/AKfycbwJsylXmVramfW8iNDgVPFtfQ-wBvzfQ9FiJ66OU-4Aejd1-JAqr0lCmQVSOWXc-fiBUw/exec";
+  const ENDPOINT = (window.IC_CONFIG && window.IC_CONFIG.FELLOWS_DEBATE_ENDPOINT) || "https://script.google.com/macros/s/AKfycbwJsylXmVramfW8iNDgVPFtfQ-wBvzfQ9FiJ66OU-4Aejd1-JAqr0lCmQVSOWXc-fiBUw/exec";
 
   const el = (id) => document.getElementById(id);
   const toggle = el("sub-toggle");
