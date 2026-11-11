@@ -32,6 +32,17 @@
     toggle.appendChild(sp);
     toggle.appendChild(document.createTextNode(label.slice(1)));
   }
+  const pathLink = el("path-notice");
+  if (pathLink) {
+    pathLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (panel.classList.contains("hidden")) {
+        panel.classList.remove("hidden");
+        setLabel("\u2212 Close");
+      }
+      toggle.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  }
   toggle.hidden = false;
   toggle.addEventListener("click", () => {
     panel.classList.toggle("hidden");

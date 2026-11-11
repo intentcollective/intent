@@ -141,7 +141,7 @@ h1, h2, h3 {
 
 .hero h1 {
   font-size: clamp(2.2rem, 4.6vw, 3.6rem);
-  max-width: 20ch;
+  max-width: 24ch;
 }
 
 .hero p { max-width: var(--measure); }
@@ -983,3 +983,5 @@ a.btn-primary, a.btn-secondary {
   border: 1px solid var(--ink);
 }
 .compose-toggle.toggle-public:hover { color: var(--ink); border-color: var(--mark); }
+
+.hero-path { margin-top: 24px; }
