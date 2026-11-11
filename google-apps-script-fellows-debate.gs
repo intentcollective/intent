@@ -310,13 +310,19 @@ function handleConfirm(token) {
 }
 
 function handleUnsubscribe(token) {
-  var sheet = getSubscribersSheet(false);
-  if (!sheet) return invalidLink();
-  var t = readTable(sheet);
-  var rowIdx = findRowIndex(t, "token", token);
-  if (rowIdx === -1) return invalidLink();
+  // Subscribers first, then Fellows (each Fellow gets a token the first time
+  // a notice is queued for them).
+  var found = null;
+  [getSubscribersSheet(false), getFellowsSheet()].forEach(function (sheet) {
+    if (found || !sheet || sheet.getLastRow() < 2) return;
+    var t = readTable(sheet);
+    var rowIdx = findRowIndex(t, "token", token);
+    if (rowIdx > -1) found = { sheet: sheet, row: rowIdx + 2 };
+  });
+  if (!found) return invalidLink();
 
-  sheet.getRange(rowIdx + 2, t.col["status"] + 1).setValue("unsubscribed");
+  var statusCol = ensureColumn(found.sheet, "status", "Status");
+  found.sheet.getRange(found.row, statusCol).setValue("unsubscribed");
   return {
     title: "You're unsubscribed",
     message: "You will not get any more debate notices. You are always welcome at the debates themselves."
@@ -683,20 +689,26 @@ function collectRecipients() {
   // Principal Design Fellows (priority 1), then Design Fellows (2).
   var fellows = getFellowsSheet();
   if (fellows && fellows.getLastRow() > 1) {
+    var fTokenCol = ensureColumn(fellows, "token", "Token");
     var f = readTable(fellows);
     if (f.col["email"] === undefined) throw new Error('No "Email" column in the Fellows tab.');
-    f.rows.forEach(function (r) {
+    f.rows.forEach(function (r, i) {
       var email = String(r[f.col["email"]]).trim().toLowerCase();
       var status = f.col["status"] !== undefined ? String(r[f.col["status"]]).trim().toLowerCase() : "";
       if (SKIP_STATUSES.indexOf(status) > -1) return;
       if (!isValidEmailFormat(email) || seen[email]) return;
       seen[email] = true;
       var level = f.col["fellowship"] !== undefined ? String(r[f.col["fellowship"]]).toLowerCase() : "";
+      var fToken = String(r[fTokenCol - 1] || "").trim();
+      if (!fToken) {
+        fToken = newToken();
+        fellows.getRange(i + 2, fTokenCol).setValue(fToken);
+      }
       out.push({
         email: email,
         first: f.col["first name"] !== undefined ? String(r[f.col["first name"]]).trim() : "",
         kind: "fellow",
-        token: "",
+        token: fToken,
         priority: level.indexOf("principal") > -1 ? 1 : 2
       });
     });
@@ -872,7 +884,12 @@ function buildNoticeEmail(data, timeLines, recipient, hasLogo, type) {
     var u = unsubscribeUrl(recipient.token);
     footerHtml = 'You receive this because you signed up for debate notices. <a href="' + esc(u) + '" style="color:' + C_SOFT + ';text-decoration:underline;">Unsubscribe</a>.';
     footerText = "You receive this because you signed up for debate notices. Unsubscribe: " + u;
+  } else if (recipient.token) {
+    var fu = unsubscribeUrl(recipient.token);
+    footerHtml = 'You receive this as a Fellow of Intent Collective. <a href="' + esc(fu) + '" style="color:' + C_SOFT + ';text-decoration:underline;">Unsubscribe</a>.';
+    footerText = "You receive this as a Fellow of Intent Collective. Unsubscribe: " + fu;
   } else {
+    // Notices queued before Fellows had tokens.
     footerHtml = 'You receive this as a Fellow of Intent Collective. To stop these notices, write to <a href="mailto:' + esc(CONTACT_EMAIL) + '" style="color:' + C_SOFT + ';text-decoration:underline;">' + esc(CONTACT_EMAIL) + '</a>.';
     footerText = "You receive this as a Fellow of Intent Collective. To stop these notices, write to " + CONTACT_EMAIL + ".";
   }
