@@ -31,29 +31,8 @@
       <img class="logo-mark" src="assets/logo.png" alt="Intent Collective mark">
       <h1>A global collective of designers challenging ideas through live debate.</h1>
       <p><span class="brand">INTENT COLLECTIVE&trade;</span> brings designers together to exchange ideas, question assumptions, and learn from opposing perspectives. Our debates are live, free, and open to everyone.</p>
-      <p class="card-link-row hero-path">
-        <a class="text-link" href="#debate">See upcoming debates &gt;&gt;</a>
-        <a class="text-link" href="structure.html#fellowship">Meet the Fellows &gt;&gt;</a>
-        <a class="text-link" href="#debate" id="path-notice">Get notices by email &gt;&gt;</a>
-      </p>
-    </div>
-  </section>
-
-  <!-- ===================== NEXT LIVE DEBATE ===================== -->
-  <section class="section-block" id="debate">
-    <div class="wrap">
-      <div class="mark-label">Upcoming Live Debates</div>
-      <p class="section-note">Free and open to everyone. No Fellowship or invitation required.</p>
-      <ul class="bullets">
-        <li>One-hour online debates centered on a defined question.</li>
-        <li>Join to speak or listen, depending on the debate format.</li>
-        <li>Email notices of upcoming debates are available to anyone.</li>
-      </ul>
-      <div id="next-debate-state" class="state-msg">Loading the next debate&hellip;</div>
-      <div id="next-debate" class="debate-list" hidden></div>
-      <p class="section-note debate-help" id="next-debate-help" hidden>The Join link appears on the debate one hour before it starts.</p>
       <div class="notice-signup">
-        <button type="button" id="sub-toggle" class="compose-toggle toggle-public" hidden>+ Get debate notices by email</button>
+        <button type="button" id="sub-toggle" class="btn-primary" hidden>Get debate notices by email</button>
         <div id="sub-composer" class="composer hidden">
           <p class="section-note">Get an email when a live debate is scheduled. You confirm by email first, and every notice has an unsubscribe link.</p>
           <div class="field-row">
@@ -80,6 +59,22 @@
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ===================== NEXT LIVE DEBATE ===================== -->
+  <section class="section-block" id="debate">
+    <div class="wrap">
+      <div class="mark-label">Upcoming Live Debates</div>
+      <p class="section-note">Free and open to everyone. No Fellowship or invitation required.</p>
+      <ul class="bullets">
+        <li>One-hour online debates centered on a defined question.</li>
+        <li>Join to speak or listen, depending on the debate format.</li>
+        <li>Email notices of upcoming debates are available to anyone.</li>
+      </ul>
+      <div id="next-debate-state" class="state-msg">Loading the next debate&hellip;</div>
+      <div id="next-debate" class="debate-list" hidden></div>
+      <p class="section-note debate-help" id="next-debate-help" hidden>The Join link appears on the debate one hour before it starts.</p>
       <p class="card-link-row"><a class="text-link" href="structure.html#debates">How live debate works &gt;&gt;</a><a class="text-link" href="structure.html#become">Become a Design Fellow &gt;&gt;</a></p>
     </div>
   </section>
@@ -185,6 +180,7 @@
 <script src="js/anchors.js"></script>
 <script src="js/index.js"></script>
 <script src="js/subscribe.js"></script>
+<script src="js/typography.js"></script>
 <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 
 </body>

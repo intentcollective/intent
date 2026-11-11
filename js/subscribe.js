@@ -12,7 +12,7 @@
    ========================================================================== */
 
 (function () {
-  const ENDPOINT = (window.IC_CONFIG && window.IC_CONFIG.FELLOWS_DEBATE_ENDPOINT) || "https://script.google.com/macros/s/AKfycbwJsylXmVramfW8iNDgVPFtfQ-wBvzfQ9FiJ66OU-4Aejd1-JAqr0lCmQVSOWXc-fiBUw/exec";
+  const ENDPOINT = (window.IC_CONFIG && typeof window.IC_CONFIG.FELLOWS_DEBATE_ENDPOINT === "string") ? window.IC_CONFIG.FELLOWS_DEBATE_ENDPOINT : "https://script.google.com/macros/s/AKfycbwJsylXmVramfW8iNDgVPFtfQ-wBvzfQ9FiJ66OU-4Aejd1-JAqr0lCmQVSOWXc-fiBUw/exec";
 
   const el = (id) => document.getElementById(id);
   const toggle = el("sub-toggle");
@@ -23,32 +23,15 @@
   const ready = ENDPOINT && !ENDPOINT.includes("PASTE_YOUR");
   if (!ready) return;
 
-  const openLabel = "+ Get debate notices by email";
-  function setLabel(label) {
-    toggle.textContent = "";
-    const sp = document.createElement("span");
-    sp.className = "tg-sign";
-    sp.textContent = label.charAt(0);
-    toggle.appendChild(sp);
-    toggle.appendChild(document.createTextNode(label.slice(1)));
-  }
-  const pathLink = el("path-notice");
-  if (pathLink) {
-    pathLink.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (panel.classList.contains("hidden")) {
-        panel.classList.remove("hidden");
-        setLabel("\u2212 Close");
-      }
-      toggle.scrollIntoView({ behavior: "smooth", block: "center" });
-    });
-  }
+  const openLabel = "Get debate notices by email";
   toggle.hidden = false;
+  toggle.setAttribute("aria-expanded", "false");
   toggle.addEventListener("click", () => {
     panel.classList.toggle("hidden");
-    setLabel(panel.classList.contains("hidden") ? openLabel : "\u2212 Close");
+    const open = !panel.classList.contains("hidden");
+    toggle.setAttribute("aria-expanded", String(open));
+    toggle.textContent = open ? "Close" : openLabel;
   });
-  setLabel(openLabel);
 
   function setStatus(message, kind) {
     const s = el("sub-status");

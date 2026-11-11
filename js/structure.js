@@ -25,7 +25,7 @@ const DEBATE_CSV_URL = (window.IC_CONFIG && window.IC_CONFIG.DEBATE_CSV_URL) || 
 const DISCOURSE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBQ1XXs9ML_5Bmydn824YJlm7xg-_ueJDw7YxhB4RuVVEfRi495R2E5zOLZ16QCoZQ5n8JXN-Gxo54/pub?output=csv";
 
 // Web app URL of the Fellows + Debate Apps Script.
-const POST_ENDPOINT_URL = (window.IC_CONFIG && window.IC_CONFIG.FELLOWS_DEBATE_ENDPOINT) || "https://script.google.com/macros/s/AKfycbwJsylXmVramfW8iNDgVPFtfQ-wBvzfQ9FiJ66OU-4Aejd1-JAqr0lCmQVSOWXc-fiBUw/exec";
+const POST_ENDPOINT_URL = (window.IC_CONFIG && typeof window.IC_CONFIG.FELLOWS_DEBATE_ENDPOINT === "string") ? window.IC_CONFIG.FELLOWS_DEBATE_ENDPOINT : "https://script.google.com/macros/s/AKfycbwJsylXmVramfW8iNDgVPFtfQ-wBvzfQ9FiJ66OU-4Aejd1-JAqr0lCmQVSOWXc-fiBUw/exec";
 
 // Soft client-side check only, for instant feedback. The Apps Script checks
 // the password server-side; that is the real gate.
@@ -213,7 +213,7 @@ function updateJoinSlots() {
       a.href = slot.dataset.meeting;
       a.target = "_blank";
       a.rel = "noopener";
-      a.textContent = "Join online >>";
+      a.textContent = "Join online";
       slot.replaceChildren(a);
     } else {
       slot.textContent = "Join link opens one hour before the debate.";
@@ -438,24 +438,14 @@ function refreshPostResults() {
 
 /* ---------------- forms ---------------- */
 
-function setupToggle(btnId, panelId, openLabel) {
+function setupToggle(btnId, panelId) {
   const btn = $(btnId), panel = $(panelId);
   btn.hidden = false;
+  btn.setAttribute("aria-expanded", "false");
   btn.addEventListener("click", () => {
     panel.classList.toggle("hidden");
-    setToggleLabel(btn, panel.classList.contains("hidden") ? openLabel : "\u2212 Close");
+    btn.setAttribute("aria-expanded", String(!panel.classList.contains("hidden")));
   });
-  setToggleLabel(btn, openLabel);
-}
-
-function setToggleLabel(btn, label) {
-  const sign = label.charAt(0), rest = label.slice(1);
-  btn.textContent = "";
-  const sp = document.createElement("span");
-  sp.className = "tg-sign";
-  sp.textContent = sign;
-  btn.appendChild(sp);
-  btn.appendChild(document.createTextNode(rest));
 }
 
 function updateWhenPreview() {
@@ -484,7 +474,7 @@ function initForms() {
     if (!ev.target.closest(".post-picker")) $("d-post-results").hidden = true;
   });
 
-  if (endpointReady) setupToggle("debate-toggle", "debate-composer", "+ Schedule a debate");
+  if (endpointReady) setupToggle("debate-toggle", "debate-composer");
 
   $("d-submit").addEventListener("click", async () => {
     const status = $("d-status");
@@ -547,7 +537,7 @@ function initForms() {
   });
 
   // ----- fellow registration form -----
-  if (endpointReady) setupToggle("fellow-toggle", "fellow-composer", "+ Register a fellow");
+  if (endpointReady) setupToggle("fellow-toggle", "fellow-composer");
 
   $("f-submit").addEventListener("click", async () => {
     const status = $("f-status");

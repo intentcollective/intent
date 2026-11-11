@@ -158,7 +158,7 @@ function updateJoinSlots() {
       a.href = slot.dataset.meeting;
       a.target = "_blank";
       a.rel = "noopener";
-      a.textContent = "Join online >>";
+      a.textContent = "Join online";
       slot.replaceChildren(a);
     } else {
       slot.textContent = "Join link opens one hour before the debate.";

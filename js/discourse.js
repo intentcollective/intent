@@ -505,7 +505,7 @@ try {
   } else {
     composeToggle.addEventListener("click", () => {
       composer.classList.toggle("hidden");
-      composeToggle.textContent = composer.classList.contains("hidden") ? "+ Share a post" : "− Close";
+      composeToggle.setAttribute("aria-expanded", String(!composer.classList.contains("hidden")));
     });
   }
 
@@ -673,7 +673,7 @@ try {
 
         clearComposer();
         composer.classList.add("hidden");
-        composeToggle.textContent = "+ Share a post";
+        composeToggle.setAttribute("aria-expanded", "false");
         setComposerStatus("Published. (It may take a few minutes to also show up after the sheet's own refresh.)", "ok");
       } catch (err) {
         setComposerStatus("Couldn't reach the posting service. Check POST_ENDPOINT_URL in js/discourse.js.", "error");
