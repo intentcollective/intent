@@ -24,11 +24,20 @@
   if (!ready) return;
 
   const openLabel = "+ Get debate notices by email";
+  function setLabel(label) {
+    toggle.textContent = "";
+    const sp = document.createElement("span");
+    sp.className = "tg-sign";
+    sp.textContent = label.charAt(0);
+    toggle.appendChild(sp);
+    toggle.appendChild(document.createTextNode(label.slice(1)));
+  }
   toggle.hidden = false;
   toggle.addEventListener("click", () => {
     panel.classList.toggle("hidden");
-    toggle.textContent = panel.classList.contains("hidden") ? openLabel : "\u2212 Close";
+    setLabel(panel.classList.contains("hidden") ? openLabel : "\u2212 Close");
   });
+  setLabel(openLabel);
 
   function setStatus(message, kind) {
     const s = el("sub-status");

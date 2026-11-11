@@ -443,8 +443,19 @@ function setupToggle(btnId, panelId, openLabel) {
   btn.hidden = false;
   btn.addEventListener("click", () => {
     panel.classList.toggle("hidden");
-    btn.textContent = panel.classList.contains("hidden") ? openLabel : "\u2212 Close";
+    setToggleLabel(btn, panel.classList.contains("hidden") ? openLabel : "\u2212 Close");
   });
+  setToggleLabel(btn, openLabel);
+}
+
+function setToggleLabel(btn, label) {
+  const sign = label.charAt(0), rest = label.slice(1);
+  btn.textContent = "";
+  const sp = document.createElement("span");
+  sp.className = "tg-sign";
+  sp.textContent = sign;
+  btn.appendChild(sp);
+  btn.appendChild(document.createTextNode(rest));
 }
 
 function updateWhenPreview() {
