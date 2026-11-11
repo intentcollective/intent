@@ -542,7 +542,8 @@ function countQueued(dueOnly) {
 function noticeTimeLines(data) {
   var when = new Date(data.startUtc);
   if (isNaN(when.getTime())) return [data.date + " (US Eastern)"];
-  var fmt = "EEEE, MMMM d, yyyy 'at' h:mm a z";
+  // Non-breaking spaces keep "at 10:00 AM EST" on one line on phones.
+  var fmt = "EEEE, MMMM d, yyyy\u00a0'at'\u00a0h:mm\u00a0a\u00a0z";
   return [
     "Eastern: " + Utilities.formatDate(when, "America/New_York", fmt),
     "Seoul: " + Utilities.formatDate(when, "Asia/Seoul", fmt),
@@ -847,6 +848,23 @@ function buildIcsBlob(data) {
   return Utilities.newBlob(lines.join("\r\n") + "\r\n", "text/calendar", "intent-collective-debate.ics");
 }
 
+// One block in the email box with both calendar choices: add this debate, or
+// subscribe to every debate. They are alternatives (doing both shows the
+// debate twice), so they sit on two labelled lines, not side by side.
+function calendarBlockHtml(gcal, font, link) {
+  var soft = 'color:' + C_SOFT + ';';
+  link = link + 'white-space:nowrap;';   // a link name never breaks across lines
+  var thisLine = gcal
+    ? '<span style="' + soft + '">This debate:</span> <a href="' + esc(gcal) + '" style="' + link + '">Google Calendar &gt;</a><span style="' + soft + '">, or open the attached file</span>'
+    : '<span style="' + soft + '">This debate: open the attached file</span>';
+  var allLine = CAL_SUBSCRIBE_GOOGLE
+    ? '<br><span style="' + soft + '">Every debate, automatically:</span> <a href="' + esc(CAL_SUBSCRIBE_GOOGLE) + '" style="' + link + '">Google Calendar &gt;</a><span style="' + soft + '"> &middot; </span><a href="' + esc(CAL_SUBSCRIBE_ICAL) + '" style="' + link + '">Apple or Outlook &gt;</a>'
+    : '';
+  return '<div style="border-top:1px dashed ' + C_LINE + ';margin:14px 0 0 0;padding:12px 0 0 0;font-family:' + font + ';font-size:15px;line-height:1.8;">' +
+    '<div style="font-family:' + font + ';font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;' + soft + '">Add to your calendar</div>' +
+    thisLine + allLine + '</div>';
+}
+
 // type: "notice" (a debate was scheduled) or "reminder" (24 hours before).
 function buildNoticeEmail(data, timeLines, recipient, hasLogo, type) {
   var isReminder = type === "reminder";
@@ -863,20 +881,14 @@ function buildNoticeEmail(data, timeLines, recipient, hasLogo, type) {
     '<div style="font-family:' + font + ';font-size:15px;line-height:1.6;color:' + C_SOFT + ';margin:0 0 6px 0;">Hosted by ' + esc(data.host) + '</div>' +
     '<div style="font-family:' + font + ';font-size:15px;line-height:1.6;color:' + C_INK + ';">' + timeLines.map(esc).join('<br>') + '</div>' +
     '<div style="border-top:1px dashed ' + C_LINE + ';margin:16px 0 0 0;padding:12px 0 0 0;font-family:' + font + ';font-size:15px;line-height:1.8;">' +
-    '<a href="' + esc(data.discourse) + '" style="' + link + '">Read the discourse post &gt;&gt;</a><br>' +
-    '<a href="' + esc(page) + '" style="' + link + '">Open the debate page &gt;&gt;</a>' +
-    (gcal ? '<br><a href="' + esc(gcal) + '" style="' + link + '">Add to Google Calendar &gt;&gt;</a>' : '') +
-    '</div>';
+    '<a href="' + esc(data.discourse) + '" style="' + link + '">Read the discourse post &gt;</a><br>' +
+    '<a href="' + esc(page) + '" style="' + link + '">Open the debate page &gt;</a>' +
+    '</div>' +
+    calendarBlockHtml(gcal, font, link);
 
   var below = 'The Join link appears on the debate page one hour before the start. ' +
-    (gcal ? 'For Apple Calendar or Outlook, open the attached calendar file. ' : '') +
     'Debates are one hour, online, and open to everyone. ' +
-    '<a href="' + esc(SITE_STRUCTURE_URL) + '" style="' + link + '">All debates &gt;&gt;</a>' +
-    (CAL_SUBSCRIBE_GOOGLE
-      ? '<br>Every debate on your calendar, automatically: ' +
-        '<a href="' + esc(CAL_SUBSCRIBE_GOOGLE) + '" style="' + link + '">Google Calendar &gt;&gt;</a> ' +
-        '<a href="' + esc(CAL_SUBSCRIBE_ICAL) + '" style="' + link + '">Apple or Outlook &gt;&gt;</a>'
-      : '');
+    '<a href="' + esc(SITE_STRUCTURE_URL) + '" style="' + link + '">All debates &gt;</a>';
 
   var footerHtml;
   var footerText;
@@ -902,15 +914,15 @@ function buildNoticeEmail(data, timeLines, recipient, hasLogo, type) {
     timeLines.join("\n") + "\n\n" +
     "Read the discourse post: " + data.discourse + "\n" +
     "Debate page: " + page + "\n" +
-    (gcal ? "Add to Google Calendar: " + gcal + "\n" : "") +
+    "\nAdd to your calendar\n" +
+    (gcal ? "This debate: Google Calendar " + gcal + ", or open the attached file\n" : "This debate: open the attached file\n") +
+    (CAL_SUBSCRIBE_GOOGLE
+      ? "Every debate, automatically: Google Calendar " + CAL_SUBSCRIBE_GOOGLE + " | Apple or Outlook " + CAL_SUBSCRIBE_ICAL + "\n"
+      : "") +
     "\nThe Join link appears on the debate page one hour before the start. " +
     "Debates are one hour, online, and open to everyone.\n" +
-    "All debates: " + SITE_STRUCTURE_URL + "\n" +
-    (CAL_SUBSCRIBE_GOOGLE
-      ? "Every debate on your calendar, automatically: Google Calendar " + CAL_SUBSCRIBE_GOOGLE +
-        " | Apple or Outlook " + CAL_SUBSCRIBE_ICAL + "\n"
-      : "") +
-    "\n" + footerText;
+    "All debates: " + SITE_STRUCTURE_URL + "\n\n" +
+    footerText;
 
   return {
     text: text,
@@ -1174,9 +1186,9 @@ function messagePage(o) {
     '<div style="font-size:16px;line-height:1.6;color:' + C_SOFT + ';">' + esc(o.message) + '</div>' +
     (o.note ? '<div style="font-size:16px;line-height:1.6;color:' + C_SOFT + ';margin-top:12px;">' + esc(o.note) + '</div>' : '') +
     (o.links || []).map(function (l) {
-      return '<div style="margin-top:8px;"><a href="' + esc(l.url) + '" style="color:' + C_MARK + ';font-weight:700;text-decoration:none;">' + esc(l.label) + ' &gt;&gt;</a></div>';
+      return '<div style="margin-top:8px;"><a href="' + esc(l.url) + '" style="color:' + C_MARK + ';font-weight:700;text-decoration:none;">' + esc(l.label) + ' &gt;</a></div>';
     }).join('') +
-    '<div style="margin-top:20px;"><a href="' + esc(SITE_URL) + '" style="color:' + C_MARK + ';font-weight:700;text-decoration:none;">intentcollective.design &gt;&gt;</a></div>' +
+    '<div style="margin-top:20px;"><a href="' + esc(SITE_URL) + '" style="color:' + C_MARK + ';font-weight:700;text-decoration:none;">intentcollective.design &gt;</a></div>' +
     '</div></div></div>';
   return HtmlService.createHtmlOutput(html).setTitle(o.title);
 }

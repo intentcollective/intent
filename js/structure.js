@@ -247,7 +247,7 @@ function rowsToDebates(rows) {
 
 function debateRowHTML(d, isPast, isNext) {
   const links = [];
-  if (d.discourse) links.push(`<a href="${escapeHTML(d.discourse)}">Read the discourse post &gt;&gt;</a>`);
+  if (d.discourse) links.push(`<a href="${escapeHTML(d.discourse)}">Read the discourse post &gt;</a>`);
   if (d.meeting && !isPast) links.push(joinSlotHTML(d));
 
   const times = [fmtZone(d.start, TZ_ET, true)];
