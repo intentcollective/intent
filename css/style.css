@@ -775,7 +775,7 @@ details[open] > summary::before { transform: rotate(90deg); }
   padding-top: 10px;
 }
 
-.debate-links .join-slot a {
+.join-slot a {
   display: inline-block;
   margin-top: var(--s1);
   padding: var(--btn-pad);
@@ -787,7 +787,7 @@ details[open] > summary::before { transform: rotate(90deg); }
   text-transform: uppercase;
 }
 
-.debate-links .join-slot a:hover { opacity: 0.9; text-decoration: none; }
+.join-slot a:hover { opacity: 0.9; text-decoration: none; }
 .join-slot.join-note { color: var(--ink-soft); }
 
 /* Add to calendar line on a debate card: label in soft ink, links in red */
@@ -797,6 +797,17 @@ details[open] > summary::before { transform: rotate(90deg); }
 
 /* Highlight: the one place a red outline is used */
 .debate-card.is-next { border: 3px solid var(--mark); padding: 20px; }
+
+/* While Join is open: the outline gets heavier (padding shrinks by the same
+   amount, so the content does not move) and the Join button leads the card. */
+.debate-card.is-next.is-live { border-width: 6px; padding: 17px; }
+.join-slot.join-top { display: block; margin: 0 0 12px; }
+.join-slot.join-top a { margin-top: 0; }
+.join-slot[hidden] { display: none; }
+
+/* Index hero while a debate is open: Join replaces the notice sign-up. */
+.hero-join { display: inline-block; margin-top: 28px; text-decoration: none; }
+.hero-join[hidden], body.join-live .notice-signup { display: none; }
 
 .debate-past { margin-top: 32px; }
 .debate-past summary { padding: var(--s1) 0; }

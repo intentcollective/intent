@@ -193,32 +193,57 @@ function fmtZone(date, tz, withZoneName) {
 // should also have "Join before host" turned off and the waiting room on.
 const JOIN_OPENS_MS = 60 * 60 * 1000;
 
-function joinSlotHTML(d) {
+// Each upcoming card has two slots. The "top" slot, right under the title,
+// holds the Join button once it opens, so the live action leads the card.
+// The "note" slot, at the bottom, says when the link will open until then.
+function joinSlotHTML(d, pos) {
   const url = String(d.meeting).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
-  return `<span class="join-slot" data-start="${d.start.toISOString()}" data-meeting="${url}"></span>`;
+  return `<span class="join-slot join-${pos}" data-pos="${pos}" data-start="${d.start.toISOString()}" data-meeting="${url}"></span>`;
 }
 
-// Fills each slot with the Join link or a note, and flips it by itself when
-// the hour arrives. Called after drawing and every 30 seconds.
+// Fills the slots and flips them by itself when the hour arrives. While
+// Join is open the card is marked .is-live (thicker red outline) and, on the
+// Index, the hero's notice button gives way to "Join the live debate".
+// Called after drawing and every 30 seconds.
 function updateJoinSlots() {
   const now = Date.now();
+  let liveUrl = "";
   document.querySelectorAll(".join-slot").forEach(slot => {
-    const open = now >= new Date(slot.dataset.start).getTime() - JOIN_OPENS_MS;
+    const valid = /^https?:\/\//i.test(slot.dataset.meeting);
+    const open = valid && now >= new Date(slot.dataset.start).getTime() - JOIN_OPENS_MS;
+    const card = slot.closest(".debate-card");
+    if (card) card.classList.toggle("is-live", open);
+    if (open && !liveUrl && card && card.classList.contains("is-next")) liveUrl = slot.dataset.meeting;
+
     const state = open ? "open" : "closed";
     if (slot.dataset.state === state) return;
     slot.dataset.state = state;
-    slot.classList.toggle("join-note", !open);
-    if (open && /^https?:\/\//i.test(slot.dataset.meeting)) {
-      const a = document.createElement("a");
-      a.href = slot.dataset.meeting;
-      a.target = "_blank";
-      a.rel = "noopener";
-      a.textContent = "Join online";
-      slot.replaceChildren(a);
+
+    if (slot.dataset.pos === "top") {
+      if (open) {
+        const a = document.createElement("a");
+        a.href = slot.dataset.meeting;
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.textContent = "Join online";
+        slot.replaceChildren(a);
+      } else {
+        slot.replaceChildren();
+      }
+      slot.hidden = !open;
     } else {
-      slot.textContent = "Join link opens one hour before the debate.";
+      slot.classList.add("join-note");
+      slot.textContent = open ? "" : "Join link opens one hour before the debate.";
+      slot.hidden = open;
     }
   });
+
+  const heroJoin = document.getElementById("hero-join");
+  if (heroJoin) {
+    heroJoin.hidden = !liveUrl;
+    if (liveUrl) heroJoin.href = liveUrl;
+    document.body.classList.toggle("join-live", !!liveUrl);
+  }
 }
 
 setInterval(updateJoinSlots, 30000);
@@ -249,7 +274,7 @@ function debateRowHTML(d, isPast, isNext) {
   const links = [];
   if (d.discourse) links.push(`<a href="${escapeHTML(d.discourse)}">Read the discourse post &gt;</a>`);
   if (!isPast && typeof calendarLinksHTML === "function") links.push(calendarLinksHTML(d));
-  if (d.meeting && !isPast) links.push(joinSlotHTML(d));
+  if (d.meeting && !isPast) links.push(joinSlotHTML(d, "note"));
 
   const times = [fmtZone(d.start, TZ_ET, true)];
   if (!isPast) {
@@ -261,6 +286,7 @@ function debateRowHTML(d, isPast, isNext) {
     <article class="entry-card debate-card${isNext ? " is-next" : ""}">
       <div class="entry-meta"><span>${isPast ? "Debate" : (isNext ? "Next debate" : "Upcoming debate")}</span></div>
       <h3>${escapeHTML(d.subject)}</h3>
+      ${d.meeting && !isPast ? joinSlotHTML(d, "top") : ""}
       <div class="debate-info">
         ${d.host ? `<div class="debate-host">Hosted by ${escapeHTML(d.host)}</div>` : ""}
         ${times.map(t => `<div>${escapeHTML(t)}</div>`).join("")}
