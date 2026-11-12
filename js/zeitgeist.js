@@ -224,7 +224,7 @@ window.addEventListener("hashchange", handleHash);
 async function loadEntries() {
   if (!SHEET_CSV_URL || SHEET_CSV_URL.includes("PASTE_YOUR")) {
     setState(
-      "Zeitgeist isn't connected yet — paste your published Google Sheet CSV URL into js/zeitgeist.js.",
+      "Zeitgeist isn\u2019t connected yet. Paste your published Google Sheet CSV URL into js/zeitgeist.js.",
       true
     );
     return;
@@ -240,7 +240,7 @@ async function loadEntries() {
     handleHash();
   } catch (err) {
     setState(
-      "Couldn't load links from the sheet. Check that it's published to the web as CSV and that the URL in js/zeitgeist.js is correct.",
+      "Couldn\u2019t load links from the sheet. Check that it\u2019s published to the web as CSV and that the URL in js/zeitgeist.js is correct.",
       true
     );
     console.error(err);
@@ -330,9 +330,9 @@ try {
         passwordInput.value = "";
         composer.classList.add("hidden");
         composeToggle.setAttribute("aria-expanded", "false");
-        setComposerStatus("Published. (It may take a few minutes to also show up after the sheet's own refresh.)", "ok");
+        setComposerStatus("Published. (It may take a few minutes to also show up after the sheet\u2019s own refresh.)", "ok");
       } catch (err) {
-        setComposerStatus("Couldn't reach the posting service. Check POST_ENDPOINT_URL in js/zeitgeist.js.", "error");
+        setComposerStatus("Couldn\u2019t reach the posting service. Check POST_ENDPOINT_URL in js/zeitgeist.js.", "error");
         console.error(err);
       }
       publishBtn.disabled = false;

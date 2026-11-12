@@ -266,7 +266,7 @@ async function loadNextDebate() {
   } catch (err) {
     stateEl.hidden = false;
     stateEl.classList.add("is-error");
-    stateEl.textContent = "Couldn't load the next debate. See all debates on the Structure page.";
+    stateEl.textContent = "Couldn\u2019t load the next debate. See all debates on the Structure page.";
     console.error(err);
   }
 }

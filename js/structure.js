@@ -346,7 +346,7 @@ function renderDebates() {
 async function loadDebates() {
   const stateEl = $("debate-state");
   if (!DEBATE_CSV_URL || DEBATE_CSV_URL.includes("PASTE_YOUR")) {
-    stateEl.textContent = "The debate schedule isn't connected yet. Paste the Debate Schedule CSV URL into js/structure.js.";
+    stateEl.textContent = "The debate schedule isn\u2019t connected yet. Paste the Debate Schedule CSV URL into js/structure.js.";
     stateEl.classList.add("is-error");
     return;
   }
@@ -356,7 +356,7 @@ async function loadDebates() {
     debates = rowsToDebates(parseCSV(await res.text()));
     renderDebates();
   } catch (err) {
-    stateEl.textContent = "Couldn't load the debate schedule. Check that the sheet is published to the web as CSV and that the URL in js/structure.js is correct.";
+    stateEl.textContent = "Couldn\u2019t load the debate schedule. Check that the sheet is published to the web as CSV and that the URL in js/structure.js is correct.";
     stateEl.classList.add("is-error");
     console.error(err);
   }
@@ -557,7 +557,7 @@ function initForms() {
         }
       }
     } catch (err) {
-      setStatus(status, "Couldn't reach the posting service. In Apps Script, the deployment must be set to Who has access: Anyone. Also check POST_ENDPOINT_URL in js/structure.js.", "error");
+      setStatus(status, "Couldn\u2019t reach the posting service. In Apps Script, the deployment must be set to Who has access: Anyone. Also check POST_ENDPOINT_URL in js/structure.js.", "error");
       console.error(err);
     }
     btn.disabled = false;
@@ -586,7 +586,7 @@ function initForms() {
       setStatus(status, "Enter a valid email address.", "error"); return;
     }
     if (email.toLowerCase() !== email2.toLowerCase()) {
-      setStatus(status, "The two email addresses don't match.", "error"); return;
+      setStatus(status, "The two email addresses don\u2019t match.", "error"); return;
     }
     if (linkedin && !safeUrl(linkedin)) {
       setStatus(status, "The LinkedIn link must start with http:// or https://", "error"); return;
@@ -598,7 +598,7 @@ function initForms() {
     btn.disabled = true;
     setStatus(status, "Checking email\u2026", null);
     if (!(await emailDomainOk(email))) {
-      setStatus(status, "That email's domain can't receive mail. Please check for typos.", "error");
+      setStatus(status, "That email\u2019s domain can\u2019t receive mail. Please check for typos.", "error");
       btn.disabled = false;
       return;
     }
@@ -616,7 +616,7 @@ function initForms() {
         setStatus(status, "Registered: " + firstName + " " + lastName + ".", "ok");
       }
     } catch (err) {
-      setStatus(status, "Couldn't reach the posting service. In Apps Script, the deployment must be set to Who has access: Anyone. Also check POST_ENDPOINT_URL in js/structure.js.", "error");
+      setStatus(status, "Couldn\u2019t reach the posting service. In Apps Script, the deployment must be set to Who has access: Anyone. Also check POST_ENDPOINT_URL in js/structure.js.", "error");
       console.error(err);
     }
     btn.disabled = false;

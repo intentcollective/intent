@@ -186,7 +186,7 @@ function handleFellow(data) {
   if (!domainCanReceiveMail(email)) {
     return respond({
       status: "error",
-      message: "That email's domain can't receive mail. Please check for typos."
+      message: "That email\u2019s domain can\u2019t receive mail. Please check for typos."
     });
   }
 
@@ -223,7 +223,7 @@ function handleSubscribe(data) {
     return respond({ status: "error", message: "Enter a valid email address." });
   }
   if (!domainCanReceiveMail(email)) {
-    return respond({ status: "error", message: "That email's domain can't receive mail. Please check for typos." });
+    return respond({ status: "error", message: "That email\u2019s domain can\u2019t receive mail. Please check for typos." });
   }
   if (MailApp.getRemainingDailyQuota() < 5) {
     return respond({ status: "error", message: "Sign-ups are paused for today. Please try again tomorrow." });
@@ -293,13 +293,13 @@ function handleConfirm(token) {
 
   var status = String(t.rows[rowIdx][t.col["status"]] || "").trim().toLowerCase();
   if (status === "bounced" || status === "skip") {
-    return { title: "We couldn't confirm this address", message: "Please write to " + CONTACT_EMAIL + " and we will help." };
+    return { title: "We couldn\u2019t confirm this address", message: "Please write to " + CONTACT_EMAIL + " and we will help." };
   }
   if (status !== "confirmed") {
     sheet.getRange(rowIdx + 2, t.col["status"] + 1).setValue("confirmed");
   }
   return {
-    title: "You're subscribed",
+    title: "You\u2019re subscribed",
     message: "You will get an email when Intent Collective schedules a live debate. Every notice has an unsubscribe link.",
     note: CAL_SUBSCRIBE_GOOGLE ? "You can also put every debate on your calendar, automatically:" : "",
     links: CAL_SUBSCRIBE_GOOGLE ? [
@@ -324,7 +324,7 @@ function handleUnsubscribe(token) {
   var statusCol = ensureColumn(found.sheet, "status", "Status");
   found.sheet.getRange(found.row, statusCol).setValue("unsubscribed");
   return {
-    title: "You're unsubscribed",
+    title: "You\u2019re unsubscribed",
     message: "You will not get any more debate notices. You are always welcome at the debates themselves."
   };
 }

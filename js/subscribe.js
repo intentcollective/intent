@@ -75,7 +75,7 @@
     submit.disabled = true;
     setStatus("Checking email\u2026", null);
     if (!(await emailDomainOk(email))) {
-      setStatus("That email's domain can't receive mail. Please check for typos.", "error");
+      setStatus("That email\u2019s domain can\u2019t receive mail. Please check for typos.", "error");
       submit.disabled = false;
       return;
     }
@@ -95,7 +95,7 @@
         setStatus(data.message || "Check your email to confirm.", "ok");
       }
     } catch (err) {
-      setStatus("Couldn't reach the sign-up service. Please try again later.", "error");
+      setStatus("Couldn\u2019t reach the sign-up service. Please try again later.", "error");
       console.error(err);
     }
     submit.disabled = false;
