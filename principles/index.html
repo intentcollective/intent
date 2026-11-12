@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=EB+Garamond:ital@1&family=Poppins:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
 <style>
   :root {
     --paper: #E4E1D6; --raised: #EDEAE0; --ink: #211F1A; --ink-soft: #55524A;
@@ -26,7 +27,7 @@
     font-family: "DM Sans", Helvetica, Arial, sans-serif;
     font-size: var(--fs-body); line-height: 1.6;
   }
-  .wrap { max-width: 1120px; margin: 0 auto; padding: 48px var(--margin) 96px; }
+  .article { max-width: 1120px; margin: 0 auto; padding: 48px var(--margin) 96px; }
   @media (max-width: 1120px) { body { background-position: 0 0; } }
   @media (max-width: 374px) { :root { --margin: 16px; } body { background-position: 16px 0; } }
   .eyebrow {
@@ -109,9 +110,9 @@
   .outline.live { border-width: 6px; padding: 2px 10px; }
   .mark-row p { margin: 0; }
 
-  footer { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: var(--fs-label); color: var(--ink-soft); }
-  footer .online { margin: 0 0 16px; }
-  footer .process { max-width: var(--measure-label); margin: 0 0 8px; }
+  .article footer { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: var(--fs-label); color: var(--ink-soft); }
+  .article footer .online { margin: 0 0 16px; }
+  .article footer .process { max-width: var(--measure-label); margin: 0 0 8px; }
 
   @media (max-width: 640px) {
     .spec, .mark-row { grid-template-columns: minmax(0, 1fr); gap: 8px; }
@@ -119,7 +120,24 @@
 </style>
 </head>
 <body>
-<div class="wrap">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a href="/index.html" class="wordmark-link">
+      <img src="/assets/wordmark.png" alt="Intent Collective">
+    </a>
+    <nav class="site-nav">
+      <a href="/index.html#manifesto" aria-label="Manifesto">M<span class="glyph glyph--a" aria-hidden="true"><svg viewBox="0 0 103 100" fill="none" stroke="currentColor" stroke-width="14" focusable="false"><path d="M51.5 9 98 91H5Z"/></svg></span>NIFESTO</a>
+      <a href="/structure.html" aria-label="Structure">STRUCTUR<span class="glyph glyph--e" aria-hidden="true"><svg viewBox="0 0 86 100" fill="none" stroke="currentColor" stroke-width="14" focusable="false"><path d="M4 8H82M4 50H82M4 92H82"/></svg></span></a>
+      <a href="/discourse.html" aria-label="Discourse">DISC<span class="glyph glyph--o" aria-hidden="true"><svg viewBox="0 0 106 100" focusable="false"><circle cx="53" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="14"/><circle cx="53" cy="50" r="18" fill="currentColor"/></svg></span>URSE</a>
+      <a href="/zeitgeist.html" aria-label="Zeitgeist">ZEI<span class="glyph glyph--t" aria-hidden="true"><svg viewBox="0 0 83 100" fill="none" stroke="currentColor" stroke-width="14" focusable="false"><path d="M41.5 96V8M8 40 41.5 6 75 40"/></svg></span>GEIST</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<div class="article">
 
   <h1>Visual Identity Principles of Intent Collective</h1>
   <p class="lede">Why Intent Collective looks and reads the way it does. The meaning behind its marks, and the essential rules of type, color, and space that hold the system together.</p>
@@ -343,9 +361,17 @@
   <footer>
     <p class="online">This article lives at <a class="link" href="https://intentcollective.design/principles/">intentcollective.design/principles&nbsp;&gt;</a></p>
     <p class="process"><em>Process Note. This text was developed through a human&ndash;AI process. The founder of Intent Collective established the ideas, language, and conceptual framework. AI assisted in synthesizing and formalizing these from their existing body of writing, and they re-edited and proofread the resulting text. The process itself is intentional, an instance of a new mode of authorship and&nbsp;practice.</em></p>
-    <p class="process">&copy; 2026 intent collective&trade;</p>
   </footer>
 
 </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>&copy; <span id="year"></span> intent collective&trade;</span>
+    <span><a href="mailto:intentcollectivedesign@gmail.com">intentcollectivedesign@gmail.com</a></span>
+  </div>
+</footer>
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 </body>
 </html>
