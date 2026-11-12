@@ -10,7 +10,7 @@
       receive mail, so a typo can't create endless bounce notices.
 
    Both forms post to the same Apps Script Web App
-   (google-apps-script-fellows-debate.gs). See README.md, "Fellows and
+   (apps-script/fellows-debate.gs). See README.md, "Fellows and
    Debate Schedule".
 
    Debate Schedule sheet header row (any order, case-insensitive):

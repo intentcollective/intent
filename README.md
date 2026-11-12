@@ -11,13 +11,13 @@ Static site, no build step. Four pages:
 
 Typeface: DM Sans only. Logo mark and wordmark are in `assets/`.
 
-Google Apps Script files (these are NOT uploaded to the website; you paste each one into Google's script editor):
+Google Apps Script files, kept in `apps-script/` as the backup of what runs in Google. You paste each one into Google's script editor; the website never loads them. Keep each file identical to the deployed version: after any change in the editor, commit it here too. Like every file in this repo, they are publicly readable, so put nothing secret in them.
 
 | File | Used for |
 |---|---|
-| `google-apps-script.gs` | Discourse posting |
-| `google-apps-script-news.gs` | Zeitgeist posting |
-| `google-apps-script-fellows-debate.gs` | Fellow registration, debate scheduling, email notice, bounce protection |
+| `apps-script/discourse.gs` | Discourse posting |
+| `apps-script/zeitgeist.gs` | Zeitgeist posting |
+| `apps-script/fellows-debate.gs` | Fellow registration, debate scheduling, email notice, bounce protection |
 
 ---
 
@@ -28,7 +28,7 @@ One password now covers every form on the site: Discourse, Zeitgeist, fellow reg
 It lives in six places. If you ever change it, change all six, then redeploy the scripts (see section 2):
 
 - `js/discourse.js`, `js/zeitgeist.js`, `js/structure.js` (constant `POST_PASSWORD`)
-- `google-apps-script.gs`, `google-apps-script-news.gs`, `google-apps-script-fellows-debate.gs` (variable `PASSWORD`)
+- `apps-script/discourse.gs`, `apps-script/zeitgeist.gs`, `apps-script/fellows-debate.gs` (variable `PASSWORD`)
 
 How much protection this gives:
 
@@ -44,7 +44,7 @@ Posting on Discourse and Zeitgeist will fail until the scripts know the new pass
 For each of the two existing Google Sheets (Discourse, then Zeitgeist):
 
 1. Open the Sheet, then **Extensions > Apps Script**.
-2. Replace the code with the updated file from this project (`google-apps-script.gs` for Discourse, `google-apps-script-news.gs` for Zeitgeist). Check that the `SHEET_NAME` line still matches your tab name, or leave it and the script uses the first tab.
+2. Replace the code with the updated file from this project (`apps-script/discourse.gs` for Discourse, `apps-script/zeitgeist.gs` for Zeitgeist). Check that the `SHEET_NAME` line still matches your tab name, or leave it and the script uses the first tab.
 3. Save, then **Deploy > Manage deployments**.
 4. Click the pencil icon, set **Version** to **New version**, then **Deploy**.
 5. The `/exec` URL stays the same, so `js/discourse.js` and `js/zeitgeist.js` need no URL change.
@@ -161,7 +161,7 @@ Do not publish the `Fellows` tab. It contains emails and LinkedIn links, and a p
 ### 5d. Add or update the script
 
 1. In the spreadsheet: **Extensions > Apps Script**.
-2. Replace the code with `google-apps-script-fellows-debate.gs`.
+2. Replace the code with `apps-script/fellows-debate.gs`.
 3. Check the tab names at the top match your tabs. Set `SEND_EMAIL_NOTICE = false` if you want to turn off the email notice.
 4. Save.
 5. **Approve permissions before deploying.** In the function dropdown pick `flagBouncedFellows`, click **Run**, and approve when Google asks. The script needs: your spreadsheets, sending email, outside web requests (the email domain check and fetching the wordmark for emails), reading Gmail (the bounce cleanup), and showing a web page (the confirm and unsubscribe links). This is your own script on your own sheet.

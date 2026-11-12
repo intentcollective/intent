@@ -5,7 +5,7 @@
  * News reads from (Extensions → Apps Script in that Sheet), then deploy
  * it as a Web App. See README.md, "News — enable posting from the site".
  *
- * This is the News-sheet counterpart to google-apps-script.gs (Discourse).
+ * This is the News-sheet counterpart to apps-script/discourse.gs (Discourse).
  * They're separate because News and Discourse are separate spreadsheets —
  * each needs its own script bound to its own sheet.
  */
