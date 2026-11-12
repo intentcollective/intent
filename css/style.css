@@ -788,7 +788,10 @@ details[open] > summary::before { transform: rotate(90deg); }
 }
 
 .join-slot a:hover { opacity: 0.9; text-decoration: none; }
-.join-slot.join-note { color: var(--ink-soft); }
+/* Utilities on a card (the calendar line and the Join note) use the note
+   size, so the discourse link and, when open, the Join button lead. */
+.join-slot.join-note { color: var(--ink-soft); font-size: var(--fs-label); line-height: 1.5; }
+.debate-links .cal-links { font-size: var(--fs-label); line-height: 1.6; margin-top: 2px; }
 
 /* Add to calendar line on a debate card: label in soft ink, links in red */
 .cal-links .cal-label,
