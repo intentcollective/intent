@@ -326,6 +326,9 @@ h3 { font-size: var(--fs-title); }
 .sub-head { margin: 40px 0 var(--s2); }
 .card-link-row { display: flex; flex-wrap: wrap; gap: 6px 24px; margin: var(--s3) 0 0; }
 
+/* Structure: "Subscribe in Google Calendar > · Apple or Outlook >" (lead-in in soft ink) */
+.cal-subscribe { margin: var(--s3) 0 0; color: var(--ink-soft); }
+
 
 /* ---------- 7. lists ---------- */
 
