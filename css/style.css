@@ -71,6 +71,7 @@
   --s6: 64px;
   --s7: 96px;
   --module: 32px;
+  --margin: var(--s4);           /* page margin: one module, half on the smallest phones */
   --btn-pad: 4px 8px;            /* inner space of every filled button */
 
   /* layout */
@@ -117,7 +118,7 @@ a { color: inherit; text-decoration: none; }
 /* Skip link: hidden until reached by keyboard, then shown over the header. */
 .skip-link {
   position: absolute;
-  left: var(--s4);
+  left: var(--margin);
   top: var(--s1);
   z-index: 20;
   transform: translateY(-200%);
@@ -206,7 +207,7 @@ h3 { font-size: var(--fs-title); }
 
 /* ---------- 4. shell ---------- */
 
-.wrap { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--s4); }
+.wrap { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--margin); }
 
 .site-header {
   border-bottom: 1px solid var(--rule);
@@ -278,8 +279,8 @@ h3 { font-size: var(--fs-title); }
   content: "";
   position: absolute;
   top: 0;
-  left: var(--s4);
-  right: var(--s4);
+  left: var(--margin);
+  right: var(--margin);
   height: 2px;
   background: var(--rule-strong);
 }
@@ -893,10 +894,20 @@ details[open] > summary::before { transform: rotate(90deg); }
 @media (max-width: 640px) {
   .hero { padding: var(--s5) 0 var(--s5); }
   .logo-mark { width: 112px; }
-  .site-nav { gap: var(--s2); }
+  /* Nav labels never break inside a word. They spread across the full
+     width, and only on the narrowest screens drop to a second row. */
+  .site-nav { flex-basis: 100%; flex-wrap: wrap; justify-content: space-between; gap: var(--s1); }
+  .site-nav a { white-space: nowrap; }
   .wordmark-link { flex-shrink: 0; }
   .site-header .wrap { flex-wrap: wrap; row-gap: var(--s1); padding-top: var(--s2); padding-bottom: var(--s2); }
   .pillar-row { grid-template-columns: 10px minmax(0, 1fr); gap: var(--s1) var(--s2); }
   .pillar-people { grid-column: 2; text-align: left; }
   .field-row { grid-template-columns: 1fr; }
+}
+
+/* The smallest phones: the margin halves to 16px and the pattern moves
+   with it, so the text still starts on a line. */
+@media (max-width: 374px) {
+  :root { --margin: var(--s2); }
+  body { background-position: var(--s2) 0; }
 }
