@@ -10,7 +10,8 @@
 <style>
   :root {
     --paper: #E4E1D6; --raised: #EDEAE0; --ink: #211F1A; --ink-soft: #55524A;
-    --mark: #B23A2E; --sage: #5B6B5E; --rule: #CFCBBE;
+    --mark: #B23A2E; --sage: #5B6B5E; --rule: #CFCBBE; --grid-line: #8FA6A340;
+    --module: 32px; --margin: 32px;   /* spacing moves in 8px steps; four make the module */
     --fs-label: 13px; --fs-body: 16px; --fs-large: 18px; --fs-title: 20px;
     --fs-display: clamp(1.75rem, 3.6vw, 2.4rem);
     --measure: 64ch; --measure-label: 79ch;
@@ -18,14 +19,19 @@
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
   body {
-    margin: 0; background: var(--paper); color: var(--ink);
+    margin: 0; color: var(--ink);
+    background-color: var(--paper);
+    background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: var(--module) var(--module); background-position: center top;
     font-family: "DM Sans", Helvetica, Arial, sans-serif;
     font-size: var(--fs-body); line-height: 1.6;
   }
-  .wrap { max-width: 1024px; margin: 0 auto; padding: 56px 24px 96px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 48px var(--margin) 96px; }
+  @media (max-width: 1120px) { body { background-position: 0 0; } }
+  @media (max-width: 374px) { :root { --margin: 16px; } body { background-position: 16px 0; } }
   .eyebrow {
     font-size: var(--fs-label); font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.04em; color: var(--mark); margin: 0 0 12px;
+    letter-spacing: 0.04em; color: var(--mark); margin: 0 0 16px;
   }
   h1 {
     font-size: var(--fs-display); line-height: 1.15; font-weight: 700;
@@ -33,16 +39,16 @@
   }
   .lede { font-size: var(--fs-large); max-width: var(--measure); margin: 0 0 8px; text-wrap: pretty; }
   .meta { font-size: var(--fs-label); color: var(--sage); margin: 0; }
-  section { border-top: 2px solid var(--ink); margin-top: 56px; padding-top: 20px; }
+  section { border-top: 2px solid var(--ink); margin-top: 48px; padding-top: 24px; }
   h2 {
     font-size: var(--fs-title); line-height: 1.25; font-weight: 700;
-    margin: 0 0 12px; text-wrap: balance;
+    margin: 0 0 16px; text-wrap: balance;
   }
   h3 { font-size: var(--fs-label); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink); margin: 24px 0 8px; }
   p, li { max-width: var(--measure); text-wrap: pretty; }
-  p { margin: 0 0 12px; }
-  ul, ol { margin: 0 0 12px; padding-left: 1.2em; }
-  li { margin: 0 0 6px; }
+  p { margin: 0 0 16px; }
+  ul, ol { margin: 0 0 16px; padding-left: 1.2em; }
+  li { margin: 0 0 8px; }
   ul { list-style: none; padding-left: 1em; }
   ul > li { position: relative; }
   ul > li::before { content: "\00B7"; position: absolute; left: -1em; width: 1em; text-align: center; color: var(--ink-soft); }
@@ -60,10 +66,10 @@
   .g-compare figcaption { font-size: var(--fs-label); color: var(--sage); }
 
   /* Type specimens */
-  .specimens { display: grid; gap: 0; margin: 16px 0 12px; }
+  .specimens { display: grid; gap: 0; margin: 16px 0; }
   .spec {
     display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 16px;
-    align-items: baseline; padding: 12px 0; border-bottom: 1px solid var(--rule);
+    align-items: baseline; padding: 16px 0; border-bottom: 1px solid var(--rule);
   }
   .spec .tag { font-size: var(--fs-label); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--sage); }
   .spec .tag span { display: block; font-weight: 400; text-transform: none; letter-spacing: 0; }
@@ -75,17 +81,17 @@
   .s-quote { font-family: "EB Garamond", Georgia, serif; font-style: italic; font-size: var(--fs-display); line-height: 1.2; }
 
   /* Swatches */
-  .swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 16px 0 20px; }
+  .swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin: 16px 0 24px; }
   .swatch { background: var(--raised); border: 1px solid var(--rule); }
   .swatch .chip { height: 64px; border-bottom: 1px solid var(--rule); }
-  .swatch .cap { padding: 8px 10px; font-size: var(--fs-label); line-height: 1.4; }
+  .swatch .cap { padding: 8px; font-size: var(--fs-label); line-height: 1.4; }
   .swatch .cap b { display: block; }
 
   /* Action marks, drawn as on the site */
-  .marks { display: grid; gap: 12px; margin: 16px 0 12px; }
+  .marks { display: grid; gap: 16px; margin: 16px 0; }
   .mark-row {
     display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 16px; align-items: center;
-    padding: 12px 0; border-bottom: 1px solid var(--rule);
+    padding: 16px 0; border-bottom: 1px solid var(--rule);
   }
   .disclosure { font-weight: 700; color: var(--mark); display: inline-flex; align-items: center; gap: 8px; }
   .disclosure::before {
@@ -94,12 +100,13 @@
   }
   .link { color: var(--mark); font-weight: 700; white-space: nowrap; text-decoration: none; }
   a.link:hover { text-decoration: underline; }
+  li a.link { white-space: normal; }   /* long source titles may wrap on phones */
   .btn {
-    display: inline-block; background: var(--mark); color: var(--paper); padding: 5px 10px;
+    display: inline-block; background: var(--mark); color: var(--paper); padding: 4px 8px;
     font-size: var(--fs-label); font-weight: 700; text-transform: uppercase; line-height: 1.15;
   }
-  .outline { display: inline-block; border: 3px solid var(--mark); background: var(--raised); padding: 8px 12px; font-size: var(--fs-label); font-weight: 700; }
-  .outline.live { border-width: 6px; padding: 5px 9px; }
+  .outline { display: inline-block; border: 3px solid var(--mark); background: var(--raised); padding: 5px 13px; /* 3px border + padding = 8 by 16 */ font-size: var(--fs-label); font-weight: 700; }
+  .outline.live { border-width: 6px; padding: 2px 10px; }
   .mark-row p { margin: 0; }
 
   footer { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: var(--fs-label); color: var(--ink-soft); }
@@ -107,7 +114,7 @@
   footer .process { max-width: var(--measure-label); margin: 0 0 8px; }
 
   @media (max-width: 640px) {
-    .spec, .mark-row { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+    .spec, .mark-row { grid-template-columns: minmax(0, 1fr); gap: 8px; }
   }
 </style>
 </head>
