@@ -308,11 +308,16 @@ h3 { font-size: var(--fs-title); }
 .jump-links a,
 .site-footer a { display: inline-block; line-height: var(--s3); }   /* 24px targets */
 
-/* The copyright line quietly opens the Visual Identity Principles:
-   the trademark covers the whole name, and so does the link. It looks
-   like plain footer text; hover and keyboard focus reveal it. */
-.site-footer a.egg { color: inherit; }
-.site-footer a.egg:hover { color: var(--mark); }
+/* The one action in the footer: red and bold like every other link
+   that goes somewhere, kept on one line. */
+.site-footer a.footer-link { color: var(--mark); font-weight: 700; white-space: nowrap; }
+.site-footer a.footer-link:hover { text-decoration: underline; }
+/* On phones the link takes its own line rather than leaving the
+   midpoint stranded at a line end. */
+@media (max-width: 640px) {
+  .site-footer .sep { display: none; }
+  .site-footer a.footer-link { display: block; }
+}
 
 .jump-links {
   display: flex;
