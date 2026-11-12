@@ -858,7 +858,7 @@ function calendarBlockHtml(gcal, font, link) {
     ? '<span style="' + soft + '">This debate:</span> <a href="' + esc(gcal) + '" style="' + link + '">Google Calendar &gt;</a><span style="' + soft + '">, or open the attached file</span>'
     : '<span style="' + soft + '">This debate: open the attached file</span>';
   var allLine = CAL_SUBSCRIBE_GOOGLE
-    ? '<br><span style="' + soft + '">Every debate, automatically:</span> <a href="' + esc(CAL_SUBSCRIBE_GOOGLE) + '" style="' + link + '">Google Calendar &gt;</a><span style="' + soft + '"> &middot; </span><a href="' + esc(CAL_SUBSCRIBE_ICAL) + '" style="' + link + '">Apple or Outlook &gt;</a>'
+    ? '<br><span style="' + soft + '">Future debates: Subscribe in</span> <a href="' + esc(CAL_SUBSCRIBE_GOOGLE) + '" style="' + link + '">Google Calendar &gt;</a><span style="' + soft + '"> &middot; </span><a href="' + esc(CAL_SUBSCRIBE_ICAL) + '" style="' + link + '">Apple or Outlook &gt;</a>'
     : '';
   return '<div style="border-top:1px dashed ' + C_LINE + ';margin:14px 0 0 0;padding:12px 0 0 0;font-family:' + font + ';font-size:15px;line-height:1.8;">' +
     '<div style="font-family:' + font + ';font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;' + soft + '">Add to your calendar</div>' +
@@ -917,7 +917,7 @@ function buildNoticeEmail(data, timeLines, recipient, hasLogo, type) {
     "\nAdd to your calendar\n" +
     (gcal ? "This debate: Google Calendar " + gcal + ", or open the attached file\n" : "This debate: open the attached file\n") +
     (CAL_SUBSCRIBE_GOOGLE
-      ? "Every debate, automatically: Google Calendar " + CAL_SUBSCRIBE_GOOGLE + " | Apple or Outlook " + CAL_SUBSCRIBE_ICAL + "\n"
+      ? "Future debates: Subscribe in Google Calendar " + CAL_SUBSCRIBE_GOOGLE + " \u00b7 Apple or Outlook " + CAL_SUBSCRIBE_ICAL + "\n"
       : "") +
     "\nThe Join link appears on the debate page one hour before the start. " +
     "Debates are one hour, online, and open to everyone.\n" +
