@@ -245,20 +245,20 @@ h3 { font-size: var(--fs-title); }
 .site-nav a[aria-current="page"]::after { right: 0; }
 .site-nav a[aria-current="page"] { color: var(--mark); }
 
-/* One letter in each nav label is a drawn glyph that matches DM Sans cap
+/* One letter in each section name (nav and page label) is a drawn glyph that matches DM Sans cap
    height and stroke weight. The page name stays the link's accessible label. */
-.site-nav .glyph {
+.glyph {
   display: inline-block;
   height: 0.7em;
   margin: 0 0.03em;
   vertical-align: baseline;
 }
 
-.site-nav .glyph svg { display: block; width: 100%; height: 100%; overflow: visible; }
-.site-nav .glyph--a { width: 0.72em; }
-.site-nav .glyph--o { width: 0.74em; }
-.site-nav .glyph--e { width: 0.6em; }
-.site-nav .glyph--t { width: 0.58em; }
+.glyph svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.glyph--a { width: 0.72em; }
+.glyph--o { width: 0.74em; }
+.glyph--e { width: 0.6em; }
+.glyph--t { width: 0.58em; }
 
 .site-footer {
   padding: 0 0 var(--s5);
@@ -351,6 +351,11 @@ h3 { font-size: var(--fs-title); }
   align-items: center;
   gap: var(--s1);
   margin-bottom: var(--s1);
+}
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
 
 .mark-label::before,
