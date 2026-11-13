@@ -42,11 +42,11 @@ function icIcsEscape(s) {
 }
 
 // Same UID as the emails (icsUid in fellows-debate.gs): from the sheet's
-// Event ID, which never changes, so a new date or a cancellation updates the
-// event instead of adding a second one. Falls back to the start time.
-// SEQUENCE grows with time, so the newest file always wins.
+// Debate ID, which never changes, so a new date or a cancellation updates
+// the event instead of adding a second one. Falls back to the Event ID, then
+// the start time. SEQUENCE grows with time, so the newest file always wins.
 function icUid(d) {
-  const k = String(d.eventId || "").replace(/@.*$/, "").replace(/[^A-Za-z0-9]/g, "");
+  const k = String(d.debateId || d.eventId || "").replace(/@.*$/, "").replace(/[^A-Za-z0-9]/g, "");
   return "debate-" + (k || d.start.getTime()) + "@intentcollective.design";
 }
 

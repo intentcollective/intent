@@ -51,8 +51,10 @@
  *   meeting link, and has no location, because calendars offer map
  *   directions for a location. Notice emails and the "You're subscribed"
  *   page link to the whole calendar. Run syncDebateCalendar() by hand to sync right away.
- *   A cancelled debate keeps its event, retitled "Cancelled: ...", so people
- *   who subscribed to the calendar see the change.
+ *   A cancelled debate's event is deleted (everyone also gets a
+ *   "Cancelled" email); reinstating it creates the event again. Change
+ *   debates only in the sheet: an event edited or deleted by hand in the
+ *   calendar is put back within the hour.
  *
  * CHANGING OR CANCELLING A DEBATE (edit the row, never delete it):
  *   - New date or time: edit the Date cell. Within the hour every recipient
@@ -64,8 +66,9 @@
  *     Set Status back to "scheduled" to reinstate it (everyone gets a notice).
  *   - Subject, host or Discourse link: edit the cell. Queued reminders pick
  *     up the change. No email is sent for these.
- *   The "Announced" column (added automatically, do not edit) holds what
- *   recipients were last told, so each change is announced once. Past
+ *   The "Announced" and "Debate ID" columns (added automatically, do not
+ *   edit) hold what recipients were last told and the debate's permanent
+ *   id. Announced makes sure each change is announced once. Past
  *   debates are never announced. The "Intent Collective" menu in the sheet
  *   has "Send debate changes now" (no waiting for the hourly run) and "Catch
  *   up notices and reminders" (queues them for upcoming debates for anyone
@@ -368,7 +371,9 @@ function handleDebate(data) {
 
   ensureColumn(sheet, "status", "Status");
   ensureColumn(sheet, "announced", "Announced");
+  ensureColumn(sheet, "debate id", "Debate ID");
   var start = debateStart(data.date);
+  var key = newDebateId();
   var values = {
     "host": data.host,
     "date": data.date,            // "YYYY-MM-DD HH:mm", US Eastern wall time
@@ -377,18 +382,14 @@ function handleDebate(data) {
     "meeting": data.meeting,
     "status": "scheduled",
     "announced": start ? etWall(start) : data.date,
+    "debate id": key,
     "added": new Date()
   };
   // Keep the Date and Announced cells as plain text so Sheets does not
   // reformat them.
   appendByHeader(sheet, values, ["date", "announced"]);
-  var newRow = sheet.getLastRow();
-
-  // The calendar event's id becomes the debate's key: it links the Outbox
-  // rows to this row and keeps the calendar file's UID stable.
+  data.key = key;
   try { syncDebateCalendar(); } catch (err) { /* the hourly run retries */ }
-  var idCol = ensureColumn(sheet, "event id", "Event ID");
-  data.key = String(sheet.getRange(newRow, idCol).getValue() || "").trim();
   if (start) { data.date = etWall(start); data.startUtc = start.toISOString(); }
 
   var result = { status: "ok", emailed: 0, queued: 0 };
@@ -444,7 +445,7 @@ function outboxRow(now, r, payload, type, sendAfter) {
 }
 
 // Run on a timer by installNoticeTrigger().
-// Order matters: the calendar first (it gives new rows their Event ID), then
+// Order matters: the calendar first (it gives rows their Debate ID), then
 // changes to the schedule (they drop and queue emails), then the sending.
 function processOutboxTrigger() {
   try { syncDebateCalendar(); } catch (err) { console.error("Calendar sync: " + err.message); }
@@ -649,7 +650,8 @@ var CAL_TAG = "intentCollectiveDebate";
  * Keeps the public calendar in step with the "Debate Schedule" tab. Each row
  * gets one event; its id is stored in the row's "Event ID" column (added
  * automatically). Edited rows update their event. A future event whose row
- * was deleted is removed. Past events are kept as a record. Safe to run any
+ * was deleted or cancelled is removed. Also gives every row its permanent
+ * "Debate ID". Past events are kept as a record. Safe to run any
  * time, by hand or from the hourly timer.
  */
 function syncDebateCalendar() {
@@ -664,6 +666,7 @@ function syncDebateCalendar() {
   if (!lock.tryLock(20000)) return;   // another run is syncing; the next one catches up
   try {
     var idCol = ensureColumn(sheet, "event id", "Event ID");
+    var keyCol = ensureColumn(sheet, "debate id", "Debate ID");
     var t = readTable(sheet);
     var c = t.col;
     var keep = {};
@@ -673,17 +676,34 @@ function syncDebateCalendar() {
       var start = debateStart(r[c["date"]]);
       if (!subject || !start) return;
 
+      var id = String(r[idCol - 1] || "").trim();
+      // Every debate gets a permanent Debate ID once. A row that already has
+      // an event takes its Event ID, so earlier emails and calendar files
+      // keep matching.
+      if (!String(r[keyCol - 1] || "").trim()) {
+        var key = id || newDebateId();
+        sheet.getRange(i + 2, keyCol).setValue(key);
+        r[keyCol - 1] = key;
+      }
+
+      // A cancelled debate has no event: delete it if there is one.
+      if (isCancelledStatus(c["status"] !== undefined ? r[c["status"]] : "")) {
+        if (id) {
+          try { var old = cal.getEventById(id); if (old) old.deleteEvent(); } catch (err) { /* already gone */ }
+          sheet.getRange(i + 2, idCol).setValue("");
+        }
+        return;
+      }
+
       var data = {
         subject: subject,
         host: String(r[c["host"]] || "").trim(),
         discourse: String(r[c["discourse"]] || "").trim()
       };
       var end = new Date(start.getTime() + 60 * 60 * 1000);
-      var cancelled = isCancelledStatus(c["status"] !== undefined ? r[c["status"]] : "");
-      var title = (cancelled ? "Cancelled: " : "") + "Intent Collective: " + subject;
-      var desc = (cancelled ? "This debate is cancelled.\n" : "") + calendarDescription(data);
+      var title = "Intent Collective: " + subject;
+      var desc = calendarDescription(data);
 
-      var id = String(r[idCol - 1] || "").trim();
       var ev = null;
       if (id) { try { ev = cal.getEventById(id); } catch (err) { ev = null; } }
 
@@ -700,7 +720,7 @@ function syncDebateCalendar() {
       keep[ev.getId()] = true;
     });
 
-    // Remove future events whose row is gone.
+    // Remove future events whose row is gone or cancelled.
     var now = new Date();
     var later = new Date(now.getTime() + 3 * 365 * 24 * 3600 * 1000);
     cal.getEvents(now, later).forEach(function (ev) {
@@ -713,6 +733,12 @@ function syncDebateCalendar() {
 
 // The Date cell holds "YYYY-MM-DD HH:mm" in US Eastern wall time. A cell that
 // Sheets turned into a real date is accepted too.
+// A permanent id for a new debate. It links the row to its Outbox emails
+// and makes the calendar file's UID, and never changes.
+function newDebateId() {
+  return "d" + Utilities.getUuid().replace(/-/g, "");
+}
+
 function debateStart(v) {
   if (v instanceof Date) return isNaN(v.getTime()) ? null : v;
   var s = String(v || "").trim();
@@ -760,7 +786,8 @@ function debateFromRow(r, c) {
     discourse: String(c["discourse"] !== undefined ? r[c["discourse"]] : "").trim(),
     date: etWall(start),
     startUtc: start.toISOString(),
-    key: String(c["event id"] !== undefined ? r[c["event id"]] : "").trim(),
+    key: String(c["debate id"] !== undefined && r[c["debate id"]] ? r[c["debate id"]]
+         : c["event id"] !== undefined ? r[c["event id"]] : "").trim(),
     cancelled: isCancelledStatus(c["status"] !== undefined ? r[c["status"]] : "")
   };
 }
@@ -833,6 +860,7 @@ function processDebateChanges() {
   try {
     ensureColumn(sheet, "status", "Status");
     ensureColumn(sheet, "event id", "Event ID");
+    ensureColumn(sheet, "debate id", "Debate ID");
     var annCol = ensureColumn(sheet, "announced", "Announced");
     var t = readTable(sheet);
     var outSheet = SEND_EMAIL_NOTICE ? getOutboxSheet(true) : null;
@@ -1116,7 +1144,7 @@ function icsEscape(s) {
   return String(s).replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
 }
 
-// The calendar file's UID. It comes from the debate's Event ID, which never
+// The calendar file's UID. It comes from the debate's Debate ID, which never
 // changes, so a calendar app treats a new date or a cancellation as the same
 // event. Debates without one (queued before keys existed) fall back to the
 // start time. js/calendar.js builds the same UID for the site's cards.

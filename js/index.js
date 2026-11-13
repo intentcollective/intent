@@ -117,7 +117,7 @@ function rowsToDebates(rows) {
   const idx = (name) => header.indexOf(name);
   const iHost = idx("host"), iDate = idx("date"), iSubject = idx("subject");
   const iDiscourse = idx("discourse"), iMeeting = idx("meeting");
-  const iStatus = idx("status"), iEventId = idx("event id");
+  const iStatus = idx("status"), iEventId = idx("event id"), iDebateId = idx("debate id");
   const cell = (r, i) => (i > -1 ? (r[i] || "").trim() : "");
 
   return rows.slice(1).map(r => {
@@ -128,6 +128,7 @@ function rowsToDebates(rows) {
       discourse: safeUrl(cell(r, iDiscourse)),
       meeting: safeUrl(cell(r, iMeeting)),
       eventId: cell(r, iEventId),
+      debateId: cell(r, iDebateId),
       cancelled: /^cancel+ed$/i.test(cell(r, iStatus)),
       start: parts ? etWallToDate(...parts) : null,
     };
