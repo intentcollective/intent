@@ -144,6 +144,7 @@ h1, h2, h3 {
 
 h1 { font-size: var(--fs-display); }
 h3 { font-size: var(--fs-title); }
+h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than text */
 
 .brand { font-size: 0.9em; }     /* the name in capitals sits a little smaller */
 .gt { font-weight: 400; }         /* text glyphs in headings */
