@@ -31,7 +31,25 @@
              14 responsive
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=EB+Garamond:ital,wght@1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@1,400&display=swap');
+
+/* DM Sans is hosted here, not by Google, because Google's copy drops the
+   stylistic sets. Trimmed to Latin, weights 400 to 700, and the features
+   in use. ss01 gives the traditional teardrop quotes, apostrophe and comma. */
+@font-face {
+  font-family: 'DM Sans';
+  src: url('../assets/fonts/DMSans-Roman.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DM Sans';
+  src: url('../assets/fonts/DMSans-Italic.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: italic;
+  font-display: swap;
+}
 
 
 /* ---------- 1. tokens ---------- */
@@ -106,6 +124,7 @@ body {
   background-position: center top;
   color: var(--ink);
   font-family: var(--font);
+  font-feature-settings: "ss01" 1;
   font-size: var(--fs-body);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -882,6 +901,7 @@ details[open] > summary::before { transform: rotate(90deg); }
 
 .manifesto blockquote {
   font-family: var(--font-quote);
+  font-feature-settings: normal;   /* ss01 is for DM Sans only */
   font-style: italic;
   font-weight: 400;
   font-size: var(--fs-display);
