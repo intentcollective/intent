@@ -18,6 +18,7 @@ Google Apps Script files, kept in `apps-script/` as the backup of what runs in G
 | `apps-script/discourse.gs` | Discourse posting |
 | `apps-script/zeitgeist.gs` | Zeitgeist posting |
 | `apps-script/fellows-debate.gs` | Fellow registration, debate scheduling, changes and cancellations, email notice, bounce protection |
+| `apps-script/backups.gs` | Nightly copies of every sheet into the private db_backups folder, kept 15 days. Standalone project "db_backups"; real IDs live only in the editor |
 
 ---
 
