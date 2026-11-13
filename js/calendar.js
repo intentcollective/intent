@@ -41,6 +41,15 @@ function icIcsEscape(s) {
     .replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
 }
 
+// Same UID as the emails (icsUid in fellows-debate.gs): from the sheet's
+// Event ID, which never changes, so a new date or a cancellation updates the
+// event instead of adding a second one. Falls back to the start time.
+// SEQUENCE grows with time, so the newest file always wins.
+function icUid(d) {
+  const k = String(d.eventId || "").replace(/@.*$/, "").replace(/[^A-Za-z0-9]/g, "");
+  return "debate-" + (k || d.start.getTime()) + "@intentcollective.design";
+}
+
 function icIcsDataUrl(d) {
   const end = new Date(d.start.getTime() + 60 * 60 * 1000);
   const lines = [
@@ -50,7 +59,8 @@ function icIcsDataUrl(d) {
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     "BEGIN:VEVENT",
-    "UID:debate-" + d.start.getTime() + "@intentcollective.design",
+    "UID:" + icUid(d),
+    "SEQUENCE:" + Math.floor(Date.now() / 60000),
     "DTSTAMP:" + icStamp(new Date()),
     "DTSTART:" + icStamp(d.start),
     "DTEND:" + icStamp(end),

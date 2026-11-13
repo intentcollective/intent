@@ -256,6 +256,7 @@ function rowsToDebates(rows) {
   const idx = (name) => header.indexOf(name);
   const iHost = idx("host"), iDate = idx("date"), iSubject = idx("subject");
   const iDiscourse = idx("discourse"), iMeeting = idx("meeting");
+  const iStatus = idx("status"), iEventId = idx("event id");
   const cell = (r, i) => (i > -1 ? (r[i] || "").trim() : "");
 
   return rows.slice(1).map(r => {
@@ -265,28 +266,33 @@ function rowsToDebates(rows) {
       subject: cell(r, iSubject),
       discourse: safeUrl(cell(r, iDiscourse)),
       meeting: safeUrl(cell(r, iMeeting)),
+      eventId: cell(r, iEventId),
+      cancelled: /^cancel+ed$/i.test(cell(r, iStatus)),
       start: parts ? etWallToDate(...parts) : null,
     };
   }).filter(d => d.subject && d.start && !isNaN(d.start.getTime()));
 }
 
+// A cancelled debate keeps its card, labelled Cancelled, with no Join or
+// calendar links and only the Eastern time.
 function debateRowHTML(d, isPast, isNext) {
+  const live = !isPast && !d.cancelled;
   const links = [];
   if (d.discourse) links.push(`<a href="${escapeHTML(d.discourse)}">Read the discourse post &gt;</a>`);
-  if (!isPast && typeof calendarLinksHTML === "function") links.push(calendarLinksHTML(d));
-  if (d.meeting && !isPast) links.push(joinSlotHTML(d, "note"));
+  if (live && typeof calendarLinksHTML === "function") links.push(calendarLinksHTML(d));
+  if (d.meeting && live) links.push(joinSlotHTML(d, "note"));
 
   const times = [fmtZone(d.start, TZ_ET, true)];
-  if (!isPast) {
+  if (live) {
     times.push(fmtZone(d.start, TZ_SEOUL, false) + ", Seoul");
     times.push(fmtZone(d.start, TZ_LONDON, false) + ", London");
   }
 
   return `
-    <article class="entry-card debate-card${isNext ? " is-next" : ""}">
-      <div class="entry-meta"><span>${isPast ? "Debate" : (isNext ? "Next debate" : "Upcoming debate")}</span></div>
+    <article class="entry-card debate-card${isNext ? " is-next" : ""}${d.cancelled ? " is-cancelled" : ""}">
+      <div class="entry-meta"><span>${d.cancelled ? "Cancelled" : isPast ? "Debate" : (isNext ? "Next debate" : "Upcoming debate")}</span></div>
       <h3>${escapeHTML(d.subject)}</h3>
-      ${d.meeting && !isPast ? joinSlotHTML(d, "top") : ""}
+      ${d.meeting && live ? joinSlotHTML(d, "top") : ""}
       <div class="debate-info">
         ${d.host ? `<div class="debate-host">Hosted by ${escapeHTML(d.host)}</div>` : ""}
         ${times.map(t => `<div>${escapeHTML(t)}</div>`).join("")}
@@ -309,7 +315,9 @@ function renderDebates() {
     .sort((a, b) => b.start - a.start);
 
   if (upcoming.length) {
-    upEl.innerHTML = upcoming.map((d, n) => debateRowHTML(d, false, n === 0)).join("");
+    // The next debate is the first one that is not cancelled.
+    const next = upcoming.find(d => !d.cancelled);
+    upEl.innerHTML = upcoming.map(d => debateRowHTML(d, false, d === next)).join("");
     upEl.hidden = false;
     stateEl.hidden = true;
   } else {

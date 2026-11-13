@@ -818,6 +818,9 @@ details[open] > summary::before { transform: rotate(90deg); }
 }
 
 .debate-card { cursor: default; }
+/* A cancelled debate stays as a record: label and title in soft ink. */
+.debate-card.is-cancelled h3,
+.debate-card.is-cancelled .debate-info { color: var(--ink-soft); }
 
 .debate-card .debate-info { display: flex; flex-direction: column; gap: var(--s0); flex-grow: 1; color: var(--ink); }
 .debate-card .debate-host { color: var(--ink-soft); margin-bottom: var(--s1); }

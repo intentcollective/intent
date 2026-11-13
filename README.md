@@ -127,7 +127,7 @@ Fellowship | First Name | Last Name | Email | LinkedIn | Recommended By | Added 
 **Tab `Debate Schedule`**:
 
 ```
-Host | Date | Subject | Discourse | Meeting | Added
+Host | Date | Subject | Status | Discourse | Meeting | Added | Event ID | Announced
 ```
 
 **Tab `Subscribers`** (private, never published). You do not need to create it: the script creates it the first time someone signs up for debate notices. Its columns are:
@@ -147,6 +147,8 @@ Add your existing fellows' names and emails to the `Fellows` tab now, so they re
 If you prefer the Fellows list in a different spreadsheet, see `FELLOWS_SPREADSHEET_ID` at the top of the script.
 
 Entering a debate by hand in the sheet: put the date in the Date column as `2026-12-05 10:00` (US Eastern, 24-hour). Format that column as plain text so Sheets does not rewrite it.
+
+`Status` is `scheduled` or `cancelled`. `Event ID` and `Announced` are added and filled by the script; do not edit them. A debate entered by hand gets no notice on its own: use **Catch up notices and reminders** in the sheet's Intent Collective menu (see 5f).
 
 ### 5c. Publish ONLY the Debate Schedule tab
 
@@ -200,7 +202,14 @@ The schedule shows upcoming debates soonest first, each with Eastern, Seoul and 
 - **Add to calendar:** both emails have one "Add to your calendar" block in the box with two choices: this debate (Google Calendar link, or the attached `.ics` file, which Gmail also shows as an event card at the top), or "Future debates: Subscribe in Google Calendar > · Apple or Outlook >" (the public calendar). The event is one hour long. Its location and description point to the website, not to the meeting.
 - **Public debate calendar:** every debate is also an event in the public Google Calendar set in `DEBATE_CALENDAR_ID` at the top of the script. The account that deploys the script must own the calendar or have "Make changes to events" permission, and the first run asks you to approve calendar access. The event is added when a debate is scheduled, and the hourly timer keeps the calendar in step with the `Debate Schedule` tab: an edited row updates its event, and deleting the row of a future debate removes its event. Past events stay. Each row's event is remembered in an `Event ID` column, added automatically; do not edit it. The event never contains the meeting link, and has no location, because calendar apps offer map directions for any location. The notice and reminder emails, the "You're subscribed" page and the Structure page link to the whole calendar (Google Calendar, and a webcal link for Apple Calendar and Outlook), so people can subscribe once. To sync right away, run `syncDebateCalendar` from the script editor. Leave `DEBATE_CALENDAR_ID` empty to switch the calendar off.
 - **The meeting link is never emailed.** Emails link to the debate page on the website. The Join link appears on the debate card (Index and Structure) from one hour before the start until the card moves to Past debates, and the page switches by itself without a refresh. The link is still stored in the Meeting column of the Debate Schedule sheet, and that sheet is published, so a determined person could read it there. In Zoom, turn **off** "Join before host" and turn **on** the waiting room, so anyone who arrives early waits until you start.
-- **Outbox statuses:** `queued` (waiting, or a reminder not due yet), `sent`, `skipped` (unsubscribed or removed), `expired` (the debate had started), `failed`. The `Type` column says notice or reminder, and `Send After` is when a reminder is due. Old rows can be deleted at any time.
+- **Changing or cancelling a debate.** Edit the row; never delete it.
+  - *New date or time:* edit the Date cell. Within the hour everyone gets a "New date" email (with the earlier date shown as "Previously"), queued notices and reminders for the old date are dropped, and a new reminder is queued.
+  - *Cancel:* set Status to `cancelled`. Within the hour queued emails for it are dropped and everyone gets a "Cancelled" email with a calendar file that removes the event. The public calendar event is retitled "Cancelled: ...", and the card stays on the site labelled Cancelled, without Join or calendar links. Set Status back to `scheduled` to reinstate it: everyone gets a fresh notice.
+  - *Subject, host or Discourse link:* edit the cell. Queued reminders pick it up. No email is sent.
+  - The `Announced` column holds what recipients were last told, so each change is announced once. Past debates are never announced.
+  - The sheet has an **Intent Collective** menu (it appears after the sheet is reloaded): **Send debate changes now** acts at once instead of waiting for the hourly run; **Catch up notices and reminders** queues a notice and a reminder for every upcoming debate for anyone who has not had them (after the Outbox was cleared, or when the list is switched on).
+  - The calendar file in every email and on every card has a UID made from the Event ID, so a calendar app treats a new date or a cancellation as the same event. An event added with the Google Calendar link is a separate copy and must be changed by hand.
+- **Outbox statuses:** `queued` (waiting, or a reminder not due yet), `sent`, `skipped` (unsubscribed or removed), `expired` (the debate had started), `failed`, `replaced` (the date changed, or a cancellation was undone), `cancelled` (the debate was cancelled). Types: `notice`, `reminder`, `change`, `cancel`. The `Type` column says notice or reminder, and `Send After` is when a reminder is due. Old rows can be deleted at any time.
 - **Large lists:** a list over a few hundred people cannot be fully notified before a debate that is only days away. At that size, move to a Google Workspace account or a mailing service.
 - If the email fails, the debate is still saved and the page shows why.
 

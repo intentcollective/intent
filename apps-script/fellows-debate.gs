@@ -51,6 +51,25 @@
  *   meeting link, and has no location, because calendars offer map
  *   directions for a location. Notice emails and the "You're subscribed"
  *   page link to the whole calendar. Run syncDebateCalendar() by hand to sync right away.
+ *   A cancelled debate keeps its event, retitled "Cancelled: ...", so people
+ *   who subscribed to the calendar see the change.
+ *
+ * CHANGING OR CANCELLING A DEBATE (edit the row, never delete it):
+ *   - New date or time: edit the Date cell. Within the hour every recipient
+ *     gets a "New date" email, queued notices and reminders for the old date
+ *     are dropped, and a new reminder is queued.
+ *   - Cancel: set Status to "cancelled". Within the hour queued notices and
+ *     reminders are dropped and everyone gets a "Cancelled" email. The card
+ *     stays on the site marked Cancelled, and the row stays as the record.
+ *     Set Status back to "scheduled" to reinstate it (everyone gets a notice).
+ *   - Subject, host or Discourse link: edit the cell. Queued reminders pick
+ *     up the change. No email is sent for these.
+ *   The "Announced" column (added automatically, do not edit) holds what
+ *   recipients were last told, so each change is announced once. Past
+ *   debates are never announced. The "Intent Collective" menu in the sheet
+ *   has "Send debate changes now" (no waiting for the hourly run) and "Catch
+ *   up notices and reminders" (queues them for upcoming debates for anyone
+ *   who has not had them, e.g. after the Outbox was cleared).
  *
  * SENDING ORDER:
  *   Principal Design Fellows first, then Design Fellows, then Subscribers.
@@ -344,21 +363,35 @@ function handleDebate(data) {
   var sheet = ss.getSheetByName(DEBATE_TAB);
   if (!sheet) return respond({ status: "error", message: 'Tab "' + DEBATE_TAB + '" not found.' });
 
+  ensureColumn(sheet, "status", "Status");
+  ensureColumn(sheet, "announced", "Announced");
+  var start = debateStart(data.date);
   var values = {
     "host": data.host,
     "date": data.date,            // "YYYY-MM-DD HH:mm", US Eastern wall time
     "subject": data.subject,
     "discourse": data.discourse,
     "meeting": data.meeting,
+    "status": "scheduled",
+    "announced": start ? etWall(start) : data.date,
     "added": new Date()
   };
-  // Keep the Date cell as plain text so Sheets does not reformat it.
-  appendByHeader(sheet, values, "date");
+  // Keep the Date and Announced cells as plain text so Sheets does not
+  // reformat them.
+  appendByHeader(sheet, values, ["date", "announced"]);
+  var newRow = sheet.getLastRow();
+
+  // The calendar event's id becomes the debate's key: it links the Outbox
+  // rows to this row and keeps the calendar file's UID stable.
+  try { syncDebateCalendar(); } catch (err) { /* the hourly run retries */ }
+  var idCol = ensureColumn(sheet, "event id", "Event ID");
+  data.key = String(sheet.getRange(newRow, idCol).getValue() || "").trim();
+  if (start) { data.date = etWall(start); data.startUtc = start.toISOString(); }
 
   var result = { status: "ok", emailed: 0, queued: 0 };
   if (SEND_EMAIL_NOTICE) {
     try {
-      enqueueNotices(data);
+      enqueueNotices(data, "notice");
       result.emailed = processOutbox(MAX_INLINE);
       result.queued = countQueued(true);
       if (countQueued(false) > 0 && !noticeTriggerInstalled()) {
@@ -368,29 +401,27 @@ function handleDebate(data) {
       result.emailError = err.message;
     }
   }
-  try { syncDebateCalendar(); } catch (err) { /* the hourly run retries */ }
   return respond(result);
 }
 
-// Adds Outbox rows: a notice for every recipient and, when the debate is
-// more than a day away, a reminder for every recipient due 24 hours before
-// it. The debate's details are stored with each row.
-function enqueueNotices(data) {
+// Adds Outbox rows for every recipient: one email of `type` ("notice",
+// "change" or "cancel") and, for a notice or a change when the debate is
+// more than a day away, a reminder due 24 hours before it. The debate's
+// details are stored with each row.
+function enqueueNotices(data, type) {
+  type = type || "notice";
   var recipients = collectRecipients();
   if (!recipients.length) return 0;
 
   var sheet = getOutboxSheet(true);
-  var payload = JSON.stringify({
-    subject: data.subject, host: data.host, discourse: data.discourse,
-    date: data.date, startUtc: data.startUtc
-  });
+  var payload = debatePayload(data);
   var now = new Date();
   var start = new Date(data.startUtc);
   var objs = [];
 
-  recipients.forEach(function (r) { objs.push(outboxRow(now, r, payload, "notice", "")); });
+  recipients.forEach(function (r) { objs.push(outboxRow(now, r, payload, type, "")); });
 
-  if (!isNaN(start.getTime())) {
+  if (type !== "cancel" && !isNaN(start.getTime())) {
     var due = new Date(start.getTime() - REMINDER_HOURS * 3600 * 1000);
     if (due.getTime() > now.getTime() + 30 * 60 * 1000) {
       recipients.forEach(function (r) { objs.push(outboxRow(now, r, payload, "reminder", due)); });
@@ -410,9 +441,12 @@ function outboxRow(now, r, payload, type, sendAfter) {
 }
 
 // Run on a timer by installNoticeTrigger().
+// Order matters: the calendar first (it gives new rows their Event ID), then
+// changes to the schedule (they drop and queue emails), then the sending.
 function processOutboxTrigger() {
-  processOutbox(MAX_PER_RUN);
   try { syncDebateCalendar(); } catch (err) { console.error("Calendar sync: " + err.message); }
+  try { processDebateChanges(); } catch (err) { console.error("Debate changes: " + err.message); }
+  processOutbox(MAX_PER_RUN);
 }
 
 // Sends queued emails that are due, as many as today's allowance and `limit`
@@ -440,7 +474,7 @@ function runOutbox(limit) {
     if (String(row[c["status"]]).trim().toLowerCase() !== "queued") return;
 
     var type = c["type"] !== undefined ? String(row[c["type"]]).trim().toLowerCase() : "";
-    if (type !== "reminder") type = "notice";
+    if (!EMAIL_SUBJECT_PREFIX.hasOwnProperty(type)) type = "notice";
 
     // Reminders wait until their time.
     var after = c["send after"] !== undefined ? row[c["send after"]] : "";
@@ -454,11 +488,12 @@ function runOutbox(limit) {
   });
   if (!pending.length) return 0;
 
-  // Reminders are the most urgent, then Principal Design Fellows, Design
-  // Fellows and Subscribers, each in the order they were queued.
+  // Reminders, cancellations and new dates are the most urgent, then
+  // Principal Design Fellows, Design Fellows and Subscribers, each in the
+  // order they were queued.
+  function urgency(type) { return type === "notice" ? 1 : 0; }
   pending.sort(function (x, y) {
-    return (x.type === "reminder" ? 0 : 1) - (y.type === "reminder" ? 0 : 1) ||
-      x.priority - y.priority || x.i - y.i;
+    return urgency(x.type) - urgency(y.type) || x.priority - y.priority || x.i - y.i;
   });
 
   var budget = Math.min(MailApp.getRemainingDailyQuota() - MAIL_RESERVE, limit || MAX_PER_RUN);
@@ -501,13 +536,13 @@ function runOutbox(limit) {
       var mail = buildNoticeEmail(data, noticeTimeLines(data), recipient, !!logo, p.type);
       var options = {
         to: email,
-        subject: (p.type === "reminder" ? "Reminder: " : "Upcoming debate: ") + data.subject,
+        subject: EMAIL_SUBJECT_PREFIX[p.type] + data.subject,
         body: mail.text,
         htmlBody: mail.html,
         name: SENDER_NAME
       };
       if (logo) options.inlineImages = { wordmark: logo };
-      var ics = buildIcsBlob(data);
+      var ics = buildIcsBlob(data, p.type === "cancel");
       if (ics) options.attachments = [ics];
       MailApp.sendEmail(options);
       mark(p.i, "sent");
@@ -641,8 +676,9 @@ function syncDebateCalendar() {
         discourse: String(r[c["discourse"]] || "").trim()
       };
       var end = new Date(start.getTime() + 60 * 60 * 1000);
-      var title = "Intent Collective: " + subject;
-      var desc = calendarDescription(data);
+      var cancelled = isCancelledStatus(c["status"] !== undefined ? r[c["status"]] : "");
+      var title = (cancelled ? "Cancelled: " : "") + "Intent Collective: " + subject;
+      var desc = (cancelled ? "This debate is cancelled.\n" : "") + calendarDescription(data);
 
       var id = String(r[idCol - 1] || "").trim();
       var ev = null;
@@ -679,6 +715,259 @@ function debateStart(v) {
   var s = String(v || "").trim();
   if (!/^\d{4}-\d{2}-\d{2} \d{1,2}:\d{2}$/.test(s)) return null;
   try { return Utilities.parseDate(s, "America/New_York", "yyyy-MM-dd HH:mm"); } catch (err) { return null; }
+}
+
+/* ================= changes and cancellations ================= */
+
+var EMAIL_SUBJECT_PREFIX = {
+  notice: "Upcoming debate: ",
+  reminder: "Reminder: ",
+  change: "New date: ",
+  cancel: "Cancelled: "
+};
+
+function isCancelledStatus(v) {
+  var s = String(v || "").trim().toLowerCase();
+  return s === "cancelled" || s === "canceled";
+}
+
+// "2027-03-06 09:00", US Eastern wall time. One spelling, so "9:00" and
+// "09:00" compare equal.
+function etWall(d) {
+  return Utilities.formatDate(d, "America/New_York", "yyyy-MM-dd HH:mm");
+}
+
+function normalizeAnnounced(v) {
+  if (v instanceof Date) return isNaN(v.getTime()) ? "" : etWall(v);
+  var s = String(v || "").trim();
+  if (!s) return "";
+  if (isCancelledStatus(s)) return "cancelled";
+  var d = debateStart(s);
+  return d ? etWall(d) : s;
+}
+
+// One row of the Debate Schedule tab as the details stored with each email.
+function debateFromRow(r, c) {
+  var subject = String(r[c["subject"]] || "").trim();
+  var start = debateStart(r[c["date"]]);
+  if (!subject || !start) return null;
+  return {
+    subject: subject,
+    host: String(c["host"] !== undefined ? r[c["host"]] : "").trim(),
+    discourse: String(c["discourse"] !== undefined ? r[c["discourse"]] : "").trim(),
+    date: etWall(start),
+    startUtc: start.toISOString(),
+    key: String(c["event id"] !== undefined ? r[c["event id"]] : "").trim(),
+    cancelled: isCancelledStatus(c["status"] !== undefined ? r[c["status"]] : "")
+  };
+}
+
+function debatePayload(d) {
+  var p = {
+    subject: d.subject, host: d.host, discourse: d.discourse,
+    date: d.date, startUtc: d.startUtc, key: d.key || ""
+  };
+  if (d.previous) p.previous = d.previous;
+  return JSON.stringify(p);
+}
+
+// Does an Outbox payload belong to this debate? By key when both have one;
+// otherwise (rows queued before keys existed) by subject and the date that
+// was announced.
+function payloadMatches(p, d, announced) {
+  if (p.key && d.key) return p.key === d.key;
+  return String(p.subject).trim() === d.subject && normalizeAnnounced(p.date) === announced;
+}
+
+// Sets every queued Outbox row of this debate to `status`.
+function dropQueued(ob, d, announced, status) {
+  var c = ob.t.col;
+  ob.t.rows.forEach(function (row, i) {
+    if (String(row[c["status"]]).trim().toLowerCase() !== "queued") return;
+    var p;
+    try { p = JSON.parse(String(row[c["payload"]])); } catch (err) { return; }
+    if (!payloadMatches(p, d, announced)) return;
+    ob.sheet.getRange(i + 2, c["status"] + 1).setValue(status);
+    row[c["status"]] = status;
+  });
+}
+
+// Queued rows of this debate pick up a new subject, host or Discourse link.
+function refreshQueued(ob, d, announced) {
+  var c = ob.t.col;
+  ob.t.rows.forEach(function (row, i) {
+    if (String(row[c["status"]]).trim().toLowerCase() !== "queued") return;
+    var p;
+    try { p = JSON.parse(String(row[c["payload"]])); } catch (err) { return; }
+    if (!payloadMatches(p, d, announced)) return;
+    if (p.subject === d.subject && p.host === d.host && p.discourse === d.discourse && (p.key || "") === d.key) return;
+    p.subject = d.subject; p.host = d.host; p.discourse = d.discourse; p.key = d.key;
+    var json = JSON.stringify(p);
+    ob.sheet.getRange(i + 2, c["payload"] + 1).setValue(json);
+    row[c["payload"]] = json;
+  });
+}
+
+function setAnnounced(sheet, rowIndex, col, value) {
+  sheet.getRange(rowIndex + 2, col).setNumberFormat("@").setValue(value);
+}
+
+/**
+ * Compares every row with what recipients were last told (the "Announced"
+ * column) and acts once on each difference: a cancelled row drops its
+ * queued emails and queues a "Cancelled" email; a new date drops the old
+ * emails and queues a "New date" email and a new reminder; a reinstated row
+ * queues a fresh notice. A row with no Announced value (one that existed
+ * before this column) is taken as already announced. Past debates are never
+ * announced. Returns how many debates changed. Run by the hourly timer.
+ */
+function processDebateChanges() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(DEBATE_TAB);
+  if (!sheet || sheet.getLastRow() < 2) return 0;
+
+  var lock = LockService.getScriptLock();
+  if (!lock.tryLock(20000)) return 0;   // another run is busy; the next one catches up
+  try {
+    ensureColumn(sheet, "status", "Status");
+    ensureColumn(sheet, "event id", "Event ID");
+    var annCol = ensureColumn(sheet, "announced", "Announced");
+    var t = readTable(sheet);
+    var outSheet = SEND_EMAIL_NOTICE ? getOutboxSheet(true) : null;
+    var ob = outSheet ? { sheet: outSheet, t: readTable(outSheet) } : null;
+    var nowMs = Date.now();
+    var changed = 0;
+
+    t.rows.forEach(function (r, i) {
+      var d = debateFromRow(r, t.col);
+      if (!d) return;
+      var announced = normalizeAnnounced(r[annCol - 1]);
+      var current = d.cancelled ? "cancelled" : d.date;
+
+      if (announced === current) {
+        if (ob && !d.cancelled) refreshQueued(ob, d, announced);
+        return;
+      }
+      // First sight of the row, a past debate, or emails switched off:
+      // record it without announcing anything.
+      if (!announced || new Date(d.startUtc).getTime() <= nowMs || !ob) {
+        setAnnounced(sheet, i, annCol, current);
+        return;
+      }
+
+      if (d.cancelled) {
+        dropQueued(ob, d, announced, "cancelled");
+        enqueueNotices(d, "cancel");
+      } else if (announced === "cancelled") {
+        dropQueued(ob, d, announced, "replaced");   // cancellations not yet sent
+        enqueueNotices(d, "notice");
+      } else {
+        dropQueued(ob, d, announced, "replaced");
+        d.previous = announced;
+        enqueueNotices(d, "change");
+      }
+      setAnnounced(sheet, i, annCol, current);
+      changed++;
+    });
+    return changed;
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/**
+ * For every upcoming debate that is not cancelled, queues a notice for each
+ * recipient who has not had one (sent or queued) and a reminder for each who
+ * has none, when the reminder is still due. Use it after the Outbox was
+ * cleared, or when the list is switched on. Returns the number queued.
+ */
+function catchUpNotices() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(DEBATE_TAB);
+  if (!SEND_EMAIL_NOTICE || !sheet || sheet.getLastRow() < 2) return 0;
+
+  var lock = LockService.getScriptLock();
+  if (!lock.tryLock(20000)) throw new Error("Another run is busy. Try again in a minute.");
+  try {
+    var annCol = ensureColumn(sheet, "announced", "Announced");
+    var t = readTable(sheet);
+    var outSheet = getOutboxSheet(true);
+    var ot = readTable(outSheet);
+    var oc = ot.col;
+    var recipients = collectRecipients();
+    var now = new Date();
+    var objs = [];
+
+    t.rows.forEach(function (r) {
+      var d = debateFromRow(r, t.col);
+      if (!d || d.cancelled) return;
+      var start = new Date(d.startUtc);
+      if (start.getTime() <= now.getTime()) return;
+      var announced = normalizeAnnounced(r[annCol - 1]) || d.date;
+
+      var hasNotice = {}, hasReminder = {};
+      ot.rows.forEach(function (row) {
+        var st = String(row[oc["status"]]).trim().toLowerCase();
+        if (st !== "queued" && st !== "sent") return;
+        var p;
+        try { p = JSON.parse(String(row[oc["payload"]])); } catch (err) { return; }
+        if (!payloadMatches(p, d, announced)) return;
+        var email = String(row[oc["email"]]).trim().toLowerCase();
+        var type = String(row[oc["type"]]).trim().toLowerCase();
+        if (type === "reminder") hasReminder[email] = true; else hasNotice[email] = true;
+      });
+
+      var payload = debatePayload(d);
+      var due = new Date(start.getTime() - REMINDER_HOURS * 3600 * 1000);
+      var reminderOk = due.getTime() > now.getTime() + 30 * 60 * 1000;
+      recipients.forEach(function (rc) {
+        if (!hasNotice[rc.email]) objs.push(outboxRow(now, rc, payload, "notice", ""));
+        if (reminderOk && !hasReminder[rc.email]) objs.push(outboxRow(now, rc, payload, "reminder", due));
+      });
+    });
+
+    appendObjectsByHeader(outSheet, objs);
+    return objs.length;
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/* ================= sheet menu ================= */
+
+// Adds an "Intent Collective" menu to the spreadsheet.
+function onOpen() {
+  SpreadsheetApp.getUi().createMenu("Intent Collective")
+    .addItem("Send debate changes now", "menuSendChangesNow")
+    .addItem("Catch up notices and reminders", "menuCatchUp")
+    .addToUi();
+}
+
+function menuSendChangesNow() {
+  var ui = SpreadsheetApp.getUi();
+  try {
+    try { syncDebateCalendar(); } catch (err) { /* reported below if it matters */ }
+    var changed = processDebateChanges();
+    var sent = processOutbox(MAX_PER_RUN);
+    ui.alert(changed
+      ? changed + (changed === 1 ? " debate changed. " : " debates changed. ") + sent + " emails sent now, " + countQueued(true) + " waiting for the hourly run."
+      : "No changes to announce. " + sent + " waiting emails sent.");
+  } catch (err) {
+    ui.alert("Something went wrong: " + err.message);
+  }
+}
+
+function menuCatchUp() {
+  var ui = SpreadsheetApp.getUi();
+  var ok = ui.alert("Catch up notices and reminders",
+    "This queues a notice and a reminder for every upcoming debate, for each person on the list who has not had them. Continue?",
+    ui.ButtonSet.OK_CANCEL);
+  if (ok !== ui.Button.OK) return;
+  try {
+    var queued = catchUpNotices();
+    var sent = processOutbox(MAX_INLINE);
+    ui.alert(queued + " emails queued. " + sent + " sent now; reminders go out 24 hours before each debate.");
+  } catch (err) {
+    ui.alert("Something went wrong: " + err.message);
+  }
 }
 
 /* ================= recipients ================= */
@@ -824,27 +1113,41 @@ function icsEscape(s) {
   return String(s).replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
 }
 
-// A calendar file for Apple Calendar, Outlook and others.
-function buildIcsBlob(data) {
+// The calendar file's UID. It comes from the debate's Event ID, which never
+// changes, so a calendar app treats a new date or a cancellation as the same
+// event. Debates without one (queued before keys existed) fall back to the
+// start time. js/calendar.js builds the same UID for the site's cards.
+function icsUid(data, start) {
+  var k = String(data.key || "").replace(/@.*$/, "").replace(/[^A-Za-z0-9]/g, "");
+  return "debate-" + (k || start.getTime()) + "@intentcollective.design";
+}
+
+// A calendar file for Apple Calendar, Outlook and others. SEQUENCE grows
+// with time, so the newest file always wins. cancel: a file that removes
+// the event from calendars that already have it.
+function buildIcsBlob(data, cancel) {
   var t = calendarTimes(data);
   if (!t) return null;
+  var now = new Date();
   var lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
     "PRODID:-//Intent Collective//Debate//EN",
     "CALSCALE:GREGORIAN",
-    "METHOD:PUBLISH",
+    "METHOD:" + (cancel ? "CANCEL" : "PUBLISH"),
     "BEGIN:VEVENT",
-    "UID:debate-" + t.start.getTime() + "@intentcollective.design",
-    "DTSTAMP:" + icsStamp(new Date()),
+    "UID:" + icsUid(data, t.start),
+    "SEQUENCE:" + Math.floor(now.getTime() / 60000),
+    "DTSTAMP:" + icsStamp(now),
     "DTSTART:" + icsStamp(t.start),
-    "DTEND:" + icsStamp(t.end),
-    "SUMMARY:" + icsEscape("Intent Collective: " + data.subject),
-    "DESCRIPTION:" + icsEscape(calendarDescription(data)),
+    "DTEND:" + icsStamp(t.end)
+  ].concat(cancel ? ["STATUS:CANCELLED"] : []).concat([
+    "SUMMARY:" + icsEscape((cancel ? "Cancelled: " : "") + "Intent Collective: " + data.subject),
+    "DESCRIPTION:" + icsEscape((cancel ? "This debate is cancelled.\n" : "") + calendarDescription(data)),
     "URL:" + debatePageUrl(),
     "END:VEVENT",
     "END:VCALENDAR"
-  ];
+  ]);
   return Utilities.newBlob(lines.join("\r\n") + "\r\n", "text/calendar", "intent-collective-debate.ics");
 }
 
@@ -865,30 +1168,81 @@ function calendarBlockHtml(gcal, font, link) {
     thisLine + allLine + '</div>';
 }
 
-// type: "notice" (a debate was scheduled) or "reminder" (24 hours before).
+// The Eastern line for a "YYYY-MM-DD HH:mm" Eastern wall time.
+function easternLine(wall) {
+  var d = debateStart(wall);
+  if (!d) return String(wall || "") + " (US Eastern)";
+  return Utilities.formatDate(d, "America/New_York", "EEEE, MMMM d, yyyy 'at' h:mm a z");
+}
+
+// type: "notice" (a debate was scheduled), "reminder" (24 hours before),
+// "change" (a new date) or "cancel" (the debate is cancelled).
+var EMAIL_LABEL = {
+  notice: "Upcoming live debate",
+  reminder: "Debate reminder",
+  change: "New debate date",
+  cancel: "Debate cancelled"
+};
+var EMAIL_TOPLINE = {
+  reminder: "Starts in about 24 hours",
+  change: "The date has changed",
+  cancel: "This debate will not take place"
+};
+var EMAIL_INTRO = {
+  notice: "A new Intent Collective debate has been scheduled.",
+  reminder: "Reminder: this Intent Collective debate starts in about 24 hours.",
+  change: "The date of this Intent Collective debate has changed.",
+  cancel: "This Intent Collective debate is cancelled and will not take place."
+};
+
 function buildNoticeEmail(data, timeLines, recipient, hasLogo, type) {
-  var isReminder = type === "reminder";
+  if (!EMAIL_LABEL.hasOwnProperty(type)) type = "notice";
+  var isCancel = type === "cancel";
   var font = "'DM Sans',Helvetica,Arial,sans-serif";
   var link = 'color:' + C_MARK + ';font-weight:700;text-decoration:none;';
-  var gcal = googleCalendarUrl(data);
+  var softStyle = 'font-family:' + font + ';font-size:15px;line-height:1.6;color:' + C_SOFT + ';';
+  var gcal = isCancel ? "" : googleCalendarUrl(data);
   var page = debatePageUrl();
+  var top = EMAIL_TOPLINE[type];
+  var previous = type === "change" && data.previous ? easternLine(data.previous) : "";
+
+  // A cancellation shows only the Eastern time, under "Was scheduled for".
+  var whenHtml = isCancel
+    ? '<div style="' + softStyle + '">Was scheduled for</div>' +
+      '<div style="font-family:' + font + ';font-size:15px;line-height:1.6;color:' + C_INK + ';">' + esc(timeLines[0]) + '</div>'
+    : '<div style="font-family:' + font + ';font-size:15px;line-height:1.6;color:' + C_INK + ';">' + timeLines.map(esc).join('<br>') + '</div>' +
+      (previous ? '<div style="' + softStyle + 'margin:6px 0 0 0;">Previously: ' + esc(previous) + '</div>' : '');
+
+  var calHtml = isCancel
+    ? '<div style="border-top:1px dashed ' + C_LINE + ';margin:14px 0 0 0;padding:12px 0 0 0;' + softStyle + '">Already in your calendar? Open the attached file to remove it, or delete it by hand.</div>'
+    : calendarBlockHtml(gcal, font, link);
 
   var box =
-    (isReminder
-      ? '<div style="font-family:' + font + ';font-size:12px;font-weight:700;text-transform:uppercase;color:' + C_SOFT + ';margin:0 0 8px 0;">Starts in about 24 hours</div>'
+    (top
+      ? '<div style="font-family:' + font + ';font-size:12px;font-weight:700;text-transform:uppercase;color:' + C_SOFT + ';margin:0 0 8px 0;">' + esc(top) + '</div>'
       : '') +
     '<div style="font-family:' + font + ';font-size:22px;line-height:1.2;font-weight:700;color:' + C_INK + ';margin:0 0 10px 0;">' + esc(data.subject) + '</div>' +
-    '<div style="font-family:' + font + ';font-size:15px;line-height:1.6;color:' + C_SOFT + ';margin:0 0 6px 0;">Hosted by ' + esc(data.host) + '</div>' +
-    '<div style="font-family:' + font + ';font-size:15px;line-height:1.6;color:' + C_INK + ';">' + timeLines.map(esc).join('<br>') + '</div>' +
+    '<div style="' + softStyle + 'margin:0 0 6px 0;">Hosted by ' + esc(data.host) + '</div>' +
+    whenHtml +
     '<div style="border-top:1px dashed ' + C_LINE + ';margin:16px 0 0 0;padding:12px 0 0 0;font-family:' + font + ';font-size:15px;line-height:1.8;">' +
-    '<a href="' + esc(data.discourse) + '" style="' + link + '">Read the discourse post &gt;</a><br>' +
-    '<a href="' + esc(page) + '" style="' + link + '">Open the debate page &gt;</a>' +
+    (data.discourse ? '<a href="' + esc(data.discourse) + '" style="' + link + '">Read the discourse post &gt;</a><br>' : '') +
+    (isCancel
+      ? '<a href="' + esc(SITE_STRUCTURE_URL) + '" style="' + link + '">All debates &gt;</a>'
+      : '<a href="' + esc(page) + '" style="' + link + '">Open the debate page &gt;</a>') +
     '</div>' +
-    calendarBlockHtml(gcal, font, link);
+    calHtml;
 
-  var below = 'The Join link appears on the debate page one hour before the start. ' +
-    'Debates are one hour, online, and open to everyone. ' +
-    '<a href="' + esc(SITE_STRUCTURE_URL) + '" style="' + link + '">All debates &gt;</a>';
+  var below;
+  if (isCancel) {
+    below = 'Upcoming debates are listed on the site, and every new one is announced by email.';
+  } else {
+    below = (type === "change"
+      ? 'If the earlier date is in your calendar, open the attached file to move it, or change it by hand. '
+      : '') +
+      'The Join link appears on the debate page one hour before the start. ' +
+      'Debates are one hour, online, and open to everyone. ' +
+      '<a href="' + esc(SITE_STRUCTURE_URL) + '" style="' + link + '">All debates &gt;</a>';
+  }
 
   var footerHtml;
   var footerText;
@@ -906,27 +1260,36 @@ function buildNoticeEmail(data, timeLines, recipient, hasLogo, type) {
     footerText = "You receive this as a Fellow of Intent Collective. To stop these notices, write to " + CONTACT_EMAIL + ".";
   }
 
-  var text =
-    (isReminder ? "Reminder: this Intent Collective debate starts in about 24 hours.\n\n"
-                : "A new Intent Collective debate has been scheduled.\n\n") +
+  var text = EMAIL_INTRO[type] + "\n\n" +
     "Subject: " + data.subject + "\n" +
-    "Host: " + data.host + "\n\n" +
-    timeLines.join("\n") + "\n\n" +
-    "Read the discourse post: " + data.discourse + "\n" +
-    "Debate page: " + page + "\n" +
-    "\nAdd to your calendar\n" +
-    (gcal ? "This debate: Google Calendar " + gcal + ", or open the attached file\n" : "This debate: open the attached file\n") +
-    (CAL_SUBSCRIBE_GOOGLE
-      ? "Future debates: Subscribe in Google Calendar " + CAL_SUBSCRIBE_GOOGLE + " \u00b7 Apple or Outlook " + CAL_SUBSCRIBE_ICAL + "\n"
-      : "") +
-    "\nThe Join link appears on the debate page one hour before the start. " +
-    "Debates are one hour, online, and open to everyone.\n" +
-    "All debates: " + SITE_STRUCTURE_URL + "\n\n" +
-    footerText;
+    "Host: " + data.host + "\n\n";
+  if (isCancel) {
+    text += "Was scheduled for: " + timeLines[0] + "\n\n" +
+      (data.discourse ? "Read the discourse post: " + data.discourse + "\n" : "") +
+      "All debates: " + SITE_STRUCTURE_URL + "\n\n" +
+      "Already in your calendar? Open the attached file to remove it, or delete it by hand.\n\n" +
+      "Upcoming debates are listed on the site, and every new one is announced by email.\n\n";
+  } else {
+    text += timeLines.join("\n") + "\n" +
+      (previous ? "Previously: " + previous + "\n" : "") + "\n" +
+      (data.discourse ? "Read the discourse post: " + data.discourse + "\n" : "") +
+      "Debate page: " + page + "\n" +
+      "\nAdd to your calendar\n" +
+      (gcal ? "This debate: Google Calendar " + gcal + ", or open the attached file\n" : "This debate: open the attached file\n") +
+      (CAL_SUBSCRIBE_GOOGLE
+        ? "Future debates: Subscribe in Google Calendar " + CAL_SUBSCRIBE_GOOGLE + " \u00b7 Apple or Outlook " + CAL_SUBSCRIBE_ICAL + "\n"
+        : "") +
+      "\n" +
+      (type === "change" ? "If the earlier date is in your calendar, open the attached file to move it, or change it by hand.\n" : "") +
+      "The Join link appears on the debate page one hour before the start. " +
+      "Debates are one hour, online, and open to everyone.\n" +
+      "All debates: " + SITE_STRUCTURE_URL + "\n\n";
+  }
+  text += footerText;
 
   return {
     text: text,
-    html: emailShell(isReminder ? "Debate reminder" : "Upcoming live debate", box, below, footerHtml, hasLogo)
+    html: emailShell(EMAIL_LABEL[type], box, below, footerHtml, hasLogo)
   };
 }
 
@@ -1137,8 +1500,8 @@ function ensureColumn(sheet, key, label) {
 }
 
 // Appends a row by matching header names (case-insensitive), so the column
-// order in your sheet does not matter. textKey: a header whose cell should
-// be stored as plain text.
+// order in your sheet does not matter. textKey: a header (or a list of
+// headers) whose cell should be stored as plain text.
 function appendByHeader(sheet, values, textKey) {
   var lastCol = Math.max(sheet.getLastColumn(), 1);
   var header = sheet.getRange(1, 1, 1, lastCol).getValues()[0]
@@ -1149,10 +1512,10 @@ function appendByHeader(sheet, values, textKey) {
   });
 
   var targetRow = sheet.getLastRow() + 1;
-  if (textKey) {
-    var c = header.indexOf(textKey);
+  [].concat(textKey || []).forEach(function (k) {
+    var c = header.indexOf(k);
     if (c > -1) sheet.getRange(targetRow, c + 1).setNumberFormat("@");
-  }
+  });
   sheet.getRange(targetRow, 1, 1, row.length).setValues([row]);
 
   var addedCol = header.indexOf("added");
