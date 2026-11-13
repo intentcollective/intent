@@ -94,8 +94,11 @@ var DEBATE_TAB = "Debate Schedule";
 // Leave empty if Fellows, Subscribers and Debate Schedule are tabs of the
 // SAME spreadsheet this script is bound to. If your Fellows list lives in a
 // different spreadsheet, paste that spreadsheet's ID here (the long string
-// in its URL between /d/ and /edit). The Subscribers tab is kept there too.
-var FELLOWS_SPREADSHEET_ID = "";
+// in its URL between /d/ and /edit). The Subscribers and Outbox tabs are
+// kept there too. Since Nov 13 2026 they live in the private "Fellows and
+// Subscribers" spreadsheet, so the Debate Schedule spreadsheet holds no
+// personal data and can be shared with Principal Design Fellows.
+var FELLOWS_SPREADSHEET_ID = "10N4HKlXA5Li46QMz4cd3XmfX3vczqgQlJFuWG7uIyys";
 
 // Set to false to stop the automatic email notice.
 var SEND_EMAIL_NOTICE = true;

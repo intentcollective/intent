@@ -199,7 +199,7 @@ Column order does not matter, but the header names must match. The `Fellowship` 
 
 Add your existing fellows' names and emails to the `Fellows` tab now, so they receive notices. Only the `Email` and `Status` columns are used for the notice.
 
-If you prefer the Fellows list in a different spreadsheet, see `FELLOWS_SPREADSHEET_ID` at the top of the script.
+The live setup keeps personal data apart: the `Fellows`, `Subscribers` and `Outbox` tabs are in a private spreadsheet ("Fellows and Subscribers", shared with nobody), named by `FELLOWS_SPREADSHEET_ID` at the top of the script. The spreadsheet the script is attached to holds only `Debate Schedule`, so it can be shared with Principal Design Fellows (each by their own Google account, as Editor, with the Added, Event ID and Announced columns protected). Never share the private spreadsheet, and never share either one by link.
 
 Entering a debate by hand in the sheet: put the date in the Date column as `2026-12-05 10:00` (US Eastern, 24-hour). Format that column as plain text so Sheets does not rewrite it.
 
