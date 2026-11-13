@@ -17,7 +17,62 @@ Google Apps Script files, kept in `apps-script/` as the backup of what runs in G
 |---|---|
 | `apps-script/discourse.gs` | Discourse posting |
 | `apps-script/zeitgeist.gs` | Zeitgeist posting |
-| `apps-script/fellows-debate.gs` | Fellow registration, debate scheduling, email notice, bounce protection |
+| `apps-script/fellows-debate.gs` | Fellow registration, debate scheduling, changes and cancellations, email notice, bounce protection |
+
+---
+
+## Running debates: a guide for Principal Design Fellows
+
+Two places do all the work. The **Structure page** schedules a debate. The **Debate Schedule** tab of the "Fellows and Debate Schedule" spreadsheet changes or cancels one. The sheet is the master record: the website, the public calendar and every email follow it, never the other way round.
+
+### Schedule a debate
+
+1. Publish the Discourse post for the debate first.
+2. On the Structure page, open **+ Schedule a debate** and fill in the host, the date and time (US Eastern), a one-sentence subject, the Discourse post, the meeting link and the password. Check the date and time before you submit: once scheduled, any later change is emailed to everyone.
+3. That is all. The row appears in the sheet, every Fellow and confirmed Subscriber gets a notice, a reminder is queued for 24 hours before the start, the event appears in the public calendar, and the card appears on the Index and Structure pages within about 5 minutes.
+
+### Change the date or time
+
+1. In Debate Schedule, edit the **Date** cell. Write it as `2027-04-03 10:00` (US Eastern, 24-hour).
+2. Choose **Intent Collective > Send debate changes now**, or wait: the hourly run does the same.
+
+Everyone gets a "New date" email that also shows the previous date. The old reminder is replaced by one for the new time, the calendar event moves, and the site updates.
+
+### Change the subject, host, Discourse link or meeting link
+
+Edit the cell. The site and the calendar follow, and queued reminders use the new text. No email is sent. The meeting link is never emailed; it appears on the debate card one hour before the start.
+
+### Cancel a debate
+
+1. In the **Status** cell, choose `cancelled` from the dropdown.
+2. Choose **Intent Collective > Send debate changes now**, or wait for the hourly run.
+
+Everyone gets a "Cancelled" email with a calendar file that removes the debate from their calendar. Queued notices and reminders for it are dropped. The public calendar event is renamed "Cancelled: ...". The card stays on the site labelled Cancelled, without Join or calendar links, and the red Next debate outline moves to the next debate. The row stays in the sheet as the record.
+
+### Undo a cancellation
+
+Set **Status** back to `scheduled`, then choose **Send debate changes now**. Everyone gets a fresh notice and a new reminder is queued.
+
+### Rules
+
+- **Never delete a row.** Deleting skips every email, so nobody is told. Cancel instead.
+- **Change things only in the sheet, never in the calendar.** An event deleted or edited by hand in the calendar is put back within the hour.
+- **Do not edit** the `Event ID`, `Announced` or `Added` columns. The script keeps them.
+- Each change is announced once. Moving a date back and forth sends one email per move.
+- Past debates are never announced, so editing an old row is safe.
+
+### The Intent Collective menu
+
+It sits at the right end of the sheet's menu bar, after Help.
+
+- **Send debate changes now:** announces changes at once instead of waiting for the hourly run, and sends any emails that are due.
+- **Catch up notices and reminders:** for every upcoming debate, queues a notice and a reminder for anyone on the list who has not had them. Use it after a debate was added by hand in the sheet, or after the Outbox tab was cleared. It never sends anything twice.
+
+If the menu does not appear, the browser is usually signed in to several Google accounts. Open the sheet in a window signed in to one account only (an incognito window works), or open **Extensions > Apps Script**, pick `onOpen` in the function list and click **Run**.
+
+### Emails and timing
+
+Emails go to Principal Design Fellows first, then Design Fellows, then Subscribers. A Gmail account sends about 100 emails a day, so on a long list some arrive over the following days (see section 5f). Nobody is ever emailed about a debate that has already started.
 
 ---
 
@@ -148,7 +203,7 @@ If you prefer the Fellows list in a different spreadsheet, see `FELLOWS_SPREADSH
 
 Entering a debate by hand in the sheet: put the date in the Date column as `2026-12-05 10:00` (US Eastern, 24-hour). Format that column as plain text so Sheets does not rewrite it.
 
-`Status` is `scheduled` or `cancelled`. `Event ID` and `Announced` are added and filled by the script; do not edit them. A debate entered by hand gets no notice on its own: use **Catch up notices and reminders** in the sheet's Intent Collective menu (see 5f).
+`Status` is `scheduled` or `cancelled`; make it a dropdown (select the column below the header, then Insert > Dropdown, with "Reject the input" under Advanced options). An empty Status counts as scheduled. `Event ID` and `Announced` are added and filled by the script; do not edit them. A debate entered by hand gets no notice on its own: use **Catch up notices and reminders** in the sheet's Intent Collective menu (see 5f).
 
 ### 5c. Publish ONLY the Debate Schedule tab
 
