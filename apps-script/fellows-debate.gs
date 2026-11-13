@@ -87,7 +87,9 @@
  *      in both the Fellows and Subscribers tabs.
  */
 
-var PASSWORD = "designeverything1234";
+// The password is NOT written here, because this repository is public.
+// Set it in Apps Script: Project Settings > Script Properties > PASSWORD.
+var PASSWORD = PropertiesService.getScriptProperties().getProperty("PASSWORD");
 
 // Tab names. Change these if your tabs are named differently.
 var FELLOWS_TAB = "Fellows";
@@ -171,7 +173,7 @@ function doPost(e) {
     // Public sign-up: no password.
     if (data.type === "subscribe") return handleSubscribe(data);
 
-    if (data.password !== PASSWORD) {
+    if (!PASSWORD || data.password !== PASSWORD) {
       return respond({ status: "error", message: "Incorrect password." });
     }
 

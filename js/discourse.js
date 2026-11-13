@@ -30,11 +30,9 @@ const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBQ1XXs9
 // Web app URL from the Apps Script that adds new posts to the sheet.
 const POST_ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbxgwEbqAZZH6x0Y5CRAVuKaZjPZx4g16IaBn-Cv3k2URO_y_d-8U4Xkde9HVxxiIOGWRA/exec";
 
-// Soft client-side check only, for instant feedback in the UI. It is
-// NOT real security: this file is visible to anyone who views page source,
-// so the string is trivially readable. The Apps Script also checks the
-// password server-side before it will add a row. That is the real gate.
-const POST_PASSWORD = "designeverything1234";
+// The posting password is never stored in this file, because the site's
+// code is public. The Apps Script checks it, reading it from its private
+// Script Properties.
 
 const ENDPOINT_READY = Boolean(POST_ENDPOINT_URL) && !POST_ENDPOINT_URL.includes("PASTE_YOUR");
 
@@ -638,8 +636,8 @@ try {
         setComposerStatus("Name, title, and content are all required.", "error");
         return;
       }
-      if (password !== POST_PASSWORD) {
-        setComposerStatus("Incorrect password.", "error");
+      if (!password) {
+        setComposerStatus("Enter the password.", "error");
         return;
       }
 

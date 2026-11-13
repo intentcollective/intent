@@ -25,9 +25,8 @@ const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS8WbPtCB
 // Web app URL from the Apps Script that appends new links to the sheet.
 const POST_ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbxYXhpRXvG3UvLTmQEec9FSxD2rXjoJcpX5BVL4R7dwtEj2F5CV7chSBLrRt3tq4csv/exec";
 
-// Soft client-side check only — see the note on this in js/discourse.js.
-// The Apps Script checks the password server-side; that's the real gate.
-const POST_PASSWORD = "designeverything1234";
+// The posting password is never stored in this file. The Apps Script
+// checks it (see the note in js/discourse.js).
 
 const stateEl = document.getElementById("state");
 const gridEl = document.getElementById("entry-grid");
@@ -292,8 +291,8 @@ try {
         setComposerStatus("Link must start with http:// or https://", "error");
         return;
       }
-      if (password !== POST_PASSWORD) {
-        setComposerStatus("Incorrect password.", "error");
+      if (!password) {
+        setComposerStatus("Enter the password.", "error");
         return;
       }
 

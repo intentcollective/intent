@@ -12,7 +12,9 @@
  * and appends a new row with an automatic timestamp.
  */
 
-var PASSWORD = "intentcollectivedesign";
+// The password is NOT written here, because this repository is public.
+// Set it in Apps Script: Project Settings > Script Properties > PASSWORD.
+var PASSWORD = PropertiesService.getScriptProperties().getProperty("PASSWORD");
 
 // If your Discourse tab has a different name, change this to match.
 // If it's not found, the script falls back to the sheet's first tab.
@@ -22,7 +24,7 @@ function doPost(e) {
   try {
     var data = JSON.parse(e.postData.contents);
 
-    if (data.password !== PASSWORD) {
+    if (!PASSWORD || data.password !== PASSWORD) {
       return respond({ status: "error", message: "Incorrect password." });
     }
     if (!data.name || !data.title || !data.content) {

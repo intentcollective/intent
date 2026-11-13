@@ -79,19 +79,22 @@ Emails go to Principal Design Fellows first, then Design Fellows, then Subscribe
 
 ## 1. The master password
 
-One password now covers every form on the site: Discourse, Zeitgeist, fellow registration, and debate scheduling.
+One password covers every form on the site: Discourse, Zeitgeist, fellow registration, and debate scheduling.
 
-It lives in six places. If you ever change it, change all six, then redeploy the scripts (see section 2):
+It is stored in one kind of place only: the private **Script Properties** of each of the three Apps Script projects (Discourse, Zeitgeist, Fellows + Debate). It is never written in this repository, because the repository is public. The site's forms simply send what the person types, and the script checks it.
 
-- `js/discourse.js`, `js/zeitgeist.js`, `js/structure.js` (constant `POST_PASSWORD`)
-- `apps-script/discourse.gs`, `apps-script/zeitgeist.gs`, `apps-script/fellows-debate.gs` (variable `PASSWORD`)
+To set or change it, in each of the three Apps Script projects:
+
+1. **Project Settings** (gear icon) > **Script Properties** > **Edit script properties**.
+2. Property `PASSWORD`, value: the password. Save.
+
+No redeploy is needed for a password change, since the script reads the property on every request. If `PASSWORD` is missing, the script rejects every post.
 
 How much protection this gives:
 
-- The real check happens inside each Apps Script. A row is only added if the password sent matches.
-- The password is still readable by anyone who opens the page source or the browser's network tab. Treat it as a light gate against casual or accidental use, not real authentication.
+- The check happens inside each Apps Script. A row is only added if the password sent matches.
 - Because it is one shared password, any fellow who knows it can register people or schedule debates, not only Principal Design Fellows. For now, Principal Design Fellows host the debates, so share the password with them only.
-- The password is not written in this README on purpose, since the repository is public. Do not paste it into public pages.
+- Never paste it into this repository, a public page, or a chat others can read.
 
 ## 2. Required now: update the two existing scripts
 
@@ -123,7 +126,7 @@ Buttons: **B**, *I*, <u>U</u>, **Line** (a horizontal rule), **Link**, **Image**
 
 ### Correcting a published post
 
-The page has no edit button on purpose. The password is readable in the page source, so a page-based edit could let anyone change a fellow's writing. Corrections are made in the Google Sheet instead, which only the sheet's owner can open:
+The page has no edit button on purpose, so a fellow's writing can only be changed by the sheet's owner. Corrections are made in the Google Sheet instead, which only the sheet's owner can open:
 
 1. Open the Discourse sheet and find the post's row.
 2. Edit the `Title` or `Content` cell. Content is simple HTML (`<p>`, `<b>`, `<i>`, `<u>`, `<a href>`, `<hr>`) plus the `[img:URL]` and `[video:URL]` tags.

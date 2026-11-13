@@ -27,9 +27,8 @@ const DISCOURSE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBQ1
 // Web app URL of the Fellows + Debate Apps Script.
 const POST_ENDPOINT_URL = (window.IC_CONFIG && typeof window.IC_CONFIG.FELLOWS_DEBATE_ENDPOINT === "string") ? window.IC_CONFIG.FELLOWS_DEBATE_ENDPOINT : "https://script.google.com/macros/s/AKfycbwJsylXmVramfW8iNDgVPFtfQ-wBvzfQ9FiJ66OU-4Aejd1-JAqr0lCmQVSOWXc-fiBUw/exec";
 
-// Soft client-side check only, for instant feedback. The Apps Script checks
-// the password server-side; that is the real gate.
-const POST_PASSWORD = "designeverything1234";
+// The password is never stored in this file. The Apps Script checks it,
+// reading it from its private Script Properties.
 
 const TZ_ET = "America/New_York";
 const TZ_SEOUL = "Asia/Seoul";
@@ -532,8 +531,8 @@ function initForms() {
     if (!meeting) {
       setStatus(status, "The meeting link must start with http:// or https://", "error"); return;
     }
-    if (password !== POST_PASSWORD) {
-      setStatus(status, "Incorrect password.", "error"); return;
+    if (!password) {
+      setStatus(status, "Enter the password.", "error"); return;
     }
 
     const start = etWallToDate(...parts);
@@ -600,8 +599,8 @@ function initForms() {
     if (linkedin && !safeUrl(linkedin)) {
       setStatus(status, "The LinkedIn link must start with http:// or https://", "error"); return;
     }
-    if (password !== POST_PASSWORD) {
-      setStatus(status, "Incorrect password.", "error"); return;
+    if (!password) {
+      setStatus(status, "Enter the password.", "error"); return;
     }
 
     btn.disabled = true;
