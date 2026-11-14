@@ -1,6 +1,6 @@
 # intent collective website
 
-Static site, no build step. Four main pages, plus two unlinked reference pages, `principles/` (linked from every footer) and `guide/` (the Principal Design Fellow Guide, shared by direct URL only, `noindex`, no password in it).
+Static site, no build step. Four main pages, plus two reference pages, `principles/` (linked from every footer) and `guide/` (the Principal Design Fellow Guide, shared by direct URL only, `noindex`, no password in it).
 
 | Page | File | Data |
 |---|---|---|
