@@ -2,7 +2,7 @@
 // the principles page, where the stone arrives from the left as the title's period.
 (function () {
   var KEY = 'ic-stone';
-  var SPEED = 0.6;   // horizontal pixels per millisecond, the same on both pages
+  var SPEED = 0.6;   // average horizontal pixels per millisecond on the home page
   var MIN = 1400;    // the home page throw is never quicker than this
   var SPIN = 0.8;    // degrees of turn per pixel travelled
   var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -12,6 +12,14 @@
   // One throw, one curve. The stone follows a single parabola, as under gravity:
   // a slight rise to a peak at three quarters of the home page, then it keeps
   // falling into the principles page from the same height, angle and speed.
+
+  // Where the stone is across its flight of X pixels, at even moments in time,
+  // when its speed eases steadily from v0 down to v1.
+  function slowing(X, v0, v1) {
+    var T = 2 * X / (v0 + v1), a = (v0 - v1) / T, xs = [];
+    for (var i = 0; i <= 60; i++) { var t = T * i / 60; xs.push(v0 * t - a * t * t / 2); }
+    return { T: T, xs: xs };
+  }
 
   var link = document.querySelector('.logo-link');
   if (link) link.addEventListener('click', function (e) {
@@ -27,15 +35,14 @@
     var peak = X * 0.75;
     var H = Math.max(16, Math.min(80, r.top - head - 12)); // a slight rise, below the header
     var k = H / (peak * peak);                            // the curve's bend, kept for page two
-    var time = Math.max(X / SPEED, MIN);
-    var frames = [];
-    for (var i = 0; i <= 40; i++) {
-      var x = X * i / 40, y = k * (x - peak) * (x - peak) - H;
-      frames.push({ transform: 'translate(' + x + 'px, ' + y + 'px) rotate(' + x * SPIN + 'deg)' });
-    }
-    flying.animate(frames, { duration: time, fill: 'forwards' }).onfinish = function () {
+    var v0 = 2 * (X / Math.max(X / SPEED, MIN)) / 1.8;     // quicker out of the hand
+    var run = slowing(X, v0, v0 * 0.8);                    // then slowing a little
+    var frames = run.xs.map(function (x) {
+      return { transform: 'translate(' + x + 'px, ' + (k * (x - peak) * (x - peak) - H) + 'px) rotate(' + x * SPIN + 'deg)' };
+    });
+    flying.animate(frames, { duration: run.T, fill: 'forwards' }).onfinish = function () {
       var u = X - peak;   // how far past the peak it left the page
-      try { sessionStorage.setItem(KEY, JSON.stringify({ top: r.top + k * u * u - H, slope: 2 * k * u, v: X / time })); } catch (err) {}
+      try { sessionStorage.setItem(KEY, JSON.stringify({ top: r.top + k * u * u - H, slope: 2 * k * u, v: v0 * 0.8 })); } catch (err) {}
       window.location.href = link.href;
     };
   });
@@ -56,12 +63,10 @@
       var s0 = thrown.slope;               // at the angle it left
       var g = Math.max(0, (drop - s0 * X) / (X * X));   // then keeps curving down onto the title
       if (g === 0) s0 = drop / X;
-      var frames = [];
-      for (var i = 0; i <= 40; i++) {
-        var x = X * i / 40, y = s0 * x + g * x * x;
-        frames.push({ transform: 'translate(' + (x - X) + 'px, ' + (y - drop) + 'px) rotate(' + (x - X) * SPIN + 'deg)' });
-      }
-      period.animate(frames, { duration: X / thrown.v });
+      var run = slowing(X, thrown.v, thrown.v * 0.6);     // same speed, easing into place
+      period.animate(run.xs.map(function (x) {
+        return { transform: 'translate(' + (x - X) + 'px, ' + (s0 * x + g * x * x - drop) + 'px) rotate(' + (x - X) * SPIN + 'deg)' };
+      }), { duration: run.T });
     }
   }
 })();
