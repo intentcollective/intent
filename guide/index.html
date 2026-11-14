@@ -59,6 +59,7 @@
   .nw { white-space: nowrap; }
   .steps { margin: 0 0 16px; padding-left: 0; counter-reset: step; list-style: none; }
   .steps > li { position: relative; padding-left: 1.6em; counter-increment: step; }
+  .steps ul { margin: 8px 0; }
   .steps > li::before { content: counter(step); position: absolute; left: 0; font-weight: 700; color: var(--ink-soft); }
   .agenda { display: grid; gap: 0; margin: 16px 0; }
   .agenda .row { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 16px; align-items: baseline; padding: 16px 0; border-bottom: 1px solid var(--rule); }
@@ -123,7 +124,13 @@
   <section>
 <h2>Prepare</h2>
 <ol class="steps">
-<li><strong>Post on Discourse.</strong> Choose Share a post. Write one plain statement that designers at every level can argue for or against, a short background, and up to three questions. Posts cannot be edited on the site, so make corrections in the sheet. <a class="link" href="/discourse.html">Discourse&nbsp;&gt;</a> &middot; <a class="link" target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/18iMENNfVjxmq6N_XQ1l2bf_UqOXvvqUdVeBfdLCwD3o/edit">Discourse sheet&nbsp;&gt;</a></li>
+<li><strong>Post on Discourse.</strong> Choose Share a post and&nbsp;include
+<ul>
+<li>One plain statement that designers at every level can argue for or&nbsp;against</li>
+<li>A short&nbsp;background</li>
+<li>Up to three&nbsp;questions</li>
+</ul>
+Posts cannot be edited on the site, so make corrections in the sheet. <a class="link" href="/discourse.html">Discourse&nbsp;&gt;</a> &middot; <a class="link" target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/18iMENNfVjxmq6N_XQ1l2bf_UqOXvvqUdVeBfdLCwD3o/edit">Discourse sheet&nbsp;&gt;</a></li>
 <li><strong>Get a meeting link.</strong> Make it in Google Meet with your personal Google account, the default. Set Meeting access to Restricted, so people wait until you open. Zoom or another platform is fine if it runs a full hour with a waiting room. Zoom&rsquo;s free plan stops at 40&nbsp;minutes.</li>
 <li><strong>Put the debate on the site.</strong> On the Structure page, choose Schedule a debate. Enter the date and time in US&nbsp;Eastern, your Discourse post, and your meeting link. Check the date first, because any change is emailed to everyone. <a class="link" href="/structure.html#schedule">Schedule a debate&nbsp;&gt;</a></li>
 </ol>
