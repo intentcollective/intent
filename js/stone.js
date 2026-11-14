@@ -3,24 +3,15 @@
 (function () {
   var KEY = 'ic-stone';
   var SPEED = 0.6;   // horizontal pixels per millisecond, the same on both pages
-  var MIN = 1400;    // never quicker than this, so short phone throws stay slow
+  var MIN = 1400;    // the home page throw is never quicker than this
   var SPIN = 0.8;    // degrees of turn per pixel travelled
   var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var head = document.querySelector('header');
   head = head ? head.getBoundingClientRect().bottom : 0;
 
-  // One smooth arc over a horizontal distance X: a slight rise of H to a peak at
-  // three quarters of the way, then a gentle fall to D below the start.
-  function arc(X, H, D) {
-    var peak = X * 0.75, points = [];
-    for (var i = 0; i <= 40; i++) {
-      var x = X * i / 40;
-      var y = x <= peak ? -H * (1 - Math.pow((peak - x) / peak, 2))
-                        : -H + (H + D) * Math.pow((x - peak) / (X - peak), 2);
-      points.push([x, y]);
-    }
-    return points;
-  }
+  // One throw, one curve. The stone follows a single parabola, as under gravity:
+  // a slight rise to a peak at three quarters of the home page, then it keeps
+  // falling into the principles page from the same height, angle and speed.
 
   var link = document.querySelector('.logo-link');
   if (link) link.addEventListener('click', function (e) {
@@ -32,20 +23,27 @@
     flying.className = 'thrown-stone';
     flying.style.cssText = 'left:' + r.left + 'px;top:' + r.top + 'px;width:' + r.width + 'px';
     document.body.appendChild(flying);
-    var X = window.innerWidth - r.left + 40;   // off the right edge
-    var H = Math.max(16, Math.min(80, r.top - head - 12));
-    flying.animate(arc(X, H, H * 3).map(function (p) {
-      return { transform: 'translate(' + p[0] + 'px, ' + p[1] + 'px) rotate(' + p[0] * SPIN + 'deg)' };
-    }), { duration: Math.max(X / SPEED, MIN), fill: 'forwards' }).onfinish = function () {
-      try { sessionStorage.setItem(KEY, '1'); } catch (err) {}
+    var X = window.innerWidth - r.left + 40;              // off the right edge
+    var peak = X * 0.75;
+    var H = Math.max(16, Math.min(80, r.top - head - 12)); // a slight rise, below the header
+    var k = H / (peak * peak);                            // the curve's bend, kept for page two
+    var time = Math.max(X / SPEED, MIN);
+    var frames = [];
+    for (var i = 0; i <= 40; i++) {
+      var x = X * i / 40, y = k * (x - peak) * (x - peak) - H;
+      frames.push({ transform: 'translate(' + x + 'px, ' + y + 'px) rotate(' + x * SPIN + 'deg)' });
+    }
+    flying.animate(frames, { duration: time, fill: 'forwards' }).onfinish = function () {
+      var u = X - peak;   // how far past the peak it left the page
+      try { sessionStorage.setItem(KEY, JSON.stringify({ top: r.top + k * u * u - H, slope: 2 * k * u, v: X / time })); } catch (err) {}
       window.location.href = link.href;
     };
   });
 
   var title = document.querySelector('.article h1');
-  var landed = false;
-  try { landed = sessionStorage.getItem(KEY) === '1'; sessionStorage.removeItem(KEY); } catch (err) {}
-  if (title && landed) {
+  var thrown = null;
+  try { thrown = JSON.parse(sessionStorage.getItem(KEY)); sessionStorage.removeItem(KEY); } catch (err) {}
+  if (title && thrown) {
     var period = document.createElement('span');
     period.className = 'stone-period';
     period.setAttribute('aria-hidden', 'true');
@@ -53,12 +51,17 @@
     title.appendChild(period);
     if (!still && period.animate) {
       var t = period.getBoundingClientRect();
-      var X = t.right + 40;          // from just past the left edge
-      var H = 24;                    // a slight rise
-      var D = t.top - (head + 12 + H);   // from the top left corner, just below the header
-      period.animate(arc(X, H, D).map(function (p) {
-        return { transform: 'translate(' + (p[0] - X) + 'px, ' + (p[1] - D) + 'px) rotate(' + (p[0] - X) * SPIN + 'deg)' };
-      }), { duration: Math.max(X / SPEED, MIN) });
+      var X = t.right + 40;                // enters just past the left edge
+      var drop = t.top - thrown.top;       // from the height where it left the home page
+      var s0 = thrown.slope;               // at the angle it left
+      var g = Math.max(0, (drop - s0 * X) / (X * X));   // then keeps curving down onto the title
+      if (g === 0) s0 = drop / X;
+      var frames = [];
+      for (var i = 0; i <= 40; i++) {
+        var x = X * i / 40, y = s0 * x + g * x * x;
+        frames.push({ transform: 'translate(' + (x - X) + 'px, ' + (y - drop) + 'px) rotate(' + (x - X) * SPIN + 'deg)' });
+      }
+      period.animate(frames, { duration: X / thrown.v });
     }
   }
 })();
