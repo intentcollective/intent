@@ -279,11 +279,14 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
 .glyph--e { width: 0.6em; }
 .glyph--t { width: 0.58em; }
 
-/* Easter egg: hovering a menu item shows the letter its glyph replaced, in red. */
-.glyph-letter { display: none; }
-.site-nav .glyph { text-align: center; }
-.site-nav a:hover .glyph svg { display: none; }
-.site-nav a:hover .glyph-letter { display: inline; color: var(--mark); }
+/* Easter egg: the glyph turns red on its own. On hover the glyph alone turns red;
+   when a page opens, its glyph is red first and the word follows. */
+.site-nav a:hover .glyph,
+.site-nav a[aria-current="page"] .glyph { color: var(--mark); }
+.site-nav a[aria-current="page"] { animation: word-follows 0.6s ease 0.5s backwards; }
+@keyframes word-follows { from { color: var(--ink); } }
+.site-nav a[aria-current="page"]::after { animation: underline-follows 0.6s ease 0.5s backwards; }
+@keyframes underline-follows { from { right: 100%; } }
 
 .site-footer {
   padding: 0 0 var(--s5);

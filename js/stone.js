@@ -29,6 +29,7 @@
     var r = stone.getBoundingClientRect();
     var flying = stone.cloneNode();
     flying.className = 'thrown-stone';
+    flying.src = '/assets/stone.png';   // the stone alone, without her fingers
     flying.style.cssText = 'left:' + r.left + 'px;top:' + r.top + 'px;width:' + r.width + 'px';
     document.body.appendChild(flying);
     var X = window.innerWidth - r.left + 40;              // off the right edge
