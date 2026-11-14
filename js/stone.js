@@ -58,15 +58,25 @@
     title.appendChild(period);
     if (!still && period.animate) {
       var t = period.getBoundingClientRect();
+      var b = t.width;                     // one small bounce: it first touches down one stone short
       var X = t.right + 40;                // enters just past the left edge
+      var A = X - b;                       // where it first touches down
       var drop = t.top - thrown.top;       // from the height where it left the home page
       var s0 = thrown.slope;               // at the angle it left
-      var g = Math.max(0, (drop - s0 * X) / (X * X));   // then keeps curving down onto the title
-      if (g === 0) s0 = drop / X;
-      var run = slowing(X, thrown.v, thrown.v * 0.6);     // same speed, easing into place
-      period.animate(run.xs.map(function (x) {
-        return { transform: 'translate(' + (x - X) + 'px, ' + (s0 * x + g * x * x - drop) + 'px) rotate(' + (x - X) * SPIN + 'deg)' };
-      }), { duration: run.T });
+      var g = Math.max(0, (drop - s0 * A) / (A * A));   // then keeps curving down onto the title
+      if (g === 0) s0 = drop / A;
+      var run = slowing(A, thrown.v, thrown.v * 0.6);     // same speed, easing in
+      var hop = 300, all = run.T + hop, frames = [];
+      run.xs.forEach(function (x, i) {
+        frames.push({ offset: run.T * i / 60 / all,
+          transform: 'translate(' + (x - X) + 'px, ' + (s0 * x + g * x * x - drop) + 'px) rotate(' + (x - X) * SPIN + 'deg)' });
+      });
+      for (var i = 1; i <= 12; i++) {      // the hop: up a little and forward one stone width
+        var p = i / 12, q = 1 - (1 - p) * (1 - p);
+        frames.push({ offset: (run.T + hop * p) / all,
+          transform: 'translate(' + (-b + b * q) + 'px, ' + (-t.height * 0.9 * 4 * q * (1 - q)) + 'px) rotate(' + (-b + b * q) * SPIN + 'deg)' });
+      }
+      period.animate(frames, { duration: all });
     }
   }
 })();
