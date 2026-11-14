@@ -11,6 +11,7 @@ Static site on GitHub Pages, no build step. Push to the default branch to publis
 | `guide/` | Principal Design Fellow Guide, shared by URL only, `noindex` |
 | `js/config.js` | The Debate Schedule CSV and the Fellows + Debate endpoint |
 | `js/anchors.js`, `js/calendar.js`, `js/subscribe.js`, `js/typography.js` | Shared helpers |
+| `js/stone.js`, `assets/logo-base.png`, `assets/stone.png` | Easter egg: the Index logo throws its stone, which lands as the principles title's period |
 | `css/style.css`, `assets/` | Styles, fonts, logo, wordmark |
 | `apps-script/` | Copies of the deployed Apps Scripts. The site never loads them |
 | `temporary/` | Design trials. See its README |

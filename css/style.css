@@ -279,6 +279,12 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
 .glyph--e { width: 0.6em; }
 .glyph--t { width: 0.58em; }
 
+/* Easter egg: hovering a menu item shows the letter its glyph replaced, in red. */
+.glyph-letter { display: none; }
+.site-nav .glyph { text-align: center; }
+.site-nav a:hover .glyph svg { display: none; }
+.site-nav a:hover .glyph-letter { display: inline; color: var(--mark); }
+
 .site-footer {
   padding: 0 0 var(--s5);
   font-weight: 500;
@@ -314,6 +320,19 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
 .hero p { max-width: var(--measure); font-size: var(--fs-title); line-height: 1.5; color: var(--ink); }
 
 .logo-mark { width: 144px; height: auto; margin-bottom: var(--s3); }
+
+/* Easter egg: the Index logo's stone nudges on hover and is thrown on click (js/stone.js). */
+.logo-link { position: relative; display: inline-block; margin-bottom: var(--s3); }
+.logo-link .logo-mark { display: block; margin-bottom: 0; }
+.logo-stone { position: absolute; left: 82.6%; top: 5.42%; width: 10.8%; transform-origin: 50% 80%; }
+@media (hover: hover) { .logo-link:hover .logo-stone { animation: stone-nudge 0.5s ease-in-out; } }
+@keyframes stone-nudge {
+  30% { transform: translate(2px, -3px) rotate(-8deg); }
+  60% { transform: translate(-1px, 1px) rotate(4deg); }
+}
+.thrown-stone { position: fixed; z-index: 100; pointer-events: none; }
+.stone-period { display: inline-block; width: 0.34em; margin-left: 0.06em; }
+.stone-period img { display: block; width: 100%; }
 
 .page-head { padding: var(--s6) 0 var(--s4); }
 .page-head h1 { max-width: 24ch; }
