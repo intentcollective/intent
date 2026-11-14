@@ -69,12 +69,12 @@
       var hop = 300, all = run.T + hop, frames = [];
       run.xs.forEach(function (x, i) {
         frames.push({ offset: run.T * i / 60 / all,
-          transform: 'translate(' + (x - X) + 'px, ' + (s0 * x + g * x * x - drop) + 'px) rotate(' + (x - X) * SPIN + 'deg)' });
+          transform: 'translate(' + (x - X) + 'px, ' + (s0 * x + g * x * x - drop) + 'px) rotate(' + ((x - A) * SPIN - 180) + 'deg)' });
       });
-      for (var i = 1; i <= 12; i++) {      // the hop: up a little and forward one stone width
+      for (var i = 1; i <= 12; i++) {      // the hop: up a little, forward one stone width, half a roll
         var p = i / 12, q = 1 - (1 - p) * (1 - p);
         frames.push({ offset: (run.T + hop * p) / all,
-          transform: 'translate(' + (-b + b * q) + 'px, ' + (-t.height * 0.9 * 4 * q * (1 - q)) + 'px) rotate(' + (-b + b * q) * SPIN + 'deg)' });
+          transform: 'translate(' + (-b + b * q) + 'px, ' + (-t.height * 0.9 * 4 * q * (1 - q)) + 'px) rotate(' + (-180 * (1 - q)) + 'deg)' });
       }
       period.animate(frames, { duration: all });
     }
