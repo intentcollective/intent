@@ -166,10 +166,9 @@ h3 { font-size: var(--fs-title); }
 h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than text */
 
 .brand { font-size: 0.9em; }     /* the name in capitals sits a little smaller */
-.gt { font-weight: 400; }         /* text glyphs in headings */
 
-/* Drawn rings for Principal Design Fellows and Design Fellows, so the pair
-   has the same size and weight in every browser. */
+/* Drawn heading glyphs (Fellows, Foundation, Methodology): one stroke
+   weight, the same size and weight in every browser. */
 .hg {
   display: inline-block;
   width: 0.78em;
