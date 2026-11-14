@@ -1,8 +1,26 @@
 // Easter egg. On the Index, clicking the logo throws Pyrrha's stone and opens
-// the principles page, where the stone lands as the title's period.
+// the principles page, where the stone arrives from the left as the title's period.
 (function () {
   var KEY = 'ic-stone';
+  var SPEED = 0.6;   // horizontal pixels per millisecond, the same on both pages
+  var MIN = 1400;    // never quicker than this, so short phone throws stay slow
+  var SPIN = 0.8;    // degrees of turn per pixel travelled
   var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var head = document.querySelector('header');
+  head = head ? head.getBoundingClientRect().bottom : 0;
+
+  // One smooth arc over a horizontal distance X: a slight rise of H to a peak at
+  // three quarters of the way, then a gentle fall to D below the start.
+  function arc(X, H, D) {
+    var peak = X * 0.75, points = [];
+    for (var i = 0; i <= 40; i++) {
+      var x = X * i / 40;
+      var y = x <= peak ? -H * (1 - Math.pow((peak - x) / peak, 2))
+                        : -H + (H + D) * Math.pow((x - peak) / (X - peak), 2);
+      points.push([x, y]);
+    }
+    return points;
+  }
 
   var link = document.querySelector('.logo-link');
   if (link) link.addEventListener('click', function (e) {
@@ -14,21 +32,11 @@
     flying.className = 'thrown-stone';
     flying.style.cssText = 'left:' + r.left + 'px;top:' + r.top + 'px;width:' + r.width + 'px';
     document.body.appendChild(flying);
-    // A long, slow arc: a slight upward throw that stays below the header, the
-    // peak at about three quarters of the page width, then a fall off the right edge.
-    var X = window.innerWidth - r.left + 40;          // horizontal travel, off the right edge
-    var peak = window.innerWidth * 0.75 - r.left;     // where it starts to fall
-    var head = document.querySelector('header').getBoundingClientRect().bottom;
-    var H = Math.max(16, Math.min(80, r.top - head - 12)); // a slight rise, below the header
-    var drop = window.innerHeight * 0.4;              // how far it has fallen at the edge
-    var frames = [];
-    for (var i = 0; i <= 40; i++) {
-      var x = X * i / 40;
-      var y = x <= peak ? -H * (1 - Math.pow((peak - x) / peak, 2))
-                        : -H + (H + drop) * Math.pow((x - peak) / (X - peak), 2);
-      frames.push({ transform: 'translate(' + x + 'px, ' + y + 'px) rotate(' + (900 * i / 40) + 'deg)' });
-    }
-    flying.animate(frames, { duration: 1800, easing: 'linear', fill: 'forwards' }).onfinish = function () {
+    var X = window.innerWidth - r.left + 40;   // off the right edge
+    var H = Math.max(16, Math.min(80, r.top - head - 12));
+    flying.animate(arc(X, H, H * 3).map(function (p) {
+      return { transform: 'translate(' + p[0] + 'px, ' + p[1] + 'px) rotate(' + p[0] * SPIN + 'deg)' };
+    }), { duration: Math.max(X / SPEED, MIN), fill: 'forwards' }).onfinish = function () {
       try { sessionStorage.setItem(KEY, '1'); } catch (err) {}
       window.location.href = link.href;
     };
@@ -43,11 +51,14 @@
     period.setAttribute('aria-hidden', 'true');
     period.innerHTML = '<img src="/assets/stone.png" alt="">';
     title.appendChild(period);
-    if (!still && period.animate) period.animate([
-      { transform: 'translate(40px, -70vh) rotate(-900deg)', easing: 'cubic-bezier(.5, 0, .9, .6)' },
-      { transform: 'translate(0, 0) rotate(0deg)', offset: 0.8, easing: 'ease-out' },
-      { transform: 'translate(0, -0.12em)', offset: 0.9, easing: 'ease-in' },
-      { transform: 'translate(0, 0)' }
-    ], { duration: 1200 });
+    if (!still && period.animate) {
+      var t = period.getBoundingClientRect();
+      var X = t.right + 40;          // from just past the left edge
+      var H = 24;                    // a slight rise
+      var D = t.top - (head + 12 + H);   // from the top left corner, just below the header
+      period.animate(arc(X, H, D).map(function (p) {
+        return { transform: 'translate(' + (p[0] - X) + 'px, ' + (p[1] - D) + 'px) rotate(' + (p[0] - X) * SPIN + 'deg)' };
+      }), { duration: Math.max(X / SPEED, MIN) });
+    }
   }
 })();
