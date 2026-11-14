@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Principal Design Fellow Guide | Intent Collective</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@1&family=Poppins:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css?v=20261113c">
+<style>
+  :root {
+    --paper: #E4E1D6; --raised: #EDEAE0; --ink: #211F1A; --ink-soft: #55524A;
+    --mark: #B23A2E; --sage: #5B6B5E; --rule: #CFCBBE; --grid-line: #8FA6A340;
+    --module: 32px; --margin: 32px;   /* spacing moves in 8px steps; four make the module */
+    --fs-label: 13px; --fs-body: 16px; --fs-large: 18px; --fs-title: 20px;
+    --fs-display: clamp(1.75rem, 3.6vw, 2.4rem);
+    --measure: 64ch; --measure-label: 79ch;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; color: var(--ink);
+    background-color: var(--paper);
+    background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: var(--module) var(--module); background-position: center top;
+    font-family: "DM Sans", Helvetica, Arial, sans-serif;
+    font-size: var(--fs-body); line-height: 1.6;
+  }
+  .article { max-width: 1120px; margin: 0 auto; padding: 48px var(--margin) 96px; }
+  @media (max-width: 1120px) { body { background-position: 0 0; } }
+  @media (max-width: 374px) { :root { --margin: 16px; } body { background-position: 16px 0; } }
+  .eyebrow {
+    font-size: var(--fs-label); font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.04em; color: var(--mark); margin: 0 0 16px;
+  }
+  h1 {
+    font-size: var(--fs-display); line-height: 1.15; font-weight: 700;
+    margin: 0 0 16px; max-width: 22ch; text-wrap: balance;
+  }
+  .lede { font-size: var(--fs-large); max-width: var(--measure); margin: 0 0 8px; text-wrap: pretty; }
+  .meta { font-size: var(--fs-label); color: var(--sage); margin: 0; }
+  section { border-top: 2px solid var(--ink); margin-top: 48px; padding-top: 24px; }
+  h2 {
+    font-size: var(--fs-title); line-height: 1.25; font-weight: 700;
+    margin: 0 0 16px; text-wrap: balance;
+  }
+  h3 { font-size: var(--fs-label); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink); margin: 24px 0 8px; }
+  p, li { max-width: var(--measure); text-wrap: pretty; }
+  p { margin: 0 0 16px; }
+  ul, ol { margin: 0 0 16px; padding-left: 1.2em; }
+  li { margin: 0 0 8px; }
+  ul { list-style: none; padding-left: 1em; }
+  ul > li { position: relative; }
+  ul > li::before { content: "\00B7"; position: absolute; left: -1em; width: 1em; text-align: center; color: var(--ink-soft); }
+  strong { font-weight: 700; }
+  .soft { color: var(--ink-soft); }
+  .nw { white-space: nowrap; }
+  .steps { margin: 0 0 16px; padding-left: 0; counter-reset: step; list-style: none; }
+  .steps > li { position: relative; padding-left: 1.6em; counter-increment: step; }
+  .steps > li::before { content: counter(step); position: absolute; left: 0; font-weight: 700; color: var(--ink-soft); }
+  .agenda { display: grid; gap: 0; margin: 16px 0; }
+  .agenda .row { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 16px; align-items: baseline; padding: 16px 0; border-bottom: 1px solid var(--rule); }
+  .agenda .row:first-child { border-top: 1px solid var(--rule); }
+  .agenda .tag { font-size: var(--fs-label); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--sage); }
+  .agenda p { margin: 0; }
+  .link { color: var(--mark); font-weight: 700; white-space: nowrap; text-decoration: none; }
+  a.link:hover { text-decoration: underline; }
+  @media (max-width: 640px) { .agenda .row { grid-template-columns: minmax(0, 1fr); gap: 8px; } }
+
+  .article footer { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: var(--fs-label); color: var(--ink-soft); }
+  .article footer .online { margin: 0 0 16px; }
+  .article footer .process { max-width: var(--measure-label); margin: 0 0 8px; }
+
+  @media (max-width: 640px) {
+    .spec, .mark-row { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a href="/index.html" class="wordmark-link">
+      <img src="/assets/wordmark.png" alt="Intent Collective">
+    </a>
+    <nav class="site-nav">
+      <a href="/index.html#manifesto" aria-label="Manifesto">M<span class="glyph glyph--a" aria-hidden="true"><svg viewBox="0 0 103 100" fill="none" stroke="currentColor" stroke-width="14" focusable="false"><path d="M51.5 9 98 91H5Z"/></svg></span>NIFESTO</a>
+      <a href="/structure.html" aria-label="Structure">STRUCTUR<span class="glyph glyph--e" aria-hidden="true"><svg viewBox="0 0 86 100" fill="none" stroke="currentColor" stroke-width="14" focusable="false"><path d="M4 8H82M4 50H82M4 92H82"/></svg></span></a>
+      <a href="/discourse.html" aria-label="Discourse">DISC<span class="glyph glyph--o" aria-hidden="true"><svg viewBox="0 0 106 100" focusable="false"><circle cx="53" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="14"/><circle cx="53" cy="50" r="18" fill="currentColor"/></svg></span>URSE</a>
+      <a href="/zeitgeist.html" aria-label="Zeitgeist">ZEI<span class="glyph glyph--t" aria-hidden="true"><svg viewBox="0 0 83 100" fill="none" stroke="currentColor" stroke-width="14" focusable="false"><path d="M41.5 96V8M8 40 41.5 6 75 40"/></svg></span>GEIST</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<div class="article">
+
+  <h1>Principal Design Fellow Guide</h1>
+  <p class="lede">How to lead a pillar, host its debates, and keep the schedule right. Everything here happens on the site and in three shared&nbsp;sheets.</p>
+
+  <section>
+<h2>Your role</h2>
+<p>You lead a pillar, set its debate questions, and host its&nbsp;debates.</p>
+<h3>Required</h3>
+<ul>
+<li>Host a debate every two to four&nbsp;months.</li>
+<li>Take part in as many other debates as you&nbsp;can.</li>
+</ul>
+<h3>Encouraged</h3>
+<ul>
+<li>Post to Discourse beyond your own debates, with ideas, questions, and work in&nbsp;progress.</li>
+<li>Share design news on&nbsp;Zeitgeist.</li>
+</ul>
+  </section>
+
+  <section>
+<h2>The debate</h2>
+<p>One hour, online, on one&nbsp;question.</p>
+    <div class="agenda">
+      <div class="row"><div class="tag">10 minutes</div><p>You introduce the question and the&nbsp;positions.</p></div>
+      <div class="row"><div class="tag">40 minutes</div><p>Participants debate. You moderate and keep&nbsp;time.</p></div>
+      <div class="row"><div class="tag">10 minutes</div><p>You close with where the debate&nbsp;landed.</p></div>
+    </div>
+  </section>
+
+  <section>
+<h2>Where to do things</h2>
+<p>All of these are on intentcollective.design. Each form asks for the posting password, which is in the Principal Design Fellow Guide in Google Drive. Keep it private and never post it&nbsp;anywhere.</p>
+<p>Every debate starts with a Discourse post. The scheduling form asks for its&nbsp;link.</p>
+<ol class="steps">
+<li><strong>Post the debate on Discourse.</strong> On the Discourse page, choose Share a post. Include the one-sentence question, the background, and who may speak. Posts cannot be edited on the site. To correct one, edit its row in the Discourse sheet. <a class="link" href="/discourse.html">Discourse&nbsp;&gt;</a></li>
+<li><strong>Schedule the debate.</strong> On the Structure page, under Upcoming Live Debates, choose Schedule a debate. Enter the date and time in US&nbsp;Eastern, and link your Discourse post and your own meeting link. Check the date and time before you submit, because any later change is emailed to everyone. <a class="link" href="/structure.html#schedule">Schedule a debate&nbsp;&gt;</a></li>
+</ol>
+<h3>Also on the site</h3>
+<ul>
+<li><strong>Register a new Fellow.</strong> On the Structure page, under Become a Fellow, choose Register a Fellow. Enter the Fellowship level, name, email, LinkedIn, and recommending Fellow. <a class="link" href="/structure.html#become">Register a Fellow&nbsp;&gt;</a></li>
+<li><strong>Post other ideas or share news.</strong> Use Share a post on Discourse, or Share a link on Zeitgeist for news. Encouraged, not required. <a class="link" href="/zeitgeist.html">Zeitgeist&nbsp;&gt;</a></li>
+</ul>
+  </section>
+
+  <section>
+<h2>After you schedule</h2>
+<ul>
+<li>Email notices, a reminder 24 hours before, and the public calendar entry all happen&nbsp;automatically.</li>
+<li>Your meeting link appears on the site one hour before the start. It is never&nbsp;emailed.</li>
+<li>In your meeting settings, turn off joining before the host and turn on the waiting&nbsp;room.</li>
+</ul>
+  </section>
+
+  <section>
+<h2>Change or cancel a debate</h2>
+<p>Open the Debate Schedule sheet and find your debate&rsquo;s&nbsp;row.</p>
+<ul>
+<li><strong>New date or time.</strong> Edit the Date cell, written as <span class="nw">2027-04-03 10:00</span> (US&nbsp;Eastern, 24-hour).</li>
+<li><strong>Cancel.</strong> In the Status cell, choose&nbsp;cancelled.</li>
+<li><strong>Undo a cancellation.</strong> Choose scheduled&nbsp;again.</li>
+<li><strong>Subject, host, Discourse link, or meeting link.</strong> Edit the cell. No email is sent for&nbsp;these.</li>
+</ul>
+<p>Within an hour, everyone is emailed, reminders are updated, and the site and the public calendar&nbsp;follow.</p>
+<h3>Rules</h3>
+<ul>
+<li><strong>Never delete a row.</strong> Nobody would be told. Cancel&nbsp;instead.</li>
+<li><strong>Change things only in the sheet</strong>, never in the&nbsp;calendar.</li>
+<li><strong>Leave the grey columns alone</strong> (Added, Event ID, Announced, Debate ID). The script keeps&nbsp;them.</li>
+</ul>
+  </section>
+
+  <section>
+<h2>Shared sheets</h2>
+<p>Your own Google account will be added as an editor to these three sheets. They open only for the accounts that have been&nbsp;added.</p>
+<ul>
+<li><a class="link" target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1qurym1SkWPI0_CUCNIISxIXd4Pdf2Dz-KbMpYVQDiYs/edit">Debate Schedule&nbsp;&gt;</a></li>
+<li><a class="link" target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/18iMENNfVjxmq6N_XQ1l2bf_UqOXvvqUdVeBfdLCwD3o/edit">Discourse&nbsp;&gt;</a></li>
+<li><a class="link" target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1dtq-5oK2_gNUTHsSx0iRr6bHLr1VCt1_n54Q8HMh3Go/edit">Zeitgeist&nbsp;&gt;</a></li>
+</ul>
+  </section>
+
+  <section>
+<h2>Questions</h2>
+<p>Write to <a class="link" href="mailto:intentcollectivedesign@gmail.com">intentcollectivedesign@gmail.com</a>.</p>
+  </section>
+
+  <footer>
+    <p class="online">This guide lives at <a class="link" href="https://intentcollective.design/guide/">intentcollective.design/guide&nbsp;&gt;</a></p>
+  </footer>
+
+</div>
+</main>
+
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>&copy; <span id="year"></span> intent collective&trade;<span class="sep"> &middot; </span><a class="footer-link" href="/principles/">Visual Identity Principles&nbsp;&gt;</a></span>
+    <span><a href="mailto:intentcollectivedesign@gmail.com">intentcollectivedesign@gmail.com</a></span>
+  </div>
+</footer>
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

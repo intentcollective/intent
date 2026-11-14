@@ -1,6 +1,6 @@
 # intent collective website
 
-Static site, no build step. Four pages:
+Static site, no build step. Four main pages, plus two unlinked reference pages, `principles/` (linked from every footer) and `guide/` (the Principal Design Fellow Guide, shared by direct URL only, `noindex`, no password in it).
 
 | Page | File | Data |
 |---|---|---|
@@ -23,6 +23,8 @@ Google Apps Script files, kept in `apps-script/` as the backup of what runs in G
 ---
 
 ## Running debates: a guide for Principal Design Fellows
+
+The Fellows themselves read the shorter version at intentcollective.design/guide/. Keep the two in step. This section is the admin detail.
 
 Two places do all the work. The **Structure page** schedules a debate. The **Debate Schedule** tab of the "Fellows and Debate Schedule" spreadsheet changes or cancels one. The sheet is the master record: the website, the public calendar and every email follow it, never the other way round.
 
