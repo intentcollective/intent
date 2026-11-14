@@ -66,7 +66,7 @@
       var g = Math.max(0, (drop - s0 * A) / (A * A));   // then keeps curving down onto the title
       if (g === 0) s0 = drop / A;
       var run = slowing(A, thrown.v, thrown.v * 0.6);     // same speed, easing in
-      var hop = 300, all = run.T + hop, frames = [];
+      var hop = 550, all = run.T + hop, frames = [];
       run.xs.forEach(function (x, i) {
         frames.push({ offset: run.T * i / 60 / all,
           transform: 'translate(' + (x - X) + 'px, ' + (s0 * x + g * x * x - drop) + 'px) rotate(' + ((x - A) * SPIN - 180) + 'deg)' });
