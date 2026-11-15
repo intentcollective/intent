@@ -46,13 +46,16 @@
     var xe = window.innerWidth - r.left;                   // where it meets the right edge
     var q = Math.sqrt((r.top - yp) / (ye - yp));
     var peak = xe * q / (1 + q);                           // where the top of the curve is
-    // On a phone the menu sits under the wordmark; the curve peaks under the
-    // middle of its last word, Zeitgeist, for a more natural arc.
-    var words = document.querySelectorAll('.site-nav a');
-    if (words.length && window.matchMedia('(max-width: 640px)').matches) {
-      var z = words[words.length - 1].getBoundingClientRect();
-      var zx = z.left + z.width / 2 - r.left - r.width / 2;
-      if (zx > 0) peak = zx;
+    // On a phone the menu sits under the wordmark, and Manifesto lies before
+    // the principles title's end. There one curve spans both pages: the stone
+    // is still rising as it leaves, and the curve's top touches the M of
+    // Manifesto on the principles page, the same spot on the same header.
+    var first = document.querySelector('.site-nav a'), txt = first && first.firstChild;
+    var phone = window.matchMedia('(max-width: 640px)').matches && txt && txt.nodeType === 3;
+    if (phone) {
+      var rg = document.createRange(); rg.setStart(txt, 0); rg.setEnd(txt, 1);
+      var mm = rg.getBoundingClientRect();
+      peak = X + (mm.left + mm.width / 2 - r.width / 2 + 40);   // past the right edge, on page two
     }
     var H = r.top - yp;                                    // how high it rises
     var k = H / (peak * peak);                             // the curve's bend, kept for page two
@@ -63,7 +66,7 @@
     });
     flying.animate(frames, { duration: run.T, fill: 'forwards' }).onfinish = function () {
       var u = X - peak;   // how far past the peak it left the page
-      try { sessionStorage.setItem(KEY, JSON.stringify({ top: r.top + k * u * u - H, slope: 2 * k * u, v: v0 * 0.8 })); } catch (err) {}
+      try { sessionStorage.setItem(KEY, JSON.stringify({ top: r.top + k * u * u - H, slope: 2 * k * u, k: k, v: v0 * 0.8 })); } catch (err) {}
       window.location.href = link.href;
     };
   });
@@ -99,8 +102,9 @@
         var xv = m.left + m.width / 2 - t.width / 2 - t.left + X;          // the M, in this flight's terms
         var yv = m.top + m.height / 2 + 0.36 * fs - t.top;                // bottom of its capital
         if (xv > 0 && xv < A * 0.6 && yv < 0) {
-          var kv = -yv / ((A - xv) * (A - xv));
-          path = function (x) { return yv + kv * (x - xv) * (x - xv); };
+          var kv = -yv / ((A - xv) * (A - xv));                         // falling onto the title
+          var ku = thrown.slope < 0 && thrown.k ? thrown.k : kv;            // rising, as it left the Index
+          path = function (x) { return yv + (x < xv ? ku : kv) * (x - xv) * (x - xv); };
         }
       }
       var run = slowing(A, thrown.v, thrown.v * 0.6);     // same speed, easing in
