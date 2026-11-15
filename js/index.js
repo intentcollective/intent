@@ -230,8 +230,8 @@ function debateCardHTML(d, label, isPast, isNext) {
 
   const times = [fmtZone(d.start, TZ_ET, true)];
   if (live) {
-    times.push(fmtZone(d.start, TZ_SEOUL, false) + ", Seoul");
     times.push(fmtZone(d.start, TZ_LONDON, false) + ", London");
+    times.push(fmtZone(d.start, TZ_SEOUL, false) + ", Seoul");
   }
 
   return `

@@ -303,8 +303,8 @@ function debateRowHTML(d, isPast, isNext) {
 
   const times = [fmtZone(d.start, TZ_ET, true)];
   if (live) {
-    times.push(fmtZone(d.start, TZ_SEOUL, false) + ", Seoul");
     times.push(fmtZone(d.start, TZ_LONDON, false) + ", London");
+    times.push(fmtZone(d.start, TZ_SEOUL, false) + ", Seoul");
   }
 
   return `
@@ -510,7 +510,7 @@ function updateWhenPreview() {
   const parts = parseEtWall($("d-when").value);
   if (!parts) { hint.textContent = ""; return; }
   const date = etWallToDate(...parts);
-  let text = "Seoul: " + fmtZone(date, TZ_SEOUL, false) + "   London: " + fmtZone(date, TZ_LONDON, false);
+  let text = "London: " + fmtZone(date, TZ_LONDON, false) + "   Seoul: " + fmtZone(date, TZ_SEOUL, false);
   if (new Date(Date.UTC(parts[0], parts[1] - 1, parts[2])).getUTCDay() !== 6) {
     text += "   (Not a Saturday in US Eastern)";
   }

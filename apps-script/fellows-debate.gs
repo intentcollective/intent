@@ -585,8 +585,8 @@ function noticeTimeLines(data) {
   if (isNaN(when.getTime())) return [data.date + " (US Eastern)"];
   return [
     "Eastern: " + fmtWhen(when, "America/New_York"),
-    "Seoul: " + fmtWhen(when, "Asia/Seoul"),
-    "London: " + fmtWhen(when, "Europe/London")
+    "London: " + fmtWhen(when, "Europe/London"),
+    "Seoul: " + fmtWhen(when, "Asia/Seoul")
   ];
 }
 
