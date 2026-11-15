@@ -1203,7 +1203,7 @@ function calendarBlockHtml(gcal, font, link) {
     ? '<br><span style="' + soft + '">Future debates: Subscribe in</span> <a href="' + esc(CAL_SUBSCRIBE_GOOGLE) + '" style="' + link + '">Google Calendar &gt;</a><span style="' + soft + '"> &middot; </span><a href="' + esc(CAL_SUBSCRIBE_ICAL) + '" style="' + link + '">Apple or Outlook &gt;</a>'
     : '';
   return '<div style="border-top:1px dashed ' + C_LINE + ';margin:14px 0 0 0;padding:12px 0 0 0;font-family:' + font + ';font-size:15px;line-height:1.8;">' +
-    '<div style="font-family:' + font + ';font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;' + soft + '">Add to your calendar</div>' +
+    '<div style="font-family:' + font + ';font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;' + soft + '">Add to calendar</div>' +
     thisLine + allLine + '</div>';
 }
 
@@ -1313,7 +1313,7 @@ function buildNoticeEmail(data, timeLines, recipient, hasLogo, type) {
       (previous ? "Previously: " + previous + "\n" : "") + "\n" +
       (data.discourse ? "Read the discourse post: " + data.discourse + "\n" : "") +
       "Debate page: " + page + "\n" +
-      "\nAdd to your calendar\n" +
+      "\nAdd to calendar\n" +
       (gcal ? "This debate: Google Calendar " + gcal + ", or open the attached file\n" : "This debate: open the attached file\n") +
       (CAL_SUBSCRIBE_GOOGLE
         ? "Future debates: Subscribe in Google Calendar " + CAL_SUBSCRIBE_GOOGLE + " \u00b7 Apple or Outlook " + CAL_SUBSCRIBE_ICAL + "\n"
