@@ -53,7 +53,7 @@ Principals follow `/guide/`. The sheet is the master record. The site, the publi
 
 - Never delete a row. Cancel instead. Each change is announced once, and past debates never.
 - Sheet menu **Intent Collective**. **Send debate changes now** acts at once instead of within the hour. **Catch up notices and reminders** queues anything missing, after a row was added by hand or the Outbox was cleared. If the menu is missing, open the sheet in a window signed in to one Google account, or run `onOpen` in the script editor.
-- The Join link shows on the card from one hour before the start until two hours after. It is never emailed, but it is in the published sheet.
+- The Join link shows on the card from one hour before the start until one hour after, when the debate leaves Upcoming. In the last hour the card label counts down ("Starts in 40 min"), then reads "Live now". It is never emailed, but it is in the published sheet.
 - Public calendar: `DEBATE_CALENDAR_ID` in the script, kept in step every hour. Run `syncDebateCalendar` to sync at once.
 
 ## Email

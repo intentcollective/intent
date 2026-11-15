@@ -564,7 +564,7 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
 
 .entry-meta { color: var(--sage); display: flex; justify-content: space-between; }
 .entry-card h3 { margin-bottom: 0; overflow-wrap: anywhere; }
-.debate-card h3 { padding-bottom: var(--s2); border-bottom: 1px solid var(--ink); }
+.debate-card .debate-head { padding-bottom: var(--s2); border-bottom: 1px solid var(--ink); }
 .entry-card .excerpt { color: var(--ink); flex-grow: 1; overflow-wrap: anywhere; }
 
 .entry-card .byline {
@@ -867,7 +867,7 @@ details[open] > summary::before { transform: rotate(90deg); }
 .debate-card.is-cancelled .debate-info { color: var(--ink-soft); }
 
 .debate-card .debate-info { display: flex; flex-direction: column; gap: var(--s0); flex-grow: 1; color: var(--ink); }
-.debate-card .debate-host { color: var(--ink-soft); margin-bottom: var(--s1); }
+.debate-card .debate-host { color: var(--ink-soft); margin-top: var(--s1); }
 
 .debate-card .debate-links {
   display: flex;
@@ -898,11 +898,11 @@ details[open] > summary::before { transform: rotate(90deg); }
 .card-action { margin: 0 0 var(--s2); }
 .card-action .cal-links { display: block; line-height: 1.6; }
 .cal-links .cal-sep { color: var(--ink-soft); }
+.card-action .cal-label { font-weight: 600; }
 .card-action .cal-links a { white-space: nowrap; }
-/* While Join is open the card keeps only what joining needs: the title,
-   the Eastern time, Join, and the discourse post. */
+/* While Join is open the card keeps only what joining needs: the title
+   and host, the Eastern time, Join, and the discourse post. */
 .debate-card.is-live .card-action,
-.debate-card.is-live .debate-host,
 .debate-card.is-live .tz-extra { display: none; }
 
 /* Highlight: the one place a red outline is used */

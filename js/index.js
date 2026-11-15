@@ -19,7 +19,7 @@ const TZ_SEOUL = "Asia/Seoul";
 const TZ_LONDON = "Europe/London";
 
 // A session stays "upcoming" until this long after it starts.
-const SESSION_WINDOW_MS = 2 * 60 * 60 * 1000;
+const SESSION_WINDOW_MS = 60 * 60 * 1000;
 
 const $ = (id) => document.getElementById(id);
 
@@ -157,9 +157,12 @@ function joinSlotHTML(d, pos) {
 function updateJoinSlots() {
   const now = Date.now();
   let liveUrl = "";
+  let ended = false;
   document.querySelectorAll(".join-slot").forEach(slot => {
     const valid = /^https?:\/\//i.test(slot.dataset.meeting);
-    const open = valid && now >= new Date(slot.dataset.start).getTime() - JOIN_OPENS_MS;
+    const start = new Date(slot.dataset.start).getTime();
+    if (now >= start + SESSION_WINDOW_MS) ended = true;
+    const open = valid && now >= start - JOIN_OPENS_MS && now < start + SESSION_WINDOW_MS;
     const card = slot.closest(".debate-card");
     if (card) card.classList.toggle("is-live", open);
     if (open && !liveUrl && card && card.classList.contains("is-next")) liveUrl = slot.dataset.meeting;
@@ -186,6 +189,19 @@ function updateJoinSlots() {
       slot.hidden = open;
     }
   });
+
+  // The next debate's label counts down in the last hour, then says
+  // "Live now". An hour after the start the list is drawn again, so
+  // the debate leaves Upcoming.
+  document.querySelectorAll(".debate-card.is-next[data-start]").forEach(card => {
+    const label = card.querySelector(".entry-meta span");
+    const toStart = new Date(card.dataset.start).getTime() - now;
+    if (!label) return;
+    if (toStart > JOIN_OPENS_MS) label.textContent = "Next debate";
+    else if (toStart > 0) label.textContent = `Starts in ${Math.ceil(toStart / 60000)} min`;
+    else label.textContent = "Live now";
+  });
+  if (ended) loadNextDebate();
 
   const heroJoin = document.getElementById("hero-join");
   if (heroJoin) {
@@ -215,12 +231,14 @@ function debateCardHTML(d, label, isPast, isNext) {
   }
 
   return `
-    <article class="entry-card debate-card${isNext ? " is-next" : ""}${d.cancelled ? " is-cancelled" : ""}">
+    <article class="entry-card debate-card${isNext ? " is-next" : ""}${d.cancelled ? " is-cancelled" : ""}" data-start="${d.start.toISOString()}">
       <div class="entry-meta"><span>${escapeHTML(label)}</span></div>
-      <h3>${escapeHTML(d.subject)}</h3>
+      <div class="debate-head">
+        <h3>${escapeHTML(d.subject)}</h3>
+        ${d.host ? `<div class="debate-host">Hosted by ${escapeHTML(d.host)}</div>` : ""}
+      </div>
       ${live && typeof calendarLinksHTML === "function" ? `<div class="card-action">${calendarLinksHTML(d)}</div>` : ""}
       <div class="debate-info">
-        ${d.host ? `<div class="debate-host">Hosted by ${escapeHTML(d.host)}</div>` : ""}
         ${times.map((t, i) => `<div${i ? ' class="tz-extra"' : ""}>${escapeHTML(t)}</div>`).join("")}
       </div>
       ${d.meeting && live ? joinSlotHTML(d, "top") : ""}
