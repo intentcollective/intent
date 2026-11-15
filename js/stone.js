@@ -46,6 +46,14 @@
     var xe = window.innerWidth - r.left;                   // where it meets the right edge
     var q = Math.sqrt((r.top - yp) / (ye - yp));
     var peak = xe * q / (1 + q);                           // where the top of the curve is
+    // On a phone the menu sits under the wordmark; the curve peaks under the
+    // middle of its last word, Zeitgeist, for a more natural arc.
+    var words = document.querySelectorAll('.site-nav a');
+    if (words.length && window.matchMedia('(max-width: 640px)').matches) {
+      var z = words[words.length - 1].getBoundingClientRect();
+      var zx = z.left + z.width / 2 - r.left - r.width / 2;
+      if (zx > 0) peak = zx;
+    }
     var H = r.top - yp;                                    // how high it rises
     var k = H / (peak * peak);                             // the curve's bend, kept for page two
     var v0 = 2 * (X / Math.max(X / SPEED, MIN)) / 1.8;     // quicker out of the hand
