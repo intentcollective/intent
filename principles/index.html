@@ -110,8 +110,10 @@
   .outline.live { border-width: 6px; padding: 2px 10px; }
   .mark-row p { margin: 0; }
 
-  .sources { font-size: var(--fs-label); color: var(--ink-soft); }
+  .sources { font-size: var(--fs-label); font-style: italic; color: var(--ink-soft); }   /* set as footnotes */
   .sources li { max-width: var(--measure-label); }
+  .sources em { font-style: normal; }          /* titles of works turn roman inside italic */
+  .sources .link { font-weight: inherit; }
   .article footer { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: var(--fs-label); color: var(--ink-soft); }
   .article footer .online { margin: 0 0 16px; }
   .article footer .process { max-width: var(--measure-label); margin: 0 0 8px; }
