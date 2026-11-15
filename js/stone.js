@@ -77,7 +77,7 @@
     period.setAttribute('aria-hidden', 'true');
     period.innerHTML = '<img src="/assets/stone.png" alt="">';
     title.appendChild(period);
-    if (!still && period.animate) {
+    var land = function () {
       var t = period.getBoundingClientRect();
       var b = t.width;                     // one small bounce: it first touches down one stone short
       var X = t.right + 40;                // enters just past the left edge
@@ -86,18 +86,41 @@
       var s0 = thrown.slope;               // at the angle it left
       var g = Math.max(0, (drop - s0 * A) / (A * A));   // then keeps curving down onto the title
       if (g === 0) s0 = drop / A;
+      var path = function (x) { return s0 * x + g * x * x - drop; };
+      // When the menu's first word lies before the title's end (on a phone),
+      // the curve's top touches the bottom of its first letter, the M, then
+      // falls onto the title.
+      var first = document.querySelector('.site-nav a');
+      var text = first && first.firstChild;
+      if (text && text.nodeType === 3) {
+        var range = document.createRange(); range.setStart(text, 0); range.setEnd(text, 1);
+        var m = range.getBoundingClientRect();
+        var fs = parseFloat(getComputedStyle(first).fontSize);
+        var xv = m.left + m.width / 2 - t.width / 2 - t.left + X;          // the M, in this flight's terms
+        var yv = m.top + m.height / 2 + 0.36 * fs - t.top;                // bottom of its capital
+        if (xv > 0 && xv < A * 0.6 && yv < 0) {
+          var kv = -yv / ((A - xv) * (A - xv));
+          path = function (x) { return yv + kv * (x - xv) * (x - xv); };
+        }
+      }
       var run = slowing(A, thrown.v, thrown.v * 0.6);     // same speed, easing in
       var hop = 550, all = run.T + hop, frames = [];
       run.xs.forEach(function (x, i) {
         frames.push({ offset: run.T * i / 60 / all,
-          transform: 'translate(' + (x - X) + 'px, ' + (s0 * x + g * x * x - drop) + 'px) rotate(' + ((x - A) * SPIN - 180) + 'deg)' });
+          transform: 'translate(' + (x - X) + 'px, ' + path(x) + 'px) rotate(' + ((x - A) * SPIN - 180) + 'deg)' });
       });
       for (var i = 1; i <= 12; i++) {      // the hop: up a little, forward one stone width, half a roll
         var p = i / 12, q = 1 - (1 - p) * (1 - p);
         frames.push({ offset: (run.T + hop * p) / all,
           transform: 'translate(' + (-b + b * q) + 'px, ' + (-t.height * 0.9 * 4 * q * (1 - q)) + 'px) rotate(' + (-180 * (1 - q)) + 'deg)' });
       }
+      period.style.visibility = '';
       period.animate(frames, { duration: all });
+    };
+    // Measure only after the fonts load, or the title reflows under the flight.
+    if (!still && period.animate) {
+      period.style.visibility = 'hidden';
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(land); else land();
     }
   }
 })();
