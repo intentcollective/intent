@@ -55,14 +55,14 @@
     var xe = window.innerWidth - r.left;                   // where it meets the right edge
     var q = Math.sqrt((r.top - yp) / (ye - yp));
     var peak = xe * q / (1 + q);                           // where the top of the curve is
-    // On a phone the menu sits under the wordmark. There the stone overlaps
-    // the lower half of the T at the end of Zeitgeist, crests just past the
-    // right edge, and on the principles page overlaps the lower half of the M
-    // in Manifesto before falling onto the title.
+    // One arc spans both pages. The stone overlaps the lower half of the T
+    // at the end of Zeitgeist, still rising, crests just past the right edge,
+    // and falls onto the principles title; on a phone it also overlaps the
+    // lower half of the M in Manifesto on the way down.
     var words = document.querySelectorAll('.site-nav a');
     var last = words.length && words[words.length - 1].lastChild;
-    var phone = window.matchMedia('(max-width: 640px)').matches && last && last.nodeType === 3 && last.length;
-    if (phone) {
+    var cross = last && last.nodeType === 3 && last.length;
+    if (cross) {
       var T = lowerHalf(last, last.length - 1, last.length, r.height);
       var uT = T.x - r.width / 2 - r.left;                 // the T, in this flight's terms
       yp = T.top - 2;                                       // the crest, a touch above
@@ -77,7 +77,7 @@
     });
     flying.animate(frames, { duration: run.T, fill: 'forwards' }).onfinish = function () {
       var u = X - peak;   // how far past the peak it left the page
-      try { sessionStorage.setItem(KEY, JSON.stringify({ top: r.top + k * u * u - H, slope: 2 * k * u, crest: phone ? { x: peak - X, top: yp } : null, v: v0 * 0.8 })); } catch (err) {}
+      try { sessionStorage.setItem(KEY, JSON.stringify({ top: r.top + k * u * u - H, slope: 2 * k * u, crest: cross ? { x: peak - X, top: yp } : null, v: v0 * 0.8 })); } catch (err) {}
       window.location.href = link.href;
     };
   });
@@ -97,13 +97,21 @@
       var X = t.right + 40;                // enters just past the left edge
       var A = X - b;                       // where it first touches down
       var drop = t.top - thrown.top;       // from the height where it left the home page
-      var s0 = thrown.slope;               // at the angle it left
+      // It comes in nearly level, at a third of the angle it left at, so the
+      // curve onto the title is wide and round rather than a straight slide.
+      var s0 = Math.max(0, thrown.slope) / 3;
       var g = Math.max(0, (drop - s0 * A) / (A * A));   // then keeps curving down onto the title
       if (g === 0) s0 = drop / A;
       var path = function (x) { return s0 * x + g * x * x - drop; };
-      // On a phone the curve carries on from its crest just past the Index's
-      // right edge, overlaps the lower half of the M in Manifesto, then bends
-      // down onto the title, with no break in its slope.
+      // The curve carries on from its crest just past the Index's right edge
+      // and falls in one wide, round curve onto the title. On a phone, where
+      // Manifesto lies before the title's end, it first overlaps the lower
+      // half of the M, with no break in its slope.
+      var cx0 = thrown.crest ? thrown.crest.x : 0, cy0 = thrown.crest ? thrown.crest.top - t.top : 0;
+      if (thrown.crest && cx0 < A * 0.5 && cy0 < 0) {
+        var kc = -cy0 / ((A - cx0) * (A - cx0));
+        path = function (x) { return cy0 + kc * (x - cx0) * (x - cx0); };
+      }
       var first = document.querySelector('.site-nav a'), text = first && first.firstChild;
       if (thrown.crest && text && text.nodeType === 3) {
         var M = lowerHalf(text, 0, 1, t.height);
