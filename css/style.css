@@ -332,8 +332,8 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
 .logo-stone { position: absolute; left: 82.6%; top: 5.42%; width: 10.8%; transform-origin: 85% 100%; }
 @media (hover: hover) { .logo-link:hover .logo-stone { animation: stone-nudge 0.5s ease-in-out; } }
 @keyframes stone-nudge {
-  40% { transform: rotate(8deg); }
-  70% { transform: rotate(-2deg); }
+  40% { transform: rotate(16deg); }
+  70% { transform: rotate(-3deg); }
 }
 .thrown-stone { position: fixed; z-index: 100; pointer-events: none; }
 .stone-period { display: inline-block; width: 0.34em; margin-left: 0.06em; position: relative; z-index: 11; }  /* above the header as it falls in */
