@@ -3,7 +3,7 @@
 // On the way its curve touches the bottom of the menu words.
 (function () {
   var KEY = 'ic-stone';
-  var SPEED = 0.6;   // average horizontal pixels per millisecond on the home page
+  var SPEED = 0.35;  // average horizontal pixels per millisecond on the home page
   var MIN = 1400;    // the home page throw is never quicker than this
   var SPIN = 0.8;    // degrees of turn per pixel travelled
   var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -70,14 +70,14 @@
     }
     var H = r.top - yp;                                    // how high it rises
     var k = H / (peak * peak);                             // the curve's bend, kept for page two
-    var v0 = 2 * (X / Math.max(X / SPEED, MIN)) / 1.8;     // quicker out of the hand
-    var run = slowing(X, v0, v0 * 0.8);                    // then slowing a little
+    var v0 = (X / Math.max(X / SPEED, MIN)) * 4 / 3;      // quick out of the hand
+    var run = slowing(X, v0, v0 * 0.5);                    // then slowing to half by the edge
     var frames = run.xs.map(function (x) {
       return { transform: 'translate(' + x + 'px, ' + (k * (x - peak) * (x - peak) - H) + 'px) rotate(' + x * SPIN + 'deg)' };
     });
     flying.animate(frames, { duration: run.T, fill: 'forwards' }).onfinish = function () {
       var u = X - peak;   // how far past the peak it left the page
-      try { sessionStorage.setItem(KEY, JSON.stringify({ top: r.top + k * u * u - H, slope: 2 * k * u, crest: cross ? { x: peak - X, top: yp } : null, v: v0 * 0.8 })); } catch (err) {}
+      try { sessionStorage.setItem(KEY, JSON.stringify({ top: r.top + k * u * u - H, slope: 2 * k * u, crest: cross ? { x: peak - X, top: yp } : null, v: v0 * 0.5 })); } catch (err) {}
       window.location.href = link.href;
     };
   });
