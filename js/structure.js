@@ -176,13 +176,17 @@ function parseEtWall(str) {
   return null;
 }
 
+// "Sat, Mar 6, 9 AM EST": minutes only when not on the hour, and
+// non-breaking spaces keep the time and zone on one line.
 function fmtZone(date, tz, withZoneName) {
-  const opts = {
+  const p = {};
+  new Intl.DateTimeFormat("en-US", {
     timeZone: tz, weekday: "short", month: "short", day: "numeric",
-    hour: "numeric", minute: "2-digit",
-  };
-  if (withZoneName) opts.timeZoneName = "short";
-  return new Intl.DateTimeFormat("en-US", opts).format(date);
+    hour: "numeric", minute: "2-digit", hour12: true,
+    timeZoneName: withZoneName ? "short" : undefined,
+  }).formatToParts(date).forEach(x => { p[x.type] = x.value; });
+  const time = p.hour + (p.minute === "00" ? "" : ":" + p.minute) + "\u00a0" + p.dayPeriod;
+  return `${p.weekday}, ${p.month} ${p.day}, ${time}` + (withZoneName ? "\u00a0" + p.timeZoneName : "");
 }
 
 

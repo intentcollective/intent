@@ -583,13 +583,19 @@ function countQueued(dueOnly) {
 function noticeTimeLines(data) {
   var when = new Date(data.startUtc);
   if (isNaN(when.getTime())) return [data.date + " (US Eastern)"];
-  // Non-breaking spaces keep "at 10:00 AM EST" on one line on phones.
-  var fmt = "EEEE, MMMM d, yyyy\u00a0'at'\u00a0h:mm\u00a0a\u00a0z";
   return [
-    "Eastern: " + Utilities.formatDate(when, "America/New_York", fmt),
-    "Seoul: " + Utilities.formatDate(when, "Asia/Seoul", fmt),
-    "London: " + Utilities.formatDate(when, "Europe/London", fmt)
+    "Eastern: " + fmtWhen(when, "America/New_York"),
+    "Seoul: " + fmtWhen(when, "Asia/Seoul"),
+    "London: " + fmtWhen(when, "Europe/London")
   ];
+}
+
+// "Sat, Mar 6, 9 AM EST", the same form as the site: minutes only when not
+// on the hour, and non-breaking spaces keep the time and zone on one line.
+function fmtWhen(d, tz) {
+  var f = function (p) { return Utilities.formatDate(d, tz, p); };
+  var time = f("mm") === "00" ? f("h") : f("h:mm");
+  return f("EEE, MMM d") + ", " + time + "\u00a0" + f("a") + "\u00a0" + f("z");
 }
 
 function fellowStatusMap() {
@@ -1205,7 +1211,7 @@ function calendarBlockHtml(gcal, font, link) {
 function easternLine(wall) {
   var d = debateStart(wall);
   if (!d) return String(wall || "") + " (US Eastern)";
-  return Utilities.formatDate(d, "America/New_York", "EEEE, MMMM d, yyyy 'at' h:mm a z");
+  return fmtWhen(d, "America/New_York");
 }
 
 // type: "notice" (a debate was scheduled), "reminder" (24 hours before),
