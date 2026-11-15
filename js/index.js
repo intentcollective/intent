@@ -253,7 +253,6 @@ function debateCardHTML(d, label, isPast, isNext) {
 function showNextDebate(debates) {
   const stateEl = $("next-debate-state");
   const cardEl = $("next-debate");
-  const helpEl = $("next-debate-help");
   const now = Date.now();
 
   const upcoming = debates
@@ -270,7 +269,6 @@ function showNextDebate(debates) {
       .map(d => debateCardHTML(d, d === next ? "Next debate" : "Upcoming debate", false, d === next))
       .join("");
     cardEl.hidden = false;
-    helpEl.hidden = false;
     stateEl.hidden = true;
     updateJoinSlots();
     return;
