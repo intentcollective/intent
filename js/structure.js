@@ -662,13 +662,3 @@ try {
 
 loadDebates();
 loadDiscoursePosts();
-
-// Principals need a Google account for the shared sheets, so the email
-// field says so when Principal Design Fellow is chosen.
-(function () {
-  const level = $("f-level"), hint = $("f-email-hint");
-  if (!level || !hint) return;
-  const sync = () => { hint.hidden = level.value !== "Principal Design Fellow"; };
-  level.addEventListener("change", sync);
-  sync();
-})();
