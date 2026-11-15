@@ -327,14 +327,16 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
 /* Easter egg: the Index logo's stone nudges on hover and is thrown on click (js/stone.js). */
 .logo-link { position: relative; display: inline-block; margin-bottom: var(--s3); }
 .logo-link .logo-mark { display: block; margin-bottom: 0; }
-.logo-stone { position: absolute; left: 82.6%; top: 5.42%; width: 10.8%; transform-origin: 50% 80%; }
+/* On hover her hand turns a little clockwise at the wrist (the piece's lower
+   right corner), the way a throw begins, then settles back. */
+.logo-stone { position: absolute; left: 82.6%; top: 5.42%; width: 10.8%; transform-origin: 85% 100%; }
 @media (hover: hover) { .logo-link:hover .logo-stone { animation: stone-nudge 0.5s ease-in-out; } }
 @keyframes stone-nudge {
-  30% { transform: translate(2px, -3px) rotate(-8deg); }
-  60% { transform: translate(-1px, 1px) rotate(4deg); }
+  40% { transform: rotate(8deg); }
+  70% { transform: rotate(-2deg); }
 }
 .thrown-stone { position: fixed; z-index: 100; pointer-events: none; }
-.stone-period { display: inline-block; width: 0.34em; margin-left: 0.06em; }
+.stone-period { display: inline-block; width: 0.34em; margin-left: 0.06em; position: relative; z-index: 11; }  /* above the header as it falls in */
 .stone-period img { display: block; width: 100%; }
 
 .page-head { padding: var(--s6) 0 var(--s4); }
