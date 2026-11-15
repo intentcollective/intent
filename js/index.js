@@ -206,7 +206,6 @@ function debateCardHTML(d, label, isPast, isNext) {
   if (d.cancelled) label = "Cancelled";
   const links = [];
   if (d.discourse) links.push(`<a href="${escapeHTML(d.discourse)}">Read the discourse post &gt;</a>`);
-  if (live && typeof calendarLinksHTML === "function") links.push(calendarLinksHTML(d));
   if (d.meeting && live) links.push(joinSlotHTML(d, "note"));
 
   const times = [fmtZone(d.start, TZ_ET, true)];
@@ -219,6 +218,7 @@ function debateCardHTML(d, label, isPast, isNext) {
     <article class="entry-card debate-card${isNext ? " is-next" : ""}${d.cancelled ? " is-cancelled" : ""}">
       <div class="entry-meta"><span>${escapeHTML(label)}</span></div>
       <h3>${escapeHTML(d.subject)}</h3>
+      ${live && typeof calendarLinksHTML === "function" ? `<div class="card-action">${calendarLinksHTML(d)}</div>` : ""}
       ${d.meeting && live ? joinSlotHTML(d, "top") : ""}
       <div class="debate-info">
         ${d.host ? `<div class="debate-host">Hosted by ${escapeHTML(d.host)}</div>` : ""}

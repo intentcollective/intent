@@ -583,10 +583,12 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
    inside a sentence are underlined. */
 .text-link,
 .debate-links a,
+.card-action a,
 .card-link a { color: var(--mark); font-weight: 600; }
 
 .text-link:hover,
 .debate-links a:hover,
+.card-action a:hover,
 .card-link a:hover { text-decoration: underline; }
 
 .apply-note a,
@@ -887,15 +889,16 @@ details[open] > summary::before { transform: rotate(90deg); }
 }
 
 .join-slot a:hover { opacity: 0.9; text-decoration: none; }
-/* Utilities on a card (the calendar line and the Join note) use the note
-   size, so the discourse link and, when open, the Join button lead. */
+/* The Join note is a utility, so it uses the note size. */
 .join-slot.join-note { color: var(--ink-soft); font-size: var(--fs-label); line-height: 1.5; }
-.debate-links .cal-links { font-size: var(--fs-label); line-height: 1.6; margin-top: var(--s0); }
 
-/* Add to calendar line on a debate card: label in soft ink, links in red */
-.cal-links .cal-label,
+/* The card's action sits under the title. Before the debate it is
+   "Add to calendar"; while Join is open, the Join button takes its place. */
+.card-action { margin: 0 0 var(--s2); }
+.card-action .cal-links { display: block; line-height: 1.6; }
 .cal-links .cal-sep { color: var(--ink-soft); }
-.debate-links .cal-links a { white-space: nowrap; }
+.card-action .cal-links a { white-space: nowrap; }
+.debate-card.is-live .card-action { display: none; }
 
 /* Highlight: the one place a red outline is used */
 .debate-card.is-next { border: 3px solid var(--mark); padding: calc(var(--s3) - 3px); }

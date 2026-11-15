@@ -73,7 +73,7 @@ function icIcsDataUrl(d) {
   return "data:text/calendar;charset=utf-8," + encodeURIComponent(lines.join("\r\n") + "\r\n");
 }
 
-// For a debate card: a soft "Add to calendar" label, then
+// For a debate card: an "Add to calendar" label, then
 // "Google > · Apple or Outlook >" on the line below (the card is narrow).
 function calendarLinksHTML(d) {
   if (!d || !d.start || isNaN(d.start.getTime())) return "";
