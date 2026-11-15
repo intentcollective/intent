@@ -142,8 +142,8 @@ function rowsToDebates(rows) {
 // should also have "Join before host" turned off and the waiting room on.
 const JOIN_OPENS_MS = 60 * 60 * 1000;
 
-// Each upcoming card has two slots. The "top" slot, right under the title,
-// holds the Join button once it opens, so the live action leads the card.
+// Each upcoming card has two slots. The "top" slot, under the time, holds
+// the Join button once it opens.
 // The "note" slot, at the bottom, says when the link will open until then.
 function joinSlotHTML(d, pos) {
   const url = String(d.meeting).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
@@ -219,11 +219,11 @@ function debateCardHTML(d, label, isPast, isNext) {
       <div class="entry-meta"><span>${escapeHTML(label)}</span></div>
       <h3>${escapeHTML(d.subject)}</h3>
       ${live && typeof calendarLinksHTML === "function" ? `<div class="card-action">${calendarLinksHTML(d)}</div>` : ""}
-      ${d.meeting && live ? joinSlotHTML(d, "top") : ""}
       <div class="debate-info">
         ${d.host ? `<div class="debate-host">Hosted by ${escapeHTML(d.host)}</div>` : ""}
-        ${times.map(t => `<div>${escapeHTML(t)}</div>`).join("")}
+        ${times.map((t, i) => `<div${i ? ' class="tz-extra"' : ""}>${escapeHTML(t)}</div>`).join("")}
       </div>
+      ${d.meeting && live ? joinSlotHTML(d, "top") : ""}
       ${links.length ? `<div class="debate-links">${links.join("")}</div>` : ""}
     </article>`;
 }
