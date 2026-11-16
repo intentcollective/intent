@@ -584,6 +584,11 @@ function initForms() {
     if (!host || !parts || !subject) {
       setStatus(status, "Host name, date and time, and subject are required.", "error"); return;
     }
+    const start = etWallToDate(...parts);
+    const taken = debateOnDay(start);
+    if (taken) {
+      setStatus(status, sameDayMessage(start, taken), "error"); return;
+    }
     if (!discourse) {
       setStatus(status, "Pick a Discourse post from the list, or paste its link.", "error"); return;
     }
@@ -594,11 +599,6 @@ function initForms() {
       setStatus(status, "Enter the password.", "error"); return;
     }
 
-    const start = etWallToDate(...parts);
-    const taken = debateOnDay(start);
-    if (taken) {
-      setStatus(status, sameDayMessage(start, taken), "error"); return;
-    }
     const date = `${parts[0]}-${pad(parts[1])}-${pad(parts[2])} ${pad(parts[3])}:${pad(parts[4])}`;
 
     btn.disabled = true;
