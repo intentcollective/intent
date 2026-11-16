@@ -11,7 +11,7 @@
 }
 
 @media (max-width: 1023px) { :root { --cols: 6; } }
-@media (max-width: 640px)  { :root { --cols: 4; } }
+@media (max-width: 640px)  { :root { --cols: 4; --gutter: 8px; } }
 
 /* One column, as a share of the parent's width (the text column). */
 :root { --col: calc((100% - (var(--cols) - 1) * var(--gutter)) / var(--cols)); }
@@ -76,6 +76,10 @@ body::before {
   .manifesto blockquote,
   .footnote { max-width: none; }
 }
+
+/* The footer is the bottom margin, like the header at the top:
+   plain paper, no columns. */
+.site-footer { background: var(--paper); }
 
 /* The old ground followed the edge on smaller screens. Not needed now. */
 @media (max-width: 1120px) { body { background-position: initial; } }
