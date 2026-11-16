@@ -76,8 +76,8 @@
   --fs-display: clamp(1.75rem, 3.6vw, 2.4rem);
   --fs-hero: clamp(2.2rem, 5vw, 4rem);
 
-  /* space: every distance is a step of 8px. Four steps make the 32px
-     module drawn on the background, so all spacing divides into it.
+  /* space: every distance is a step of 8px, including the grid's
+     columns (80px) and gutters (16px, 8px on phones).
      A border counts as space: a card with a heavier outline loses the
      same amount of padding, so its content keeps the same inset. */
   --s0: 4px;
@@ -88,17 +88,30 @@
   --s5: 48px;
   --s6: 64px;
   --s7: 96px;
-  --module: 32px;
-  --margin: var(--s4);           /* page margin: one module, half on the smallest phones */
+  --margin: var(--s4);           /* page margin: 32px, half on the smallest phones */
   --btn-pad: 4px 8px;            /* inner space of every filled button */
 
-  /* layout */
-  --max-w: 1120px;               /* 35 modules; with the pattern centered,
-                                    both page edges fall on its lines */
-  --measure: 64ch;               /* line length for 16px text */
-  --measure-label: 79ch;         /* the same width in px for 13px text */
-  --header-h: 64px;              /* two modules */
+  /* layout: the grid. 12 columns of 80px with 16px gutters make the
+     1136px text column. Columns hold elements, gutters only space them.
+     Tablet 6 columns, phone 4 with 8px gutters. The lines on the page are
+     drawn from the same numbers that place the content, so the two stay
+     aligned at every width. */
+  --text-w: 1136px;
+  --max-w: calc(var(--text-w) + 2 * var(--margin));
+  --cols: 12;
+  --gutter: var(--s2);
+  /* One column, as a share of the parent's width (the text column). */
+  --col: calc((100% - (var(--cols) - 1) * var(--gutter)) / var(--cols));
+  /* Running text spans 6 of 12 columns, lead text 8. */
+  --measure-cols: 6;
+  --wide-cols: 8;
+  --measure: calc(var(--measure-cols) * var(--col) + (var(--measure-cols) - 1) * var(--gutter));
+  --measure-wide: calc(var(--wide-cols) * var(--col) + (var(--wide-cols) - 1) * var(--gutter));
+  --header-h: 64px;
 }
+
+@media (max-width: 1023px) { :root { --cols: 6; --measure-cols: 4; --wide-cols: 6; } }
+@media (max-width: 640px)  { :root { --cols: 4; --gutter: var(--s1); --measure-cols: 4; --wide-cols: 4; } }
 
 
 /* ---------- 2. base ---------- */
@@ -117,17 +130,30 @@ html { scroll-behavior: smooth; }
 body {
   margin: 0;
   background-color: var(--paper);
-  background-image:
-    linear-gradient(var(--grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-  background-size: var(--module) var(--module);
-  background-position: center top;
   color: var(--ink);
   font-family: var(--font);
   font-feature-settings: "ss01" 1;
   font-size: var(--fs-body);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+}
+
+/* The grid: two faint lines per column, the gutter between them left
+   empty, behind the text column. The header and footer are the top and
+   bottom margins, plain paper. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 auto 0 50%;
+  transform: translateX(-50%);
+  width: min(100% - 2 * var(--margin), var(--text-w));
+  z-index: -1;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(90deg,
+    var(--grid-line) 0 1px,
+    transparent 1px calc(var(--col) - 1px),
+    var(--grid-line) calc(var(--col) - 1px) var(--col),
+    transparent var(--col) calc((100% + var(--gutter)) / var(--cols)));
 }
 
 a { color: inherit; text-decoration: none; }
@@ -289,6 +315,7 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
 @keyframes underline-follows { from { right: 100%; } }
 
 .site-footer {
+  background: var(--paper);      /* the bottom margin: no columns */
   padding: 0 0 var(--s5);
   font-weight: 500;
   color: var(--ink-soft);
@@ -320,13 +347,14 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
 
 .hero h1 { font-size: var(--fs-hero); max-width: 24ch; }
 
-.hero p { max-width: var(--measure); font-size: var(--fs-title); line-height: 1.5; color: var(--ink); }
+.hero p { max-width: var(--measure-wide); font-size: var(--fs-title); line-height: 1.5; color: var(--ink); }
 
 .logo-mark { width: 144px; height: auto; margin-bottom: var(--s3); }
+.logo-link { width: calc(2 * var(--col) + var(--gutter)); }   /* two columns */
 
 /* Easter egg: the Index logo's stone nudges on hover and is thrown on click (js/stone.js). */
 .logo-link { position: relative; display: inline-block; margin-bottom: var(--s3); }
-.logo-link .logo-mark { display: block; margin-bottom: 0; }
+.logo-link .logo-mark { display: block; width: 100%; margin-bottom: 0; }
 /* On hover her hand turns a little clockwise at the wrist (the piece's lower
    right corner), the way a throw begins, then settles back. */
 .logo-stone { position: absolute; left: 82.6%; top: 5.42%; width: 10.8%; transform-origin: 85% 100%; }
@@ -343,7 +371,7 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
 .page-head h1 { max-width: 24ch; }
 
 .page-head p.lede {
-  max-width: var(--measure);
+  max-width: var(--measure-wide);
   color: var(--ink-soft);
   text-wrap: balance;
 }
@@ -455,39 +483,41 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
 .pillar-list { margin-top: var(--s3); display: flex; flex-direction: column; }
 
 .pillar-row {
-  display: grid;
-  grid-template-columns: 10px minmax(0, 1fr) minmax(140px, 240px);
-  gap: var(--s3);
+  position: relative;
+  row-gap: 0;
   align-items: start;
   padding: var(--s1) 0;
 }
 
+/* The mark hangs in the margin, so the name starts on the first column
+   line. Name in columns 1 to 8, people in 9 to 12. */
+.pillar-letter { position: absolute; left: -1em; }
+.pillar-name   { grid-column: 1 / span 8; }
+
 .pillar-letter { font-weight: 700; color: var(--mark); font-size: var(--fs-large); line-height: 1.4; }
 .pillar-name { font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
-.pillar-people { line-height: 1.5; color: var(--ink-soft); text-align: right; }
+.pillar-people { grid-column: 9 / span 4; line-height: 1.5; color: var(--ink-soft); }
 
 /* Company list */
 .credential-list {
   list-style: none;
   margin: var(--s3) 0 0;
   padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--s1) var(--s4);
+  row-gap: var(--s1);
 }
 
 .credential-list li { font-weight: 600; line-height: 1.4; }
 
 /* Footnote: small italic note, same width as the paragraphs above it */
 .footnote {
-  max-width: var(--measure-label);
+  max-width: var(--measure);
   margin: var(--s2) 0 0;
   font-style: italic;
   color: var(--ink-soft);
 }
 
 .manifesto .footnote {
-  max-width: var(--measure-label);
+  max-width: var(--measure);
   margin-top: var(--s4);
   color: var(--ink-soft);
 }
@@ -504,12 +534,7 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
   border: 1px solid var(--rule);
 }
 
-.tier-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: var(--s3);
-  margin-top: var(--s4);
-}
+.tier-grid { margin-top: var(--s4); }
 
 .tier { padding: var(--s4) var(--s3); min-width: 0; }
 .tier h3 { margin-bottom: var(--s1); }
@@ -519,12 +544,7 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
 .tier p.card-link { margin-top: var(--s2); }
 
 /* Columns: disciplines, methods, reasons */
-.triad {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: var(--s4);
-  margin-top: var(--s3);
-}
+.triad { row-gap: var(--s4); margin-top: var(--s3); }
 
 .triad-item h3 { margin: 0 0 var(--s1); }
 .triad-item p { margin: 0 0 var(--s0); color: var(--ink-soft); }
@@ -541,12 +561,7 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
 
 .count { color: var(--ink-soft); font-weight: 500; }
 
-.entry-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: var(--s3);
-  padding-bottom: var(--s7);
-}
+.entry-grid { padding-bottom: var(--s7); }
 
 .entry-card {
   padding: calc(var(--s3) - 1px);   /* 1px rule + padding = 24px */
@@ -671,6 +686,7 @@ details[open] > summary::before { transform: rotate(90deg); }
 /* ---------- 10. forms ---------- */
 
 .composer {
+  max-width: var(--measure-wide);   /* 8 of 12 columns */
   padding: var(--s4);
   margin-bottom: var(--s5);
   display: flex;
@@ -806,7 +822,7 @@ details[open] > summary::before { transform: rotate(90deg); }
 .post-detail { padding: var(--s2) 0 var(--s7); }
 .post-detail h1 { max-width: 24ch; }
 .post-meta { color: var(--ink-soft); margin-bottom: var(--s4); }
-.post-body { max-width: 68ch; }
+.post-body { max-width: var(--measure); }
 
 .rte-body p, .rte-body div { margin: 0 0 0.8em; }
 .post-body p, .post-body div { margin: 0 0 1.1em; }
@@ -860,11 +876,7 @@ details[open] > summary::before { transform: rotate(90deg); }
 
 /* ---------- 12. debates ---------- */
 
-.debate-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: var(--s3);
-}
+
 
 .debate-card { cursor: default; }
 /* A cancelled debate stays as a record: label and title in soft ink. */
@@ -957,33 +969,89 @@ details[open] > summary::before { transform: rotate(90deg); }
 .closing-title { font-size: var(--fs-display); max-width: 22ch; margin: 0 0 var(--s2); }
 
 
-/* ---------- 14. responsive ---------- */
+/* ---------- 13b. the grid: elements span whole columns ---------- */
 
-/* Below the full page width the page runs edge to edge, so the pattern
-   starts at the left edge and the text sits one module in. */
-@media (max-width: 1120px) {
-  body { background-position: 0 0; }
+.triad,
+.tier-grid,
+.entry-grid,
+.debate-list,
+.credential-list,
+.pillar-row {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  column-gap: var(--gutter);
 }
+
+/* Cards in rows keep 24px between rows. */
+.tier-grid,
+.entry-grid,
+.debate-list { row-gap: var(--s3); }
+
+.triad > *,
+.tier-grid > *,
+.entry-grid > *,
+.debate-list > *,
+.credential-list > * { grid-column: span var(--span); }
+
+/* A row of 2, 3 or 4 items shares the 12 columns evenly. */
+.triad > * { --span: 4; }
+.triad > :first-child:nth-last-child(2),
+.triad > :first-child:nth-last-child(2) ~ * { --span: 6; }
+.triad > :first-child:nth-last-child(4),
+.triad > :first-child:nth-last-child(4) ~ * { --span: 3; }
+.tier-grid > * { --span: 6; }
+.entry-grid > *,
+.debate-list > * { --span: 4; }
+.credential-list > * { --span: 2; }
+
+/* Tablet, 6 columns: two items side by side; three stack. */
+@media (max-width: 1023px) {
+  .triad > *,
+  .triad > :first-child:nth-last-child(2),
+  .triad > :first-child:nth-last-child(2) ~ *,
+  .triad > :first-child:nth-last-child(4),
+  .triad > :first-child:nth-last-child(4) ~ * { --span: 3; }
+  .triad > :first-child:nth-last-child(3),
+  .triad > :first-child:nth-last-child(3) ~ * { --span: 6; }
+  .tier-grid > *,
+  .entry-grid > *,
+  .debate-list > * { --span: 3; }
+  .pillar-name   { grid-column: 1 / span 4; }
+  .pillar-people { grid-column: 5 / span 2; }
+}
+
+/* Phone, 4 columns: everything stacks; company names two to a row. */
+@media (max-width: 640px) {
+  .triad > *,
+  .triad > :first-child:nth-last-child(2),
+  .triad > :first-child:nth-last-child(2) ~ *,
+  .triad > :first-child:nth-last-child(3),
+  .triad > :first-child:nth-last-child(3) ~ *,
+  .triad > :first-child:nth-last-child(4),
+  .triad > :first-child:nth-last-child(4) ~ *,
+  .tier-grid > *,
+  .entry-grid > *,
+  .debate-list > * { --span: 4; }
+  .pillar-name,
+  .pillar-people { grid-column: 1 / span 4; }
+}
+
+/* ---------- 14. responsive ---------- */
 
 @media (max-width: 640px) {
   .hero { padding: var(--s5) 0 var(--s5); }
-  .logo-mark { width: 112px; }
   /* Nav labels never break inside a word. They spread across the full
      width, and only on the narrowest screens drop to a second row. */
   .site-nav { flex-basis: 100%; flex-wrap: wrap; justify-content: space-between; gap: var(--s1); }
   .site-nav a { white-space: nowrap; }
   .wordmark-link { flex-shrink: 0; }
   .site-header .wrap { flex-wrap: wrap; row-gap: var(--s1); padding-top: var(--s2); padding-bottom: var(--s2); }
-  .pillar-row { grid-template-columns: 10px minmax(0, 1fr); gap: var(--s1) var(--s2); }
-  .pillar-people { grid-column: 2; text-align: left; }
   .field-row { grid-template-columns: 1fr; }
 }
 
-/* The smallest phones: the margin halves to 16px and the pattern moves
-   with it, so the text still starts on a line. */
+/* The smallest phones: the margin halves to 16px. */
 @media (max-width: 374px) {
   :root { --margin: var(--s2); }
-  body { background-position: var(--s2) 0; }
 }
 
 /* Quiet links: look like the surrounding mark, no link styling. */

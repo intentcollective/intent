@@ -7,29 +7,25 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@1&family=Poppins:wght@400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/style.css?v=20261113c">
+<link rel="stylesheet" href="/css/style.css?v=20261115g">
 <style>
   :root {
     --paper: #E4E1D6; --raised: #EDEAE0; --ink: #211F1A; --ink-soft: #55524A;
     --mark: #B23A2E; --sage: #5B6B5E; --rule: #CFCBBE; --grid-line: #8FA6A340;
-    --module: 32px; --margin: 32px;   /* spacing moves in 8px steps; four make the module */
+    --margin: 32px;   /* spacing moves in 8px steps */
     --fs-label: 13px; --fs-body: 16px; --fs-large: 18px; --fs-title: 20px;
     --fs-display: clamp(1.75rem, 3.6vw, 2.4rem);
-    --measure: 64ch; --measure-label: 79ch;
   }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
   body {
     margin: 0; color: var(--ink);
     background-color: var(--paper);
-    background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-    background-size: var(--module) var(--module); background-position: center top;
     font-family: "DM Sans", Helvetica, Arial, sans-serif;
     font-size: var(--fs-body); line-height: 1.6;
   }
-  .article { max-width: 1120px; margin: 0 auto; padding: 48px var(--margin) 96px; }
-  @media (max-width: 1120px) { body { background-position: 0 0; } }
-  @media (max-width: 374px) { :root { --margin: 16px; } body { background-position: 16px 0; } }
+  .article { max-width: var(--max-w); margin: 0 auto; padding: 48px var(--margin) 96px; }
+  @media (max-width: 374px) { :root { --margin: 16px; } }
   .eyebrow {
     font-size: var(--fs-label); font-weight: 700; text-transform: uppercase;
     letter-spacing: 0.04em; color: var(--mark); margin: 0 0 16px;
@@ -56,7 +52,7 @@
   strong { font-weight: 700; }
   .soft { color: var(--ink-soft); }
   .nw { white-space: nowrap; }
-  .id-logo { display: block; width: 192px; height: auto; margin: 4px 0 16px; }
+  .id-logo { display: block; width: calc(2 * var(--col) + var(--gutter)); height: auto; margin: 4px 0 16px; }
   .credit { font-size: var(--fs-label); color: var(--ink-soft); margin: -8px 0 16px; }
   .id-wordmark { display: block; height: 28px; width: auto; margin: 4px 0 16px; }
   .g-pop, .g-pop-face { font-family: "Poppins", sans-serif; font-feature-settings: normal; }
@@ -69,7 +65,7 @@
   /* Type specimens */
   .specimens { display: grid; gap: 0; margin: 16px 0; }
   .spec {
-    display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 16px;
+    display: grid; grid-template-columns: calc(2 * var(--col) + var(--gutter)) minmax(0, 1fr); gap: 16px var(--gutter);
     align-items: baseline; padding: 16px 0; border-bottom: 1px solid var(--rule);
   }
   .spec .tag { font-size: var(--fs-label); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--sage); }
@@ -82,7 +78,8 @@
   .s-quote { font-family: "EB Garamond", Georgia, serif; font-feature-settings: normal; font-style: italic; font-size: var(--fs-display); line-height: 1.2; }
 
   /* Swatches */
-  .swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin: 16px 0 24px; }
+  .swatches { display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: var(--gutter); margin: 16px 0 24px; }
+  .swatches > * { grid-column: span 2; }
   .swatch { background: var(--raised); border: 1px solid var(--rule); }
   .swatch .chip { height: 64px; border-bottom: 1px solid var(--rule); }
   .swatch .cap { padding: 8px; font-size: var(--fs-label); line-height: 1.4; }
@@ -91,7 +88,7 @@
   /* Action marks, drawn as on the site */
   .marks { display: grid; gap: 16px; margin: 16px 0; }
   .mark-row {
-    display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 16px; align-items: center;
+    display: grid; grid-template-columns: calc(3 * var(--col) + 2 * var(--gutter)) minmax(0, 1fr); gap: 16px var(--gutter); align-items: center;
     padding: 16px 0; border-bottom: 1px solid var(--rule);
   }
   .disclosure { font-weight: 700; color: var(--mark); display: inline-flex; align-items: center; gap: 8px; }
@@ -108,15 +105,15 @@
   }
   .outline { display: inline-block; border: 3px solid var(--mark); background: var(--raised); padding: 5px 13px; /* 3px border + padding = 8 by 16 */ font-size: var(--fs-label); font-weight: 700; }
   .outline.live { border-width: 6px; padding: 2px 10px; }
-  .mark-row p { margin: 0; }
+  .mark-row p { margin: 0; max-width: none; }
 
   .sources { font-size: var(--fs-label); font-style: italic; color: var(--ink-soft); }   /* set as footnotes */
-  .sources li { max-width: var(--measure-label); }
+  .sources li { max-width: var(--measure); }
   .sources em { font-style: normal; }          /* titles of works turn roman inside italic */
   .sources .link { font-weight: inherit; }
   .article footer { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: var(--fs-label); color: var(--ink-soft); }
   .article footer .online { margin: 0 0 16px; }
-  .article footer .process { max-width: var(--measure-label); margin: 0 0 8px; }
+  .article footer .process { max-width: var(--measure); margin: 0 0 8px; }
 
   @media (max-width: 640px) {
     .spec, .mark-row { grid-template-columns: minmax(0, 1fr); gap: 8px; }
@@ -182,8 +179,8 @@
 <h3>The glyphs</h3>
 <p>Glyphs take the place of letters in the main menu (<span class="nw">M&#9651;NIFESTO</span>, <span class="nw">STRUCTUR&#19977;</span>, <span class="nw">DISC&#9673;URSE</span>, <span class="nw">ZEI&#8593;GEIST</span>) and mark the Foundation (&#8983; Strategy, &#182; Literacy, + Synthesis) and the Methodology (&#8756; Discourse, &#8644; Debate, &#8984;&nbsp;Praxis).</p>
 <p>Glyphs are the oldest layer of written communication. Our own alphabet descends, through Phoenician, from pictorial signs. The pilcrow (&#182;) shows the same evolution in miniature. Medieval scribes drew a C for <em>capitulum</em>, &ldquo;little head&rdquo;, to open a new section, then added a vertical stroke and filled the bowl. Reading a glyph as both sign and letter is linguistic typography, the study of how form carries&nbsp;meaning.</p>
-<h3>The ground</h3>
-<p>Digital media has no fixed page. Its structure shifts with every screen, unlike a sheet of paper. The faint pattern of squares across the background keeps a modular system in view anyway, like the ruled ground of graph paper. The module is how a designer understands, analyzes, dissects, and organizes a subject. Drawn beneath every page, it shows that our design is grounded in rational visual communication, not in intuitive or spontaneous expression. The pattern is also a measure. Every distance on the site is taken from&nbsp;it.</p>
+<h3>The grid</h3>
+<p>Digital media has no fixed page. Its structure shifts with every screen, unlike a sheet of paper. The faint columns drawn behind every page keep a modular grid in view anyway, the columns, gutters, and margins of the printed page. The grid is how a designer understands, analyzes, dissects, and organizes a subject. Drawn beneath every page, it shows that our design is grounded in rational visual communication, not in intuitive or spontaneous expression. The grid is also a structure. Every element on the site spans whole&nbsp;columns.</p>
 <h3>The number three</h3>
 <p>The logo shows three stones, two in Pyrrha&rsquo;s hands and one in Deucalion&rsquo;s. The structure of Intent Collective counts in threes, with a triangle in <span class="nw">M&#9651;NIFESTO</span>, three lines in <span class="nw">STRUCTUR&#19977;</span>, three disciplines in the Foundation, three methods in the Methodology, and three questions in every&nbsp;debate.</p>
 <p>Three is the first number that makes a whole. In <em>On the Heavens</em>, Aristotle reports the Pythagorean view that beginning, middle, and end give the number of an &ldquo;all&rdquo;. Of two things we say &ldquo;both&rdquo;, and three is the first number we call &ldquo;all&rdquo;. In the <em>Poetics</em>, he holds every well-made whole to that form, one that cannot begin or end at any point one likes. Each debate follows it, ten minutes of introduction, forty of debate, and ten of closing, within one fixed&nbsp;hour.</p>
@@ -306,7 +303,7 @@
 <li><strong>A column for reading, a field for browsing.</strong> Reading happens in one column at the fixed measure. Browsing happens in a fluid field of cards (debates, posts, links), each at least 300px wide, filling as many columns as the screen&nbsp;allows.</li>
 <li><strong>Columns hang from one line.</strong> When equal parts sit side by side, each gets a column of equal width, as many columns as there are parts. The two Fellowship tiers and the two parts of the live debate stand in two columns. The three disciplines of the Foundation and the three methods of the Methodology stand in three, and the four reasons to participate in four. Every column hangs from the same hangline, so the first lines of text start together. We read from the top left to the bottom right. A shared hangline gives the eye one place to start each column, as a flush left edge gives it one place to start each line. On a narrow screen the columns stack in reading&nbsp;order.</li>
 <li><strong>Space separates, rules divide.</strong> Paragraphs are separated by space. Sections are separated by generous space and one 2px rule, and cards by one thin border. Negative space does most of the work, and lines are kept for real&nbsp;divisions.</li>
-<li><strong>Every distance is measured.</strong> Space moves in steps of 8px, and four steps make the 32px module of the ground. Every margin, padding, and gap on the site is one of these steps (4, 8, 16, 24, 32, 48, 64, or 96px). On a wide screen the page is 35 modules wide and both its edges fall on the lines of the pattern. On any screen the text starts on a line. A border counts as space too. A card&rsquo;s 1px border and its padding add up to 24px, and so do the next debate&rsquo;s 3px red outline and the 6px live outline with theirs. Few readers will measure any of this. They feel it as calm and order before they can name it, and that care is what makes a page designed rather than&nbsp;assembled.</li>
+<li><strong>Every distance is measured.</strong> Space moves in steps of 8px. Every margin, padding, and gap on the site is one of these steps (4, 8, 16, 24, 32, 48, 64, or 96px). The page is a grid of 12 columns of 80px with 16px gutters, 6 columns on a tablet, and 4 on a phone. Columns hold the elements and gutters only space them, so the gutters stay&nbsp;narrow. A border counts as space too. A card&rsquo;s 1px border and its padding add up to 24px, and so do the next debate&rsquo;s 3px red outline and the 6px live outline with theirs. Few readers will measure any of this. They feel it as calm and order before they can name it, and that care is what makes a page designed rather than&nbsp;assembled.</li>
 <li><strong>Hierarchy by position before size.</strong> What matters most comes first. When a debate goes live, its Join button grows stronger by moving up, not by growing&nbsp;larger.</li>
 </ul>
   </section>

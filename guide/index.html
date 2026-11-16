@@ -8,29 +8,25 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@1&family=Poppins:wght@400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/style.css?v=20261113c">
+<link rel="stylesheet" href="/css/style.css?v=20261115g">
 <style>
   :root {
     --paper: #E4E1D6; --raised: #EDEAE0; --ink: #211F1A; --ink-soft: #55524A;
     --mark: #B23A2E; --sage: #5B6B5E; --rule: #CFCBBE; --grid-line: #8FA6A340;
-    --module: 32px; --margin: 32px;   /* spacing moves in 8px steps; four make the module */
+    --margin: 32px;   /* spacing moves in 8px steps */
     --fs-label: 13px; --fs-body: 16px; --fs-large: 18px; --fs-title: 20px;
     --fs-display: clamp(1.75rem, 3.6vw, 2.4rem);
-    --measure: 64ch; --measure-label: 79ch;
   }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
   body {
     margin: 0; color: var(--ink);
     background-color: var(--paper);
-    background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-    background-size: var(--module) var(--module); background-position: center top;
     font-family: "DM Sans", Helvetica, Arial, sans-serif;
     font-size: var(--fs-body); line-height: 1.6;
   }
-  .article { max-width: 1120px; margin: 0 auto; padding: 48px var(--margin) 96px; }
-  @media (max-width: 1120px) { body { background-position: 0 0; } }
-  @media (max-width: 374px) { :root { --margin: 16px; } body { background-position: 16px 0; } }
+  .article { max-width: var(--max-w); margin: 0 auto; padding: 48px var(--margin) 96px; }
+  @media (max-width: 374px) { :root { --margin: 16px; } }
   .eyebrow {
     font-size: var(--fs-label); font-weight: 700; text-transform: uppercase;
     letter-spacing: 0.04em; color: var(--mark); margin: 0 0 16px;
@@ -62,17 +58,17 @@
   .steps ul { margin: 8px 0; }
   .steps > li::before { content: counter(step); position: absolute; left: 0; font-weight: 700; color: var(--ink-soft); }
   .agenda { display: grid; gap: 0; margin: 16px 0; }
-  .agenda .row { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 16px; align-items: baseline; padding: 16px 0; border-bottom: 1px solid var(--rule); }
+  .agenda .row { display: grid; grid-template-columns: calc(2 * var(--col) + var(--gutter)) minmax(0, 1fr); gap: 16px var(--gutter); align-items: baseline; padding: 16px 0; border-bottom: 1px solid var(--rule); }
   .agenda .row:first-child { border-top: 1px solid var(--rule); }
   .agenda .tag { font-size: var(--fs-label); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--sage); }
-  .agenda p { margin: 0; }
+  .agenda p { margin: 0; max-width: none; }
   .link { color: var(--mark); font-weight: 700; white-space: nowrap; text-decoration: none; }
   a.link:hover { text-decoration: underline; }
   @media (max-width: 640px) { .agenda .row { grid-template-columns: minmax(0, 1fr); gap: 8px; } }
 
   .article footer { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: var(--fs-label); color: var(--ink-soft); }
   .article footer .online { margin: 0 0 16px; }
-  .article footer .process { max-width: var(--measure-label); margin: 0 0 8px; }
+  .article footer .process { max-width: var(--measure); margin: 0 0 8px; }
 
   @media (max-width: 640px) {
     .spec, .mark-row { grid-template-columns: minmax(0, 1fr); gap: 8px; }
