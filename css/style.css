@@ -712,7 +712,9 @@ details[open] > summary::before { transform: rotate(90deg); }
 .composer-actions input[type="password"] { max-width: 220px; }
 
 .composer-status { font-weight: 500; }
-.composer-status.is-error { color: var(--mark); }
+.composer-status.is-error,
+.field-hint.is-error { color: var(--mark); }
+.field-hint.is-error:empty { display: none; }
 .composer-status.is-ok { color: var(--sage); }
 
 .notice-signup { margin-top: var(--s4); }

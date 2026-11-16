@@ -508,8 +508,10 @@ function setupToggle(btnId, panelId) {
 function updateWhenPreview() {
   const hint = $("d-when-preview");
   const parts = parseEtWall($("d-when").value);
+  const date = parts && etWallToDate(...parts);
+  const taken = date && debateOnDay(date);
+  $("d-when-taken").textContent = taken ? sameDayMessage(date, taken) : "";
   if (!parts) { hint.textContent = ""; return; }
-  const date = etWallToDate(...parts);
   let text = "London: " + fmtZone(date, TZ_LONDON, false) + "   Seoul: " + fmtZone(date, TZ_SEOUL, false);
   if (new Date(Date.UTC(parts[0], parts[1] - 1, parts[2])).getUTCDay() !== 6) {
     text += "   (Not a Saturday in US Eastern)";
