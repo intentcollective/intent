@@ -362,6 +362,23 @@ function invalidLink() {
 
 /* ================= debate scheduling ================= */
 
+// One debate per day, by the US Eastern date. Cancelled debates free their day.
+function debateOnDay(sheet, start) {
+  var day = etWall(start).slice(0, 10);
+  var t = readTable(sheet);
+  for (var i = 0; i < t.rows.length; i++) {
+    var d = debateFromRow(t.rows[i], t.col);
+    if (d && !d.cancelled && d.date.slice(0, 10) === day) return d;
+  }
+  return null;
+}
+
+function sameDayMessage(start, d) {
+  var day = Utilities.formatDate(start, "America/New_York", "EEE, MMM d");
+  var host = d.host + (/\.$/.test(d.host) ? "" : ".");
+  return day + " already has a debate, hosted by " + host + " Please choose another day.";
+}
+
 function handleDebate(data) {
   if (!data.host || !data.date || !data.subject || !data.meeting || !data.discourse) {
     return respond({ status: "error", message: "Missing required fields." });
@@ -375,6 +392,8 @@ function handleDebate(data) {
   ensureColumn(sheet, "announced", "Announced");
   ensureColumn(sheet, "debate id", "Debate ID");
   var start = debateStart(data.date);
+  var taken = start ? debateOnDay(sheet, start) : null;
+  if (taken) return respond({ status: "error", message: sameDayMessage(start, taken) });
   var key = newDebateId();
   var values = {
     "host": data.host,

@@ -29,7 +29,7 @@ One posting password covers every form. It lives in the `PASSWORD` Script Proper
 
 **Debate Schedule** (the Fellows + Debate script is bound to it). Shared with Principals as Editors.
 
-- Tab `Debate Schedule`: `Host | Date | Subject | Status | Discourse | Meeting | Added | Event ID | Announced | Debate ID`. Date is US Eastern as plain text, `2027-04-03 10:00`. Status is a dropdown, `scheduled` or `cancelled`. The script keeps the last four columns, which are protected.
+- Tab `Debate Schedule`: `Host | Date | Subject | Status | Discourse | Meeting | Added | Event ID | Announced | Debate ID`. Date is US Eastern as plain text, `2027-04-03 10:00`. Status is a dropdown, `scheduled` or `cancelled`. The script keeps the last four columns, which are protected. The form and the script allow one debate per US Eastern day. A cancelled row frees its day.
 - Tab `Password`, protected, editable by the owner only.
 - Publish to web covers the Debate Schedule tab only, as CSV. Never the entire document.
 

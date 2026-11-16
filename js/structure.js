@@ -517,6 +517,25 @@ function updateWhenPreview() {
   hint.textContent = text;
 }
 
+// One debate per day, by the US Eastern date. Cancelled debates free their
+// day. The script checks the same, in case the page is out of date.
+function etDay(date) {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: TZ_ET }).format(date);
+}
+
+function debateOnDay(start) {
+  const day = etDay(start);
+  return debates.find(d => !d.cancelled && etDay(d.start) === day);
+}
+
+function sameDayMessage(start, d) {
+  const day = new Intl.DateTimeFormat("en-US", {
+    timeZone: TZ_ET, weekday: "short", month: "short", day: "numeric",
+  }).format(start);
+  const host = d.host + (d.host.endsWith(".") ? "" : ".");
+  return `${day} already has a debate, hosted by ${host} Please choose another day.`;
+}
+
 function initForms() {
   const endpointReady = POST_ENDPOINT_URL && !POST_ENDPOINT_URL.includes("PASTE_YOUR");
 
@@ -558,6 +577,10 @@ function initForms() {
     }
 
     const start = etWallToDate(...parts);
+    const taken = debateOnDay(start);
+    if (taken) {
+      setStatus(status, sameDayMessage(start, taken), "error"); return;
+    }
     const date = `${parts[0]}-${pad(parts[1])}-${pad(parts[2])} ${pad(parts[3])}:${pad(parts[4])}`;
 
     btn.disabled = true;
