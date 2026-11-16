@@ -37,6 +37,17 @@
   .lede { font-size: var(--fs-large); max-width: var(--measure); margin: 0 0 8px; text-wrap: pretty; }
   .meta { font-size: var(--fs-label); color: var(--sage); margin: 0; }
   section { border-top: 2px solid var(--ink); margin-top: 48px; padding-top: 24px; }
+  /* Stones becoming people, sitting on the first rule as on the ground:
+     the last three columns on a wide screen, two on a tablet, and below
+     the lede on a phone. */
+  .page-top { position: relative; padding-bottom: 48px; }
+  .page-top + section { margin-top: 0; }
+  .id-babies { position: absolute; right: 0; bottom: 0; width: calc(3 * var(--col) + 2 * var(--gutter)); height: auto; }
+  @media (max-width: 1023px) { .id-babies { width: calc(2 * var(--col) + var(--gutter)); } }
+  @media (max-width: 640px) {
+    .page-top { padding-bottom: 0; }
+    .id-babies { position: static; display: block; margin: 32px 0 0 auto; width: calc(3 * var(--col) + 2 * var(--gutter)); }
+  }
   h2 {
     font-size: var(--fs-title); line-height: 1.25; font-weight: 700;
     margin: 0 0 16px; text-wrap: balance;
@@ -140,8 +151,11 @@
 <main id="main">
 <div class="article">
 
-  <h1>Visual Identity Principles of Intent Collective</h1>
-  <p class="lede">Why Intent Collective looks and reads the way it does. The meaning behind its marks, and the essential rules of type, color, and space that hold the system together.</p>
+  <div class="page-top">
+    <h1>Visual Identity Principles of Intent Collective</h1>
+    <p class="lede">Why Intent Collective looks and reads the way it does. The meaning behind its marks, and the essential rules of type, color, and space that hold the system together.</p>
+    <img class="id-babies" src="/assets/babies.png?v=1" alt="Stones becoming people, from Virgil Solis’s engraving of Deucalion and Pyrrha, 1563">
+  </div>
 
   <section>
 <h2>The identity and its origin</h2>
