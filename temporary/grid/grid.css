@@ -1,16 +1,17 @@
 /* Trial: a column grid in place of the square ground.
-   Desktop 12 columns of 64px with 32px gutters (1120px, the text column).
+   Desktop 12 columns of 80px with 16px gutters (1136px, the text column):
+   columns hold elements, gutters only space them, so the gutter stays narrow.
    Tablet 6 columns, phone 4. The lines are drawn from the same numbers
    that place the content, so the two stay aligned at every width. */
 
 :root {
-  --max-w: calc(1120px + 2 * var(--margin));
+  --max-w: calc(1136px + 2 * var(--margin));
   --cols: 12;
-  --gutter: 32px;
+  --gutter: 16px;
 }
 
 @media (max-width: 1023px) { :root { --cols: 6; } }
-@media (max-width: 640px)  { :root { --cols: 4; --gutter: 16px; } }
+@media (max-width: 640px)  { :root { --cols: 4; } }
 
 /* One column, as a share of the parent's width (the text column). */
 :root { --col: calc((100% - (var(--cols) - 1) * var(--gutter)) / var(--cols)); }
@@ -24,7 +25,7 @@ body::before {
   position: fixed;
   inset: 0 auto 0 50%;
   transform: translateX(-50%);
-  width: min(100% - 2 * var(--margin), 1120px);
+  width: min(100% - 2 * var(--margin), 1136px);
   z-index: -1;
   pointer-events: none;
   background-image: repeating-linear-gradient(90deg,
