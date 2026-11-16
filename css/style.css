@@ -17,10 +17,12 @@
              action     brick red: every link, toggle and button
              highlight  brick red outline: only the next debate
 
-   SPACE     One step of 8px. Four steps make the 32px module drawn on
-             the background. Every margin, padding and gap is a step
-             (4 8 16 24 32 48 64 96), and the page edges fall on the
-             module's lines.
+   SPACE     One step of 4px. Every margin, padding and gap is a step
+             (4 8 12 16 24 32 48 64 96).
+
+   GRID      12 columns of 84px with 12px gutters, drawn behind the page.
+             Tablet 6 columns, phone 4 with 8px gutters. Every element
+             spans whole columns.
 
    COLOR     paper, raised paper, ink, soft ink, red, sage (sage is used for
              non-clickable metadata only), plus two rule strengths.
@@ -76,8 +78,8 @@
   --fs-display: clamp(1.75rem, 3.6vw, 2.4rem);
   --fs-hero: clamp(2.2rem, 5vw, 4rem);
 
-  /* space: every distance is a step of 8px, including the grid's
-     columns (80px) and gutters (16px, 8px on phones).
+  /* space: every distance is a step of 4px, including the grid's
+     columns (84px) and gutters (12px, 8px on phones).
      A border counts as space: a card with a heavier outline loses the
      same amount of padding, so its content keeps the same inset. */
   --s0: 4px;
@@ -91,15 +93,15 @@
   --margin: var(--s4);           /* page margin: 32px, half on the smallest phones */
   --btn-pad: 4px 8px;            /* inner space of every filled button */
 
-  /* layout: the grid. 12 columns of 80px with 16px gutters make the
-     1136px text column. Columns hold elements, gutters only space them.
+  /* layout: the grid. 12 columns of 84px with 12px gutters make the
+     1140px text column. Columns hold elements, gutters only space them.
      Tablet 6 columns, phone 4 with 8px gutters. The lines on the page are
      drawn from the same numbers that place the content, so the two stay
      aligned at every width. */
-  --text-w: 1136px;
+  --text-w: 1140px;
   --max-w: calc(var(--text-w) + 2 * var(--margin));
   --cols: 12;
-  --gutter: var(--s2);
+  --gutter: 12px;
   /* One column, as a share of the parent's width (the text column). */
   --col: calc((100% - (var(--cols) - 1) * var(--gutter)) / var(--cols));
   /* Running text spans 6 of 12 columns, lead text 8. */
