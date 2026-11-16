@@ -536,6 +536,23 @@ function sameDayMessage(start, d) {
   return `${day} already has a debate, hosted by ${host} Please choose another day.`;
 }
 
+// The form starts on the first free Saturday, 9 AM US Eastern, at least
+// PREFILL_DAYS ahead. A starting value only: any date can still be chosen.
+const PREFILL_DAYS = 28;
+
+function prefillWhen() {
+  const input = $("d-when");
+  if (input.value) return;
+  const [y, m, d] = etDay(new Date()).split("-").map(Number);
+  const day = new Date(Date.UTC(y, m - 1, d + PREFILL_DAYS));
+  day.setUTCDate(day.getUTCDate() + (6 - day.getUTCDay() + 7) % 7);
+  while (debateOnDay(etWallToDate(day.getUTCFullYear(), day.getUTCMonth() + 1, day.getUTCDate(), 9, 0))) {
+    day.setUTCDate(day.getUTCDate() + 7);
+  }
+  input.value = day.toISOString().slice(0, 10) + "T09:00";
+  updateWhenPreview();
+}
+
 function initForms() {
   const endpointReady = POST_ENDPOINT_URL && !POST_ENDPOINT_URL.includes("PASTE_YOUR");
 
@@ -551,6 +568,7 @@ function initForms() {
   });
 
   if (endpointReady) setupToggle("debate-toggle", "debate-composer");
+  $("debate-toggle").addEventListener("click", prefillWhen);
 
   $("d-submit").addEventListener("click", async () => {
     const status = $("d-status");
@@ -599,6 +617,7 @@ function initForms() {
         chosenPostUrl = "";
         $("d-post-chosen").textContent = "";
         $("d-when-preview").textContent = "";
+        prefillWhen();
         if (data.emailError) {
           setStatus(status, "Scheduled. The email notice could not be sent: " + data.emailError, "ok");
         } else if (data.queued > 0) {
