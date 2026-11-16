@@ -142,8 +142,8 @@ function rowsToDebates(rows) {
 
 /* ---------------- Join link: opens one hour before the debate ---------------- */
 
-// The meeting link is shown only from this long before the start. Zoom itself
-// should also have "Join before host" turned off and the waiting room on.
+// The meeting link is shown only from this long before the start. The meeting
+// itself should also keep people waiting until the host opens (Meet: Restricted).
 const JOIN_OPENS_MS = 60 * 60 * 1000;
 
 // Each upcoming card has two slots. The "top" slot, under the time, holds
