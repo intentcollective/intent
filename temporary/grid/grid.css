@@ -1,0 +1,80 @@
+/* Trial: a column grid in place of the square ground.
+   Desktop 12 columns of 64px with 32px gutters (1120px, the text column).
+   Tablet 6 columns, phone 4. The lines are drawn from the same numbers
+   that place the content, so the two stay aligned at every width. */
+
+:root {
+  --max-w: calc(1120px + 2 * var(--margin));
+  --cols: 12;
+  --gutter: 32px;
+}
+
+@media (max-width: 1023px) { :root { --cols: 6; } }
+@media (max-width: 640px)  { :root { --cols: 4; --gutter: 16px; } }
+
+/* One column, as a share of the parent's width (the text column). */
+:root { --col: calc((100% - (var(--cols) - 1) * var(--gutter)) / var(--cols)); }
+
+/* The square ground goes. */
+body { background-image: none; }
+
+/* The columns: two lines per column, the gutter between them left empty. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 auto 0 50%;
+  transform: translateX(-50%);
+  width: min(100% - 2 * var(--margin), 1120px);
+  z-index: -1;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(90deg,
+    var(--grid-line) 0 1px,
+    transparent 1px calc((100% - (var(--cols) - 1) * var(--gutter)) / var(--cols) - 1px),
+    var(--grid-line) calc((100% - (var(--cols) - 1) * var(--gutter)) / var(--cols) - 1px) calc((100% - (var(--cols) - 1) * var(--gutter)) / var(--cols)),
+    transparent calc((100% - (var(--cols) - 1) * var(--gutter)) / var(--cols)) calc((100% + var(--gutter)) / var(--cols)));
+}
+
+/* Content spans whole columns. A row of k equal items with the gutter
+   between them lands on the columns whenever k divides the column count. */
+.triad,
+.debate-list,
+.credential-list {
+  display: grid;
+  column-gap: var(--gutter);
+}
+
+.triad        { grid-template-columns: repeat(4, 1fr); }   /* 3 columns each */
+.debate-list  { grid-template-columns: repeat(3, 1fr); }   /* 4 columns each */
+.credential-list { grid-template-columns: repeat(6, 1fr); row-gap: var(--s1); } /* 2 each */
+
+@media (max-width: 1023px) {
+  .triad        { grid-template-columns: repeat(2, 1fr); row-gap: var(--s4); }
+  .debate-list  { grid-template-columns: repeat(2, 1fr); row-gap: var(--s3); }
+  .credential-list { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .triad,
+  .debate-list  { grid-template-columns: 1fr; }
+  .credential-list { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Text blocks end on a column line: 6 of 12 for body text, 8 for the hero. */
+.hero p { max-width: calc(8 * var(--col) + 7 * var(--gutter)); }
+.section-note,
+.bullets,
+.manifesto p,
+.manifesto blockquote,
+.footnote { max-width: calc(6 * var(--col) + 5 * var(--gutter)); }
+
+@media (max-width: 1023px) {
+  .hero p,
+  .section-note,
+  .bullets,
+  .manifesto p,
+  .manifesto blockquote,
+  .footnote { max-width: none; }
+}
+
+/* The old ground followed the edge on smaller screens. Not needed now. */
+@media (max-width: 1120px) { body { background-position: initial; } }
