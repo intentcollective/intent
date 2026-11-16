@@ -43,6 +43,7 @@
     flying.src = '/assets/stone.png';   // the stone alone, without her fingers
     flying.style.cssText = 'left:' + r.left + 'px;top:' + r.top + 'px;width:' + r.width + 'px';
     document.body.appendChild(flying);
+    stone.style.visibility = 'hidden';   // the stone has left: her hand is open and empty
     var X = window.innerWidth - r.left + 40;              // off the right edge
     // The curve's top touches the bottom of the menu words, and the stone
     // leaves the page just below the header line.
@@ -83,6 +84,16 @@
       try { sessionStorage.setItem(KEY, JSON.stringify({ top: r.top + k * u * u - H, slope: 2 * k * u, crest: cross ? { x: peak - X, top: yp } : null, v: v0 * 0.5 })); } catch (err) {}
       window.location.href = link.href;
     };
+  });
+
+  // Coming back to the Index (the browser may keep the page as it was),
+  // the stone is in her hand again.
+  window.addEventListener('pageshow', function (e) {
+    if (!e.persisted) return;
+    var st = document.querySelector('.logo-stone');
+    if (st) st.style.visibility = '';
+    var fl = document.querySelector('.thrown-stone');
+    if (fl) fl.remove();
   });
 
   var title = document.querySelector('.article h1');
