@@ -266,18 +266,27 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
 }
 
 .site-header .wrap {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  column-gap: var(--gutter);
   align-items: center;
-  justify-content: space-between;
   min-height: calc(var(--header-h) - 1px);   /* the 1px rule completes it */
 }
 
-.wordmark-link { display: inline-block; }
+.wordmark-link { display: inline-block; grid-column: 1 / -5; justify-self: start; }
 .wordmark-link img { height: 28px; width: auto; }
 .wordmark-bottom { height: 24px; width: auto; margin-top: var(--s5); }
 
-.site-nav { display: flex; gap: var(--s4); font-weight: 500; }
-.site-nav a { position: relative; padding-bottom: var(--s0); }
+/* The menu takes the last four columns, one label to a column, each set
+   flush right on its column's line. */
+.site-nav {
+  grid-column: -5 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  font-weight: 500;
+}
+.site-nav a { position: relative; padding-bottom: var(--s0); justify-self: end; white-space: nowrap; }
 
 .site-nav a::after {
   content: "";
@@ -1042,18 +1051,22 @@ details[open] > summary::before { transform: rotate(90deg); }
 
 @media (max-width: 640px) {
   .hero { padding: var(--s5) 0 var(--s5); }
-  /* Nav labels never break inside a word. They spread across the full
-     width, and only on the narrowest screens drop to a second row. */
-  .site-nav { flex-basis: 100%; flex-wrap: wrap; justify-content: space-between; gap: var(--s1); }
-  .site-nav a { white-space: nowrap; }
-  .wordmark-link { flex-shrink: 0; }
-  .site-header .wrap { flex-wrap: wrap; row-gap: var(--s1); padding-top: var(--s2); padding-bottom: var(--s2); }
+  /* The menu drops below the wordmark and fills the four columns. */
+  .wordmark-link,
+  .site-nav { grid-column: 1 / -1; }
+  .site-header .wrap { row-gap: var(--s1); padding-top: var(--s2); padding-bottom: var(--s2); }
   .field-row { grid-template-columns: 1fr; }
 }
 
 /* The smallest phones: the margin halves to 16px. */
 @media (max-width: 374px) {
   :root { --margin: var(--s2); }
+}
+
+/* On the smallest phones a column is barely wider than the longest label,
+   so the menu spreads evenly instead. */
+@media (max-width: 389px) {
+  .site-nav { display: flex; justify-content: space-between; }
 }
 
 /* Quiet links: look like the surrounding mark, no link styling. */
