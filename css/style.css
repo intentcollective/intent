@@ -822,7 +822,7 @@ details[open] > summary::before { transform: rotate(90deg); }
 }
 
 .rte-body hr,
-.post-body hr { border: none; border-top: 1px solid var(--rule); margin: 1.4em 0; }
+.post-body hr { border: none; border-top: 1px solid var(--ink); margin: 1.4em 0; }
 
 .rte-media { position: relative; margin: 0 0 0.8em; }
 .rte-media img { max-width: 100%; display: block; }
