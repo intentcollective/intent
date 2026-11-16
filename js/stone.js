@@ -169,7 +169,7 @@
         period.appendChild(baby);
         var t = period.getBoundingClientRect();
         var fs = parseFloat(getComputedStyle(title).fontSize);
-        var h = 1.2 * fs, w = h * 154 / 144;               // the figure about a capital and a half tall
+        var h = 0.9 * fs, w = h * 154 / 144;               // under the line above, clear of its descenders
         var s = h / t.height;                               // how much the stone grows to reach it
         // It grows up and to the right, away from the words. Only where the
         // title ends near the page edge does it grow up and to the left.
