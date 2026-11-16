@@ -512,11 +512,16 @@ function updateWhenPreview() {
   const taken = date && debateOnDay(date);
   $("d-when-taken").textContent = taken ? sameDayMessage(date, taken) : "";
   if (!parts) { hint.textContent = ""; return; }
-  let text = "London: " + fmtZone(date, TZ_LONDON, false) + "   Seoul: " + fmtZone(date, TZ_SEOUL, false);
+  // The same three lines as on a debate card.
+  const lines = [
+    fmtZone(date, TZ_ET, true),
+    fmtZone(date, TZ_LONDON, false) + ", London",
+    fmtZone(date, TZ_SEOUL, false) + ", Seoul",
+  ];
   if (new Date(Date.UTC(parts[0], parts[1] - 1, parts[2])).getUTCDay() !== 6) {
-    text += "   (Not a Saturday in US Eastern)";
+    lines.push("Not a Saturday in US Eastern");
   }
-  hint.textContent = text;
+  hint.textContent = lines.join("\n");
 }
 
 // One debate per day, by the US Eastern date. Cancelled debates free their
