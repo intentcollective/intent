@@ -104,7 +104,6 @@
     period.className = 'stone-period';
     period.setAttribute('aria-hidden', 'true');
     period.innerHTML = '<img src="/assets/stone.png" alt="">';
-    new Image().src = '/assets/baby.png';   // ready by the time it lands
     title.appendChild(period);
     var land = function () {
       var t = period.getBoundingClientRect();
@@ -146,57 +145,15 @@
       var hop = 550, all = run.T + hop, frames = [];
       run.xs.forEach(function (x, i) {
         frames.push({ offset: run.T * i / 60 / all,
-          transform: 'translate(' + (x - X) + 'px, ' + path(x) + 'px) rotate(' + ((x - A) * SPIN - 180) + 'deg)' });
+          transform: 'translate(' + (x - X) + 'px, ' + path(x) + 'px) rotate(' + ((x - A) * SPIN - 360) + 'deg)' });
       });
-      for (var i = 1; i <= 12; i++) {      // the hop: up a little, forward one stone width, half a roll
+      for (var i = 1; i <= 12; i++) {      // the hop: up a little, forward one stone width, one full roll, then still
         var p = i / 12, q = 1 - (1 - p) * (1 - p);
         frames.push({ offset: (run.T + hop * p) / all,
-          transform: 'translate(' + (-b + b * q) + 'px, ' + (-t.height * 0.9 * 4 * q * (1 - q)) + 'px) rotate(' + (-180 * (1 - q)) + 'deg)' });
+          transform: 'translate(' + (-b + b * q) + 'px, ' + (-t.height * 0.9 * 4 * q * (1 - q)) + 'px) rotate(' + (-360 * (1 - q)) + 'deg)' });
       }
       period.style.visibility = '';
-      period.animate(frames, { duration: all }).onfinish = becomeLife;
-    };
-    // Stones became people. A moment after it lands, the stone grows and
-    // dissolves into the newborn figure from Solis's engraving, holds, then
-    // returns to the stone, so the title still ends on its period.
-    var becomeLife = function () {
-      var stoneImg = period.querySelector('img');
-      var baby = new Image();
-      baby.src = '/assets/baby.png';
-      baby.alt = '';
-      baby.className = 'stone-life';
-      var start = function () {
-        period.appendChild(baby);
-        var t = period.getBoundingClientRect();
-        var fs = parseFloat(getComputedStyle(title).fontSize);
-        var h = 0.9 * fs, w = h * 154 / 144;               // under the line above, clear of its descenders
-        var s = h / t.height;                               // how much the stone grows to reach it
-        // It grows up and to the right, away from the words. Only where the
-        // title ends near the page edge does it grow up and to the left.
-        var right = t.left + w <= document.documentElement.clientWidth - 8;
-        var origin = right ? 'left bottom' : 'right bottom';
-        baby.style.cssText = 'height:' + h + 'px;width:' + w + 'px;bottom:0;' + (right ? 'left:0;' : 'right:0;') + 'transform-origin:' + origin;
-        stoneImg.style.transformOrigin = origin;
-        var grow = 700, hold = 1000, all = grow * 2 + hold;
-        var a = grow / all, b = (grow + hold) / all;
-        stoneImg.animate([
-          { offset: 0, transform: 'scale(1)', opacity: 1 },
-          { offset: a * 0.45, transform: 'scale(' + (1 + (s - 1) * 0.45) + ')', opacity: 1 },
-          { offset: a, transform: 'scale(' + s + ')', opacity: 0 },
-          { offset: b, transform: 'scale(' + s + ')', opacity: 0 },
-          { offset: b + (1 - b) * 0.55, transform: 'scale(' + (1 + (s - 1) * 0.45) + ')', opacity: 1 },
-          { offset: 1, transform: 'scale(1)', opacity: 1 }
-        ], { duration: all, delay: 400, easing: 'ease-in-out' });
-        baby.animate([
-          { offset: 0, transform: 'scale(' + 1 / s + ')', opacity: 0 },
-          { offset: a * 0.45, transform: 'scale(' + (1 + (s - 1) * 0.45) / s + ')', opacity: 0 },
-          { offset: a, transform: 'scale(1)', opacity: 1 },
-          { offset: b, transform: 'scale(1)', opacity: 1 },
-          { offset: b + (1 - b) * 0.55, transform: 'scale(' + (1 + (s - 1) * 0.45) / s + ')', opacity: 0 },
-          { offset: 1, transform: 'scale(' + 1 / s + ')', opacity: 0 }
-        ], { duration: all, delay: 400, easing: 'ease-in-out', fill: 'both' }).onfinish = function () { baby.remove(); };
-      };
-      if (baby.complete) start(); else { baby.onload = start; baby.onerror = function () {}; }
+      period.animate(frames, { duration: all });
     };
     // Measure only after the fonts load, or the title reflows under the flight.
     if (!still && period.animate) {

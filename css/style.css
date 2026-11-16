@@ -377,7 +377,6 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
 .thrown-stone { position: fixed; z-index: 100; pointer-events: none; }
 .stone-period { display: inline-block; width: 0.34em; margin-left: 0.06em; position: relative; z-index: 11; }  /* above the header as it falls in */
 .stone-period img { display: block; width: 100%; }
-.stone-period .stone-life { position: absolute; max-width: none; opacity: 0; pointer-events: none; }
 
 .page-head { padding: var(--s6) 0 var(--s4); }
 .page-head h1 { max-width: 24ch; }
