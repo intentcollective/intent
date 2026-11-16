@@ -1,20 +1,19 @@
 /* Trial: a column grid in place of the square ground.
-   Desktop 12 columns of 80px with 16px gutters (1136px, the text column):
-   columns hold elements, gutters only space them, so the gutter stays narrow.
-   Tablet 6 columns, phone 4. The lines are drawn from the same numbers
-   that place the content, so the two stay aligned at every width. */
+   Desktop 12 columns of 80px with 16px gutters (1136px, the text column).
+   Columns hold elements, gutters only space them, so the gutter stays narrow.
+   Tablet 6 columns, phone 4 with 8px gutters. The lines are drawn from the
+   same numbers that place the content, so the two stay aligned at every width. */
 
 :root {
   --max-w: calc(1136px + 2 * var(--margin));
   --cols: 12;
   --gutter: 16px;
+  /* One column, as a share of the parent's width (the text column). */
+  --col: calc((100% - (var(--cols) - 1) * var(--gutter)) / var(--cols));
 }
 
 @media (max-width: 1023px) { :root { --cols: 6; } }
 @media (max-width: 640px)  { :root { --cols: 4; --gutter: 8px; } }
-
-/* One column, as a share of the parent's width (the text column). */
-:root { --col: calc((100% - (var(--cols) - 1) * var(--gutter)) / var(--cols)); }
 
 /* The square ground goes. */
 body { background-image: none; }
@@ -30,56 +29,97 @@ body::before {
   pointer-events: none;
   background-image: repeating-linear-gradient(90deg,
     var(--grid-line) 0 1px,
-    transparent 1px calc((100% - (var(--cols) - 1) * var(--gutter)) / var(--cols) - 1px),
-    var(--grid-line) calc((100% - (var(--cols) - 1) * var(--gutter)) / var(--cols) - 1px) calc((100% - (var(--cols) - 1) * var(--gutter)) / var(--cols)),
-    transparent calc((100% - (var(--cols) - 1) * var(--gutter)) / var(--cols)) calc((100% + var(--gutter)) / var(--cols)));
+    transparent 1px calc(var(--col) - 1px),
+    var(--grid-line) calc(var(--col) - 1px) var(--col),
+    transparent var(--col) calc((100% + var(--gutter)) / var(--cols)));
 }
 
-/* Content spans whole columns. A row of k equal items with the gutter
-   between them lands on the columns whenever k divides the column count. */
+/* The footer is the bottom margin, like the header at the top. */
+.site-footer { background: var(--paper); }
+
+/* ---------- elements span whole columns ---------- */
+
 .triad,
+.tier-grid,
 .debate-list,
-.credential-list {
+.credential-list,
+.pillar-row {
   display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
   column-gap: var(--gutter);
 }
 
-.triad        { grid-template-columns: repeat(4, 1fr); }   /* 3 columns each */
-.debate-list  { grid-template-columns: repeat(3, 1fr); }   /* 4 columns each */
-.credential-list { grid-template-columns: repeat(6, 1fr); row-gap: var(--s1); } /* 2 each */
+.triad > *,
+.tier-grid > *,
+.debate-list > *,
+.credential-list > * { grid-column: span var(--span); }
+
+/* Desktop: a row of 2, 3 or 4 items shares the 12 columns evenly. */
+.triad > *            { --span: 4; }
+.triad > :first-child:nth-last-child(2),
+.triad > :first-child:nth-last-child(2) ~ * { --span: 6; }
+.triad > :first-child:nth-last-child(4),
+.triad > :first-child:nth-last-child(4) ~ * { --span: 3; }
+.tier-grid > *        { --span: 6; }
+.debate-list > *      { --span: 4; }
+.credential-list > *  { --span: 2; }
+
+/* Pillars: the mark hangs in the margin, so the name starts on the first
+   column line. Name in columns 1 to 8, people in 9 to 12. */
+.pillar-row { position: relative; gap: 0 var(--gutter); }
+.pillar-letter { position: absolute; left: -1em; }
+.pillar-name   { grid-column: 1 / span 8; }
+.pillar-people { grid-column: 9 / span 4; text-align: left; }
+
+/* Logo: two columns wide. */
+.logo-link { width: calc(2 * var(--col) + var(--gutter)); }
+.logo-link .logo-mark { width: 100%; }
+
+/* Text ends on a column line: 8 of 12 for the hero and page lede,
+   6 for running text and forms. */
+.hero p,
+.page-head p.lede { max-width: calc(8 * var(--col) + 7 * var(--gutter)); }
+.section-note,
+.bullets,
+.principle,
+.apply-note,
+.manifesto p,
+.manifesto blockquote,
+.footnote,
+.composer { max-width: calc(6 * var(--col) + 5 * var(--gutter)); }
 
 @media (max-width: 1023px) {
-  .triad        { grid-template-columns: repeat(2, 1fr); row-gap: var(--s4); }
-  .debate-list  { grid-template-columns: repeat(2, 1fr); row-gap: var(--s3); }
-  .credential-list { grid-template-columns: repeat(3, 1fr); }
+  .triad > *,
+  .triad > :first-child:nth-last-child(2),
+  .triad > :first-child:nth-last-child(2) ~ *,
+  .triad > :first-child:nth-last-child(4),
+  .triad > :first-child:nth-last-child(4) ~ * { --span: 3; }
+  .triad > :first-child:nth-last-child(3),
+  .triad > :first-child:nth-last-child(3) ~ * { --span: 6; }
+  .tier-grid > *,
+  .debate-list > *      { --span: 3; }
+
+  .pillar-name   { grid-column: 1 / span 4; }
+  .pillar-people { grid-column: 5 / span 2; }
+
+  .hero p, .page-head p.lede, .section-note, .bullets, .principle, .apply-note,
+  .manifesto p, .manifesto blockquote, .footnote, .composer { max-width: none; }
 }
 
 @media (max-width: 640px) {
-  .triad,
-  .debate-list  { grid-template-columns: 1fr; }
-  .credential-list { grid-template-columns: repeat(2, 1fr); }
+  .triad > *,
+  .triad > :first-child:nth-last-child(2),
+  .triad > :first-child:nth-last-child(2) ~ *,
+  .triad > :first-child:nth-last-child(3),
+  .triad > :first-child:nth-last-child(3) ~ *,
+  .triad > :first-child:nth-last-child(4),
+  .triad > :first-child:nth-last-child(4) ~ *,
+  .tier-grid > *,
+  .debate-list > *      { --span: 4; }
+
+  .pillar-name,
+  .pillar-people { grid-column: 1 / span 4; }
 }
-
-/* Text blocks end on a column line: 6 of 12 for body text, 8 for the hero. */
-.hero p { max-width: calc(8 * var(--col) + 7 * var(--gutter)); }
-.section-note,
-.bullets,
-.manifesto p,
-.manifesto blockquote,
-.footnote { max-width: calc(6 * var(--col) + 5 * var(--gutter)); }
-
-@media (max-width: 1023px) {
-  .hero p,
-  .section-note,
-  .bullets,
-  .manifesto p,
-  .manifesto blockquote,
-  .footnote { max-width: none; }
-}
-
-/* The footer is the bottom margin, like the header at the top:
-   plain paper, no columns. */
-.site-footer { background: var(--paper); }
 
 /* The old ground followed the edge on smaller screens. Not needed now. */
 @media (max-width: 1120px) { body { background-position: initial; } }
