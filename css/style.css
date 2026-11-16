@@ -368,7 +368,7 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
 .logo-link .logo-mark { display: block; width: 100%; margin-bottom: 0; }
 /* On hover her hand turns a little clockwise at the wrist (the piece's lower
    right corner), the way a throw begins, then settles back. */
-.logo-stone { position: absolute; left: 82.6%; top: 5.42%; width: 10.8%; transform-origin: 85% 100%; }
+.logo-stone { position: absolute; left: 86.245%; top: 5.497%; width: 13.383%; transform-origin: 85% 100%; }
 @media (hover: hover) { .logo-link:hover .logo-stone { animation: stone-nudge 0.5s ease-in-out; } }
 @keyframes stone-nudge {
   40% { transform: rotate(16deg); }

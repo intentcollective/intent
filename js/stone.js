@@ -34,7 +34,10 @@
     var stone = link.querySelector('.logo-stone');
     if (still || !stone || !stone.animate || e.metaKey || e.ctrlKey || e.shiftKey) return;
     e.preventDefault();
-    var r = stone.getBoundingClientRect();
+    // The piece in her hand includes her fingers; the stone alone is its
+    // upper left, about 0.81 of its width (assets/stone.png, 54 by 47).
+    var p = stone.getBoundingClientRect(), sw = p.width * 0.807;
+    var r = { left: p.left, top: p.top, width: sw, height: sw * 47 / 54 };
     var flying = stone.cloneNode();
     flying.className = 'thrown-stone';
     flying.src = '/assets/stone.png';   // the stone alone, without her fingers
