@@ -272,8 +272,8 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
 }
 
 .wordmark-link { display: inline-block; grid-column: 1 / -5; justify-self: start; }
-.wordmark-link img { height: 28px; width: auto; }
-.wordmark-bottom { height: 24px; width: auto; margin-top: var(--s5); }
+.wordmark-link img { height: 32px; width: auto; }
+.wordmark-bottom { height: 28px; width: auto; margin-top: var(--s5); }
 
 /* The menu takes the last four columns, one label to a column, each set
    flush right on its column's line. */
