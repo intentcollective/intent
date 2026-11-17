@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@1&family=Poppins:wght@400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/style.css?v=20261117b">
+<link rel="stylesheet" href="/css/style.css?v=20261117c">
 <style>
   :root {
     --paper: #E4E1D6; --raised: #EDEAE0; --ink: #211F1A; --ink-soft: #55524A;
@@ -55,11 +55,15 @@
   h3 { font-size: var(--fs-label); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink); margin: 24px 0 8px; }
   p, li { max-width: var(--measure); text-wrap: pretty; }
   p { margin: 0 0 16px; }
-  ul, ol { margin: 0 0 16px; padding-left: 1.2em; }
+  ul, ol { margin: 0 0 16px; padding-left: 0; list-style: none; }
   li { margin: 0 0 8px; }
-  ul { list-style: none; padding-left: 1em; }
-  ul > li { position: relative; }
-  ul > li::before { content: "\00B7"; position: absolute; left: -1em; width: 1em; text-align: center; color: var(--ink-soft); }
+  /* Hanging punctuation, as optical margin alignment sets it: the middle
+     of the mark sits just outside the column line, the text just inside. */
+  ul > li, ol > li { position: relative; padding-left: 0.4em; }
+  ul > li::before { content: "\00B7"; position: absolute; left: -0.2em; width: 0.3em; text-align: center; color: var(--ink-soft); }
+  ol { counter-reset: item; }
+  ol > li { counter-increment: item; }
+  ol > li::before { content: counter(item); position: absolute; left: -1.05em; width: 1.2em; text-align: right; font-weight: 700; color: var(--ink-soft); }
   strong { font-weight: 700; }
   .soft { color: var(--ink-soft); }
   .nw { white-space: nowrap; }
@@ -195,7 +199,7 @@
 <p>Glyphs are the oldest layer of written communication. Our own alphabet descends, through Phoenician, from pictorial signs. The pilcrow (&#182;) shows the same evolution in miniature. Medieval scribes drew a C for <em>capitulum</em>, &ldquo;little head&rdquo;, to open a new section, then added a vertical stroke and filled the bowl. Reading a glyph as both sign and letter is linguistic typography, the study of how form carries&nbsp;meaning.</p>
 <h3>The grid</h3>
 <p>The grid comes from the printed page. Medieval scribes ruled their pages before they wrote, and from the 1950s Swiss designers made the grid a system of columns, gutters, and margins. Josef M&uuml;ller-Brockmann set it down in <em>Grid Systems in Graphic Design</em> (1981). Our grid follows that tradition. Columns hold the elements and gutters only space them, so the gutters stay&nbsp;narrow.</p>
-<p>Digital media has no fixed page. Its structure shifts with every screen, unlike a sheet of paper. So the grid is drawn behind every page, from the same numbers that place the content, and the two stay aligned at every width. The page has 12 columns on a wide screen, 6 on a tablet, and 4 on a phone. Cards, lists, forms, and text span whole columns. The menu takes the last four columns, each label flush right on its column&rsquo;s line. The marks beside the pillars and the dots of every list hang in the margin, as quotation marks hang in fine typesetting, so every line of text starts on the column&nbsp;line. Where a column is barely wider than a label, on the smallest phones, the menu spreads evenly instead. Rows are not drawn, because text and cards change height on every&nbsp;screen.</p>
+<p>Digital media has no fixed page. Its structure shifts with every screen, unlike a sheet of paper. So the grid is drawn behind every page, from the same numbers that place the content, and the two stay aligned at every width. The page has 12 columns on a wide screen, 6 on a tablet, and 4 on a phone. Cards, lists, forms, and text span whole columns. The menu takes the last four columns, each label flush right on its column&rsquo;s line. The marks beside the pillars and the dots and numbers of every list hang in the margin, as quotation marks hang in fine typesetting. A list mark sits just outside the column line and its text just inside, the way optical margin alignment sets them, so the edge reads as straight and each item still reads as its own&nbsp;line. Where a column is barely wider than a label, on the smallest phones, the menu spreads evenly instead. Rows are not drawn, because text and cards change height on every&nbsp;screen.</p>
 <p>The grid is how a designer understands, analyzes, dissects, and organizes a subject. Drawn beneath every page, it shows that our design is grounded in rational visual communication, not in intuitive or spontaneous&nbsp;expression.</p>
 <h3>The number three</h3>
 <p>The logo shows three stones, two in Pyrrha&rsquo;s hands and one in Deucalion&rsquo;s. The structure of Intent Collective counts in threes, with a triangle in <span class="nw">M&#9651;NIFESTO</span>, three lines in <span class="nw">STRUCTUR&#19977;</span>, three disciplines in the Foundation, three methods in the Methodology, and three questions in every&nbsp;debate.</p>

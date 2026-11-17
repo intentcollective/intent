@@ -484,13 +484,15 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
 .bullet-list li {
   position: relative;
   margin: 0 0 var(--s0);
+  padding-left: 0.4em;
   color: var(--ink-soft);
 }
 
-/* The mark hangs in the margin, so every line of text starts on the
-   column line (hanging punctuation, as with the pillar marks). */
+/* Hanging punctuation, as optical margin alignment sets it: the middle
+   of the midpoint sits just outside the column line, and the text
+   starts just inside, so each item still reads as its own line. */
 .bullets li::before,
-.bullet-list li::before { content: "\00B7"; position: absolute; left: -0.9em; }
+.bullet-list li::before { content: "\00B7"; position: absolute; left: -0.2em; width: 0.3em; text-align: center; }
 
 .triad-item .bullet-list,
 .tier .bullet-list { margin: var(--s1) 0 0; }
@@ -848,7 +850,11 @@ details[open] > summary::before { transform: rotate(90deg); }
 .rte-body p, .rte-body div { margin: 0 0 0.8em; }
 .post-body p, .post-body div { margin: 0 0 1.1em; }
 .rte-body ul, .rte-body ol { margin: 0 0 0.8em 1.2em; }
-.post-body ul, .post-body ol { margin: 0 0 1.1em 1.4em; }
+.post-body ul, .post-body ol { margin: 0 0 1.1em; padding: 0; list-style: none; counter-reset: item; }
+.post-body li { position: relative; padding-left: 0.4em; }
+.post-body ul > li::before { content: "\00B7"; position: absolute; left: -0.2em; width: 0.3em; text-align: center; }
+.post-body ol > li { counter-increment: item; }
+.post-body ol > li::before { content: counter(item); position: absolute; left: -1.05em; width: 1.2em; text-align: right; }
 
 .rte-body blockquote,
 .post-body blockquote {

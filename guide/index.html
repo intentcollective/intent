@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@1&family=Poppins:wght@400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/style.css?v=20261117b">
+<link rel="stylesheet" href="/css/style.css?v=20261117c">
 <style>
   :root {
     --paper: #E4E1D6; --raised: #EDEAE0; --ink: #211F1A; --ink-soft: #55524A;
@@ -45,18 +45,19 @@
   h3 { font-size: var(--fs-label); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink); margin: 24px 0 8px; }
   p, li { max-width: var(--measure); text-wrap: pretty; }
   p { margin: 0 0 16px; }
-  ul, ol { margin: 0 0 16px; padding-left: 1.2em; }
+  ul, ol { margin: 0 0 16px; padding-left: 0; list-style: none; }
   li { margin: 0 0 8px; }
-  ul { list-style: none; padding-left: 1em; }
-  ul > li { position: relative; }
-  ul > li::before { content: "\00B7"; position: absolute; left: -1em; width: 1em; text-align: center; color: var(--ink-soft); }
+  /* Hanging punctuation, as optical margin alignment sets it: the middle
+     of the mark sits just outside the column line, the text just inside. */
+  ul > li, ol > li { position: relative; padding-left: 0.4em; }
+  ul > li::before { content: "\00B7"; position: absolute; left: -0.2em; width: 0.3em; text-align: center; color: var(--ink-soft); }
+  ol { counter-reset: item; }
+  ol > li { counter-increment: item; }
+  ol > li::before { content: counter(item); position: absolute; left: -1.05em; width: 1.2em; text-align: right; font-weight: 700; color: var(--ink-soft); }
   strong { font-weight: 700; }
   .soft { color: var(--ink-soft); }
   .nw { white-space: nowrap; }
-  .steps { margin: 0 0 16px; padding-left: 0; counter-reset: step; list-style: none; }
-  .steps > li { position: relative; padding-left: 1.6em; counter-increment: step; }
   .steps ul { margin: 8px 0; }
-  .steps > li::before { content: counter(step); position: absolute; left: 0; font-weight: 700; color: var(--ink-soft); }
   .agenda { display: grid; gap: 0; margin: 16px 0; }
   .agenda .row { display: grid; grid-template-columns: calc(2 * var(--col) + var(--gutter)) minmax(0, 1fr); gap: 16px var(--gutter); align-items: baseline; padding: 16px 0; border-bottom: 1px solid var(--rule); }
   .agenda .row:first-child { border-top: 1px solid var(--rule); }
