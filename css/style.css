@@ -484,12 +484,13 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
 .bullet-list li {
   position: relative;
   margin: 0 0 var(--s0);
-  padding-left: 0.9em;
   color: var(--ink-soft);
 }
 
+/* The mark hangs in the margin, so every line of text starts on the
+   column line (hanging punctuation, as with the pillar marks). */
 .bullets li::before,
-.bullet-list li::before { content: "\00B7"; position: absolute; left: 0; }
+.bullet-list li::before { content: "\00B7"; position: absolute; left: -0.9em; }
 
 .triad-item .bullet-list,
 .tier .bullet-list { margin: var(--s1) 0 0; }
