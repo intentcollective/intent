@@ -507,10 +507,10 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
   padding: var(--s1) 0;
 }
 
-/* The mark hangs in the margin, so the name starts on the first column
-   line. Name in columns 1 to 8, people in 9 to 12. */
-.pillar-letter { position: absolute; left: -1em; }
-.pillar-name   { grid-column: 1 / span 8; }
+/* The mark hangs like a list mark: its middle just outside the column
+   line, the name just inside. Name in columns 1 to 8, people in 9 to 12. */
+.pillar-letter { position: absolute; top: var(--s1); left: -0.2em; width: 0.3em; text-align: center; }
+.pillar-name   { grid-column: 1 / span 8; padding-left: 0.4em; }
 
 .pillar-letter { font-weight: 700; color: var(--ink); font-size: var(--fs-large); line-height: 1.4; }
 .pillar-name { font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
@@ -1067,6 +1067,7 @@ details[open] > summary::before { transform: rotate(90deg); }
   .debate-list > * { --span: 4; }
   .pillar-name,
   .pillar-people { grid-column: 1 / span 4; }
+  .pillar-people { padding-left: 0.4em; }   /* under the name, aligned with it */
 }
 
 /* ---------- 14. responsive ---------- */
