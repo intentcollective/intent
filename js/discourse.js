@@ -40,8 +40,6 @@ const ENDPOINT_READY = Boolean(POST_ENDPOINT_URL) && !POST_ENDPOINT_URL.includes
 
 const stateEl = document.getElementById("state");
 const gridEl = document.getElementById("entry-grid");
-const countEl = document.getElementById("entry-count");
-const toolbarEl = document.getElementById("discourse-toolbar");
 const composerRegionEl = document.getElementById("composer-region");
 const detailEl = document.getElementById("post-detail");
 
@@ -140,15 +138,13 @@ function excerpt(text, len) {
 }
 
 function formatDate(d) {
-  // Date only, as mm/dd/yyyy. Never shows a time.
+  // Date only, as "Nov 15, 2026". Never shows a time.
   const parsed = new Date(d);
   if (isNaN(parsed)) {
     // Unparseable text: still drop any trailing time so none is shown.
     return String(d).replace(/[T\s]+\d{1,2}:\d{2}(:\d{2})?(\.\d+)?\s*(AM|PM|Z)?$/i, "");
   }
-  const mm = String(parsed.getMonth() + 1).padStart(2, "0");
-  const dd = String(parsed.getDate()).padStart(2, "0");
-  return mm + "/" + dd + "/" + parsed.getFullYear();
+  return parsed.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
 function escapeHTML(str) {
@@ -389,7 +385,6 @@ function renderEntries(entries) {
 
   if (!currentEntries.length) {
     setState("No entries yet. The first post added will show up here.");
-    countEl.textContent = "";
     return;
   }
 
@@ -399,13 +394,9 @@ function renderEntries(entries) {
     card.type = "button";
     card.className = "entry-card";
     card.innerHTML = `
-      <div class="entry-meta">
-        <span>${e.tag ? escapeHTML(e.tag) : "Discourse"}</span>
-        <span>${e.date ? formatDate(e.date) : ""}</span>
-      </div>
       <h3>${escapeHTML(e.title)}</h3>
       <p class="excerpt">${escapeHTML(excerpt(stripTags(stripMediaTags(e.content)), 220))}</p>
-      <div class="byline">${e.name ? escapeHTML(e.name) : ""}</div>
+      <div class="byline">${escapeHTML([e.name, e.date ? formatDate(e.date) : ""].filter(Boolean).join(" \u00b7 "))}</div>
     `;
     card.addEventListener("click", () => { location.hash = "post-" + e.slug; });
     gridEl.appendChild(card);
@@ -413,21 +404,18 @@ function renderEntries(entries) {
 
   stateEl.hidden = true;
   gridEl.hidden = false;
-  countEl.textContent = `${currentEntries.length} ${currentEntries.length === 1 ? "entry" : "entries"}`;
 }
 
 /* ---------------- detail view + hash routing ---------------- */
 
 function showList() {
   detailEl.hidden = true;
-  if (toolbarEl) toolbarEl.hidden = false;
   if (composerRegionEl) composerRegionEl.hidden = false;
   gridEl.hidden = currentEntries.length === 0;
   stateEl.hidden = currentEntries.length !== 0;
 }
 
 function showDetail(entry) {
-  if (toolbarEl) toolbarEl.hidden = true;
   if (composerRegionEl) composerRegionEl.hidden = true;
   gridEl.hidden = true;
   stateEl.hidden = true;

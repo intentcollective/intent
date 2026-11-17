@@ -32,8 +32,6 @@ const POST_ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbxYXhpRXvG3Uv
 
 const stateEl = document.getElementById("state");
 const gridEl = document.getElementById("entry-grid");
-const countEl = document.getElementById("entry-count");
-const toolbarEl = document.getElementById("discourse-toolbar");
 const composerRegionEl = document.getElementById("composer-region");
 const detailEl = document.getElementById("post-detail");
 
@@ -106,15 +104,13 @@ function excerpt(text, len) {
 }
 
 function formatDate(d) {
-  // Date only, as mm/dd/yyyy. Never shows a time.
+  // Date only, as "Nov 15, 2026". Never shows a time.
   const parsed = new Date(d);
   if (isNaN(parsed)) {
     // Unparseable text: still drop any trailing time so none is shown.
     return String(d).replace(/[T\s]+\d{1,2}:\d{2}(:\d{2})?(\.\d+)?\s*(AM|PM|Z)?$/i, "");
   }
-  const mm = String(parsed.getMonth() + 1).padStart(2, "0");
-  const dd = String(parsed.getDate()).padStart(2, "0");
-  return mm + "/" + dd + "/" + parsed.getFullYear();
+  return parsed.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
 function escapeHTML(str) {
@@ -148,7 +144,6 @@ function renderEntries(entries) {
 
   if (!currentEntries.length) {
     setState("No links shared yet — the first one added will show up here.");
-    countEl.textContent = "";
     return;
   }
 
@@ -158,13 +153,9 @@ function renderEntries(entries) {
     card.type = "button";
     card.className = "entry-card";
     card.innerHTML = `
-      <div class="entry-meta">
-        <span>${escapeHTML(hostFromURL(e.link) || "Link")}</span>
-        <span>${e.date ? formatDate(e.date) : ""}</span>
-      </div>
       <h3>${escapeHTML(e.title)}</h3>
       <p class="excerpt">${escapeHTML(excerpt(e.preview, 220))}</p>
-      <div class="byline">${e.name ? "Shared by " + escapeHTML(e.name) : ""}</div>
+      <div class="byline">${escapeHTML([e.name, e.date ? formatDate(e.date) : ""].filter(Boolean).join(" \u00b7 "))}</div>
     `;
     card.addEventListener("click", () => { location.hash = "link-" + e.slug; });
     gridEl.appendChild(card);
@@ -172,21 +163,18 @@ function renderEntries(entries) {
 
   stateEl.hidden = true;
   gridEl.hidden = false;
-  countEl.textContent = `${currentEntries.length} ${currentEntries.length === 1 ? "link" : "links"}`;
 }
 
 /* ---------------- detail view + hash routing ---------------- */
 
 function showList() {
   detailEl.hidden = true;
-  if (toolbarEl) toolbarEl.hidden = false;
   if (composerRegionEl) composerRegionEl.hidden = false;
   gridEl.hidden = currentEntries.length === 0;
   stateEl.hidden = currentEntries.length !== 0;
 }
 
 function showDetail(entry) {
-  if (toolbarEl) toolbarEl.hidden = true;
   if (composerRegionEl) composerRegionEl.hidden = true;
   gridEl.hidden = true;
   stateEl.hidden = true;
@@ -196,7 +184,7 @@ function showDetail(entry) {
     <a href="#" class="back-link" id="back-link">← All links</a>
     <div class="mark-label">${escapeHTML(hostFromURL(entry.link) || "Link")}</div>
     <h1>${escapeHTML(entry.title)}</h1>
-    <div class="post-meta">${entry.name ? "Shared by " + escapeHTML(entry.name) : "Shared"}${entry.date ? " · " + formatDate(entry.date) : ""}</div>
+    <div class="post-meta">${entry.name ? escapeHTML(entry.name) : ""}${entry.date ? " · " + formatDate(entry.date) : ""}</div>
     <div class="post-body"><p>${escapeHTML(entry.preview)}</p></div>
     <a class="btn-primary" href="${escapeHTML(entry.link)}" target="_blank" rel="noopener">Visit link →</a>
   `;
