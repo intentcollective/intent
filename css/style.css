@@ -424,9 +424,10 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
   margin-bottom: var(--s5);
 }
 
-/* Mark label: the red annotation that opens each section. */
+/* Mark label: the annotation that opens each section. Set in ink, because
+   red means one thing on this site, something you can act on. */
 .mark-label {
-  color: var(--mark);
+  color: var(--ink);
   line-height: 1.6;               /* same as a label, also when it is an h2 */
   margin-top: 0;
   display: flex;
@@ -441,7 +442,7 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
 }
 
 .mark-label::before,
-.mark-label::after { content: "//"; color: var(--mark); }
+.mark-label::after { content: "//"; color: var(--ink); }
 
 /* Running text in sections */
 .section-note,
@@ -505,7 +506,7 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
 .pillar-letter { position: absolute; left: -1em; }
 .pillar-name   { grid-column: 1 / span 8; }
 
-.pillar-letter { font-weight: 700; color: var(--mark); font-size: var(--fs-large); line-height: 1.4; }
+.pillar-letter { font-weight: 700; color: var(--ink); font-size: var(--fs-large); line-height: 1.4; }
 .pillar-name { font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
 .pillar-people { grid-column: 9 / span 4; line-height: 1.5; color: var(--ink-soft); }
 
@@ -747,6 +748,21 @@ details[open] > summary::before { transform: rotate(90deg); }
 
 .notice-signup { margin-top: var(--s4); }
 .notice-signup .composer { margin-bottom: 0; }
+
+/* A form that opens inside a role card sits on the card itself, not in a
+   second card, and its fields stack. */
+.tier .notice-signup,
+.tier .apply-block { margin-top: var(--s3); }
+.tier .compose-toggle { padding-bottom: 0; text-align: left; }
+.tier .composer {
+  max-width: none;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: var(--s3) 0 0;
+}
+.tier .field-row { grid-template-columns: 1fr; }
+.tier .composer .section-note { max-width: none; }
 
 /* Honeypot: hidden from people, visible to bots */
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
@@ -1011,6 +1027,8 @@ details[open] > summary::before { transform: rotate(90deg); }
 .triad > :first-child:nth-last-child(4),
 .triad > :first-child:nth-last-child(4) ~ * { --span: 3; }
 .tier-grid > * { --span: 6; }
+.tier-grid > :first-child:nth-last-child(3),
+.tier-grid > :first-child:nth-last-child(3) ~ * { --span: 4; }
 .entry-grid > *,
 .debate-list > * { --span: 4; }
 .credential-list > * { --span: 2; }
@@ -1027,6 +1045,8 @@ details[open] > summary::before { transform: rotate(90deg); }
   .tier-grid > *,
   .entry-grid > *,
   .debate-list > * { --span: 3; }
+  .tier-grid > :first-child:nth-last-child(3),
+  .tier-grid > :first-child:nth-last-child(3) ~ * { --span: 6; }
   .pillar-name   { grid-column: 1 / span 4; }
   .pillar-people { grid-column: 5 / span 2; }
 }
@@ -1041,6 +1061,8 @@ details[open] > summary::before { transform: rotate(90deg); }
   .triad > :first-child:nth-last-child(4),
   .triad > :first-child:nth-last-child(4) ~ *,
   .tier-grid > *,
+  .tier-grid > :first-child:nth-last-child(3),
+  .tier-grid > :first-child:nth-last-child(3) ~ *,
   .entry-grid > *,
   .debate-list > * { --span: 4; }
   .pillar-name,

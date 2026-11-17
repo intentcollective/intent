@@ -6,7 +6,7 @@
 <title>Structure | Intent Collective</title>
 <meta name="description" content="How Intent Collective works: open live debate, a selective Fellowship, pillars of inquiry, and the methods behind them.">
 <link rel="icon" href="assets/logo.png">
-<link rel="stylesheet" href="css/style.css?v=20261116a">
+<link rel="stylesheet" href="css/style.css?v=20261117a">
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
@@ -34,9 +34,8 @@
       <nav class="jump-links" aria-label="On this page">
         <a href="#debates">Debate</a>
         <a href="#schedule">Schedule</a>
-        <a href="#fellowship">Fellowship</a>
+        <a href="#roles">Roles</a>
         <a href="#pillars">Pillars</a>
-        <a href="#become">Become a Fellow</a>
         <a href="#foundation">Foundation</a>
         <a href="#methodology">Methodology</a>
       </nav>
@@ -65,7 +64,7 @@
           <h3>How it works</h3>
           <ul class="bullet-list">
             <li>Principal Design Fellows select topics and lead debates within their pillars</li>
-            <li>Each hosts a one-hour online debate every three to four months</li>
+            <li>One hour, online</li>
             <li>Up to 100 participants</li>
             <li>Times are shown in US Eastern, London, and Seoul. The Join link opens one hour before</li>
             <li>Every participant is free to speak. Plain language, no lectures</li>
@@ -82,104 +81,98 @@
     <div class="wrap">
       <h2 class="mark-label">Upcoming Live Debates</h2>
 
-      <button type="button" id="debate-toggle" class="compose-toggle" hidden>Schedule a debate</button>
-
-      <div id="debate-composer" class="composer hidden">
-        <div class="field">
-          <label for="d-host">Host name</label>
-          <input type="text" id="d-host" placeholder="Your name" autocomplete="name">
-        </div>
-
-        <div class="field">
-          <label for="d-when">Date and time (US Eastern)</label>
-          <input type="datetime-local" id="d-when">
-          <p class="field-hint" id="d-when-preview" aria-live="polite"></p>
-          <p class="field-hint is-error" id="d-when-taken" aria-live="polite"></p>
-        </div>
-
-        <div class="field">
-          <label for="d-subject">Subject</label>
-          <input type="text" id="d-subject" maxlength="200" placeholder="One sentence describing the debate">
-        </div>
-
-        <div class="field">
-          <label for="d-post">Discourse post</label>
-          <div class="post-picker">
-            <input type="text" id="d-post" autocomplete="off" placeholder="Search your Discourse posts, or paste a link">
-            <div id="d-post-results" class="post-results" role="listbox" hidden></div>
-          </div>
-          <p class="field-hint" id="d-post-chosen"></p>
-        </div>
-
-        <div class="field">
-          <label for="d-meeting">Online meeting link</label>
-          <input type="text" id="d-meeting" placeholder="https://meet.google.com/…">
-        </div>
-
-        <div class="composer-actions">
-          <input type="password" id="d-password" placeholder="Password to publish" autocomplete="off">
-          <button type="button" id="d-submit" class="btn-primary">Schedule</button>
-          <span id="d-status" class="composer-status" aria-live="polite"></span>
-        </div>
-      </div>
-
       <div id="debate-state" class="state-msg">Loading debates…</div>
       <div id="debate-upcoming" class="debate-list" hidden></div>
-      <div class="notice-signup">
-        <button type="button" id="sub-toggle" class="btn-primary" hidden>Get debate notices by email</button>
-        <div id="sub-composer" class="composer hidden">
-          <p class="section-note">Get an email when a live debate is scheduled. You confirm by email first, and every notice has an unsubscribe link.</p>
-          <div class="field-row">
-            <div class="field">
-              <label for="sub-first">First name</label>
-              <input type="text" id="sub-first" autocomplete="given-name">
-            </div>
-            <div class="field">
-              <label for="sub-last">Last name</label>
-              <input type="text" id="sub-last" autocomplete="family-name">
-            </div>
-          </div>
-          <div class="field">
-            <label for="sub-email">Email address</label>
-            <input type="email" id="sub-email" autocomplete="email" placeholder="name@example.com">
-          </div>
-          <div class="field hp" aria-hidden="true">
-            <label for="sub-website">Leave this empty</label>
-            <input type="text" id="sub-website" tabindex="-1" autocomplete="off">
-          </div>
-          <div class="composer-actions">
-            <button type="button" id="sub-submit" class="btn-primary">Subscribe</button>
-            <span id="sub-status" class="composer-status" aria-live="polite"></span>
-          </div>
-        </div>
-      </div>
       <p class="cal-subscribe">Subscribe in <a class="text-link" target="_blank" rel="noopener" href="https://calendar.google.com/calendar/u/0?cid=MzcyOWU4ZmJlYTViYjlkM2UzZmI1MzQ3MjQxMWNhNWM0YzhiNTAxZGVmZjNiNTY5NDViYzE1OGRiZDVjMTUwYUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t">Google Calendar&nbsp;&gt;</a><span aria-hidden="true"> &middot; </span><a class="text-link" href="webcal://calendar.google.com/calendar/ical/3729e8fbea5bb9d3e3fb53472411ca5c4c8b501deff3b56945bc158dbd5c150a%40group.calendar.google.com/public/basic.ics">Apple or Outlook&nbsp;&gt;</a></p>
       <div id="debate-past" class="debate-past" hidden></div>
     </div>
   </section>
 
-  <!-- ===================== FELLOWSHIP ===================== -->
-  <section class="section-block" id="fellowship">
+  <!-- ===================== ROLES ===================== -->
+  <section class="section-block" id="roles">
     <div class="wrap">
-      <h2 class="mark-label">Fellowship</h2>
-      <p class="principle">Principal Design Fellows lead. Design Fellows take part in as many debates as they can. Everyone is free to contribute.</p>
-      <p class="section-note">Fellowship is a selective appointment based on professional merit, intellectual contribution, and commitment to advancing design. It is not required to take part in debates or any public activity.</p>
+      <h2 class="mark-label">Roles</h2>
+      <p class="section-note">Anyone can take part in the debates. Fellowship is a selective appointment based on professional merit, intellectual contribution, and commitment to advancing design.</p>
 
       <div class="tier-grid">
         <div class="tier">
-          <h3>Principal Design Fellows <a class="quiet-link" href="guide/" aria-label="Principal Design Fellow Guide"><span class="hg" aria-hidden="true"><svg viewBox="0 0 100 100" focusable="false"><circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="10"/><circle cx="50" cy="50" r="18" fill="currentColor"/></svg></span></a></h3>
-          <p>Distinguished voices shaping the collective&rsquo;s pillars.</p>
-          <p>They lead a pillar, set debate topics, and host debates.</p>
-          <p>They keep the role by hosting, and recommend their successor when they step&nbsp;back.</p>
+          <h3>Participants</h3>
+          <p>Get notices of upcoming debates. Join any debate that interests&nbsp;you.</p>
+          <div class="notice-signup">
+            <button type="button" id="sub-toggle" class="btn-primary" hidden>Get debate notices by email</button>
+            <div id="sub-composer" class="composer hidden">
+              <p class="section-note">You confirm by email first, and every notice has an unsubscribe link.</p>
+              <div class="field-row">
+                <div class="field">
+                  <label for="sub-first">First name</label>
+                  <input type="text" id="sub-first" autocomplete="given-name">
+                </div>
+                <div class="field">
+                  <label for="sub-last">Last name</label>
+                  <input type="text" id="sub-last" autocomplete="family-name">
+                </div>
+              </div>
+              <div class="field">
+                <label for="sub-email">Email address</label>
+                <input type="email" id="sub-email" autocomplete="email" placeholder="name@example.com">
+              </div>
+              <div class="field hp" aria-hidden="true">
+                <label for="sub-website">Leave this empty</label>
+                <input type="text" id="sub-website" tabindex="-1" autocomplete="off">
+              </div>
+              <div class="composer-actions">
+                <button type="button" id="sub-submit" class="btn-primary">Get notices</button>
+                <span id="sub-status" class="composer-status" aria-live="polite"></span>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="tier">
           <h3>Design Fellows <span class="hg" aria-hidden="true"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="10" focusable="false"><circle cx="50" cy="50" r="42"/></svg></span></h3>
-          <p>Designers advancing practice together.</p>
-          <p>They take part across all pillars, questioning assumptions, sharing experience, and turning ideas into practice.</p>
+          <p>Take part in as many debates as they can. Propose subjects and ideas to the Principal Design&nbsp;Fellows.</p>
+          <div class="apply-block">
+            <button type="button" id="apply-toggle" class="compose-toggle" hidden>Apply to be a Design Fellow</button>
+            <div id="apply-composer" class="composer hidden">
+              <div class="field-row">
+                <div class="field">
+                  <label for="ap-first">First name</label>
+                  <input type="text" id="ap-first" autocomplete="given-name">
+                </div>
+                <div class="field">
+                  <label for="ap-last">Last name</label>
+                  <input type="text" id="ap-last" autocomplete="family-name">
+                </div>
+              </div>
+              <div class="field">
+                <label for="ap-email">Email address</label>
+                <input type="email" id="ap-email" autocomplete="email" placeholder="name@example.com">
+              </div>
+              <div class="field">
+                <label for="ap-linkedin">LinkedIn profile link</label>
+                <input type="text" id="ap-linkedin" autocomplete="url" placeholder="https://www.linkedin.com/in/…">
+              </div>
+              <div class="field">
+                <label for="ap-note">Your interest</label>
+                <textarea id="ap-note" rows="4" maxlength="2000" placeholder="A few sentences about you and what you want to debate"></textarea>
+              </div>
+              <div class="field hp" aria-hidden="true">
+                <label for="ap-website">Leave this empty</label>
+                <input type="text" id="ap-website" tabindex="-1" autocomplete="off">
+              </div>
+              <div class="composer-actions">
+                <button type="button" id="ap-submit" class="btn-primary">Send</button>
+                <span id="ap-status" class="composer-status" aria-live="polite"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tier">
+          <h3>Principal Design Fellows <a class="quiet-link" href="guide/" aria-label="Principal Design Fellow Guide"><span class="hg" aria-hidden="true"><svg viewBox="0 0 100 100" focusable="false"><circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="10"/><circle cx="50" cy="50" r="18" fill="currentColor"/></svg></span></a></h3>
+          <p>Lead a pillar. Propose its debate subjects and host&nbsp;debates.</p>
         </div>
       </div>
 
-      <p class="section-note debate-help">Fellows receive an email notice of every upcoming debate. For now, Principal Design Fellows lead the debates. As the Fellowship grows, Design Fellows will be able to reach out to pillar leaders to propose one.</p>
+      <p class="section-note debate-help">Fellows receive an email notice of every upcoming&nbsp;debate.</p>
 
       <h3 class="sub-head">Where Fellows have worked</h3>
       <p class="pillar-note">A&ndash;Z</p>
@@ -266,65 +259,6 @@
     </div>
   </section>
 
-  <!-- ===================== BECOMING A DESIGN FELLOW ===================== -->
-  <section class="section-block" id="become">
-    <div class="wrap">
-      <h2 class="mark-label">Become a Fellow</h2>
-      <p class="apply-note">Interested in being a Fellow? Take part in the debates and the Discourse, then write to us at <a href="mailto:intentcollectivedesign@gmail.com">intentcollectivedesign@gmail.com</a>.</p>
-
-      <button type="button" id="fellow-toggle" class="compose-toggle" hidden>Register a Fellow</button>
-
-      <div id="fellow-composer" class="composer hidden">
-        <div class="field">
-          <label for="f-level">Fellowship</label>
-          <select id="f-level">
-            <option value="">Select a Fellowship</option>
-            <option>Principal Design Fellow</option>
-            <option>Design Fellow</option>
-          </select>
-        </div>
-
-        <div class="field-row">
-          <div class="field">
-            <label for="f-first">First name</label>
-            <input type="text" id="f-first" autocomplete="off">
-          </div>
-          <div class="field">
-            <label for="f-last">Last name</label>
-            <input type="text" id="f-last" autocomplete="off">
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="f-email">Email address</label>
-          <input type="email" id="f-email" autocomplete="off" placeholder="name@gmail.com" aria-describedby="f-email-hint">
-          <p class="field-hint" id="f-email-hint">Use their Gmail, or another email with a Google account. The shared sheets open only for&nbsp;it.</p>
-        </div>
-
-        <div class="field">
-          <label for="f-email2">Confirm email address</label>
-          <input type="email" id="f-email2" autocomplete="off" placeholder="Retype the email address">
-        </div>
-
-        <div class="field">
-          <label for="f-linkedin">LinkedIn profile link</label>
-          <input type="text" id="f-linkedin" autocomplete="off" placeholder="https://www.linkedin.com/in/…">
-        </div>
-
-        <div class="field">
-          <label for="f-recommender">Recommending Fellow</label>
-          <input type="text" id="f-recommender" autocomplete="off">
-        </div>
-
-        <div class="composer-actions">
-          <input type="password" id="f-password" placeholder="Password to register" autocomplete="off">
-          <button type="button" id="f-submit" class="btn-primary">Register</button>
-          <span id="f-status" class="composer-status" aria-live="polite"></span>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- ===================== INTELLECTUAL FOUNDATION ===================== -->
   <section class="section-block" id="foundation">
     <div class="wrap">
@@ -398,8 +332,9 @@
 <script src="js/config.js"></script>
 <script src="js/anchors.js"></script>
 <script src="js/calendar.js"></script>
-<script src="js/structure.js"></script>
-<script src="js/subscribe.js"></script>
+<script src="js/structure.js?v=20261117a"></script>
+<script src="js/subscribe.js?v=20261117a"></script>
+<script src="js/apply.js?v=20261117a"></script>
 <script src="js/typography.js"></script>
 <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 

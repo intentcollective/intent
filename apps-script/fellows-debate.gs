@@ -10,6 +10,9 @@
  *                     Adds a "pending" row to the "Subscribers" tab and
  *                     emails a confirmation link. Only people who click the
  *                     link (status "confirmed") receive notices.
+ *   type "apply":     a public Design Fellow application (no password).
+ *                     Emails it to CONTACT_EMAIL, Reply-To the applicant.
+ *                     Nothing is stored.
  *
  * The same web app also answers two links from emails (doGet):
  *   ?action=confirm&t=TOKEN      confirms a subscription
@@ -49,7 +52,7 @@
  *   in step with the tab: edit a row and the event follows, delete the row of
  *   a future debate and its event is removed. The event never contains the
  *   meeting link, and has no location, because calendars offer map
- *   directions for a location. Notice emails and the "You're subscribed"
+ *   directions for a location. Notice emails and the "Debate notices confirmed"
  *   page link to the whole calendar. Run syncDebateCalendar() by hand to sync right away.
  *   A cancelled debate's event is deleted (everyone also gets a
  *   "Cancelled" email); reinstating it creates the event again. Change
@@ -172,6 +175,7 @@ function doPost(e) {
 
     // Public sign-up: no password.
     if (data.type === "subscribe") return handleSubscribe(data);
+    if (data.type === "apply") return handleApply(data);
 
     if (!PASSWORD || data.password !== PASSWORD) {
       return respond({ status: "error", message: "Incorrect password." });
@@ -231,6 +235,52 @@ function handleFellow(data) {
   };
   appendByHeader(sheet, values, null);
   return respond({ status: "ok" });
+}
+
+/* ================= Design Fellow application ================= */
+
+var APPLY_REPLY = "Thank you. Your application was sent. We will be in touch by email.";
+
+function handleApply(data) {
+  // A hidden field that real visitors never fill in. Bots do.
+  if (data.website) return respond({ status: "ok", message: APPLY_REPLY });
+
+  var first = cleanText(data.firstName);
+  var last = cleanText(data.lastName);
+  var email = String(data.email || "").trim().toLowerCase();
+  var linkedin = String(data.linkedin || "").trim().slice(0, 300);
+  var note = String(data.note || "").trim().slice(0, 2000);
+
+  if (!first || !last || !email || !linkedin || !note) {
+    return respond({ status: "error", message: "Please fill in every field." });
+  }
+  if (!isValidEmailFormat(email)) {
+    return respond({ status: "error", message: "Enter a valid email address." });
+  }
+  if (!/^https?:\/\//i.test(linkedin)) {
+    return respond({ status: "error", message: "The LinkedIn link must start with https://" });
+  }
+  if (!domainCanReceiveMail(email)) {
+    return respond({ status: "error", message: "That email\u2019s domain can\u2019t receive mail. Please check for typos." });
+  }
+  if (MailApp.getRemainingDailyQuota() < MAIL_RESERVE) {
+    return respond({ status: "error", message: "Applications are paused for today. Please try again tomorrow, or write to " + CONTACT_EMAIL + "." });
+  }
+
+  MailApp.sendEmail({
+    to: CONTACT_EMAIL,
+    replyTo: email,
+    name: SENDER_NAME,
+    subject: "Design Fellow application: " + first + " " + last,
+    body:
+      "A Design Fellow application from the website.\n\n" +
+      "Name: " + first + " " + last + "\n" +
+      "Email: " + email + "\n" +
+      "LinkedIn: " + linkedin + "\n\n" +
+      "Interest:\n" + note + "\n\n" +
+      "Reply to this email to answer the applicant directly."
+  });
+  return respond({ status: "ok", message: APPLY_REPLY });
 }
 
 /* ================= public subscription ================= */
@@ -326,7 +376,7 @@ function handleConfirm(token) {
     sheet.getRange(rowIdx + 2, t.col["status"] + 1).setValue("confirmed");
   }
   return {
-    title: "You\u2019re subscribed",
+    title: "Debate notices confirmed",
     message: "You will get an email when Intent Collective schedules a live debate. Every notice has an unsubscribe link.",
     note: CAL_SUBSCRIBE_GOOGLE ? "You can also put every debate on your calendar, automatically:" : "",
     links: CAL_SUBSCRIBE_GOOGLE ? [
@@ -1359,16 +1409,16 @@ function sendConfirmationEmail(first, email, token) {
   var box =
     '<div style="font-family:' + font + ';font-size:22px;line-height:1.2;font-weight:700;color:' + C_INK + ';margin:0 0 12px 0;">Confirm your email</div>' +
     '<div style="font-family:' + font + ';font-size:15px;line-height:1.6;color:' + C_SOFT + ';margin:0 0 20px 0;">Hi ' + esc(first) + ', confirm to get an email whenever Intent Collective schedules a live debate.</div>' +
-    '<a href="' + esc(url) + '" style="display:inline-block;background:' + C_MARK + ';color:' + C_PAPER + ';padding:11px 22px;font-family:' + font + ';font-size:13px;font-weight:700;text-transform:uppercase;text-decoration:none;">Confirm subscription</a>';
+    '<a href="' + esc(url) + '" style="display:inline-block;background:' + C_MARK + ';color:' + C_PAPER + ';padding:11px 22px;font-family:' + font + ';font-size:13px;font-weight:700;text-transform:uppercase;text-decoration:none;">Confirm your email</a>';
 
   var below = 'Live debate is open to everyone and free. Notices are only a convenience.';
-  var footerHtml = 'If you did not ask for this, ignore this email. You will not be subscribed.';
+  var footerHtml = 'If you did not ask for this, ignore this email. You will not get any notices.';
 
   var text =
     "Hi " + first + ",\n\n" +
     "Confirm to get an email whenever Intent Collective schedules a live debate:\n" +
     url + "\n\n" +
-    "If you did not ask for this, ignore this email. You will not be subscribed.";
+    "If you did not ask for this, ignore this email. You will not get any notices.";
 
   var options = {
     to: email,

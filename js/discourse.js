@@ -25,6 +25,8 @@
    Web App and paste its URL into POST_ENDPOINT_URL below.
    ========================================================================== */
 
+(function () {
+
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBQ1XXs9ML_5Bmydn824YJlm7xg-_ueJDw7YxhB4RuVVEfRi495R2E5zOLZ16QCoZQ5n8JXN-Gxo54/pub?output=csv";
 
 // Web app URL from the Apps Script that adds new posts to the sheet.
@@ -418,15 +420,15 @@ function renderEntries(entries) {
 
 function showList() {
   detailEl.hidden = true;
-  toolbarEl.hidden = false;
-  composerRegionEl.hidden = false;
+  if (toolbarEl) toolbarEl.hidden = false;
+  if (composerRegionEl) composerRegionEl.hidden = false;
   gridEl.hidden = currentEntries.length === 0;
   stateEl.hidden = currentEntries.length !== 0;
 }
 
 function showDetail(entry) {
-  toolbarEl.hidden = true;
-  composerRegionEl.hidden = true;
+  if (toolbarEl) toolbarEl.hidden = true;
+  if (composerRegionEl) composerRegionEl.hidden = true;
   gridEl.hidden = true;
   stateEl.hidden = true;
 
@@ -456,7 +458,7 @@ function handleHash() {
   showList();
 }
 
-window.addEventListener("hashchange", handleHash);
+if (gridEl) window.addEventListener("hashchange", handleHash);
 
 /* ---------------- loading the feed ---------------- */
 
@@ -488,15 +490,16 @@ async function loadEntries() {
 
 /* ---------------- compose form (part B) ---------------- */
 
-try {
-  const composeToggle = document.getElementById("compose-toggle");
-  const composer = document.getElementById("composer");
+// The form lives in the Principal Design Fellow Guide (guide/index.html).
+if (document.getElementById("dc-toggle")) try {
+  const composeToggle = document.getElementById("dc-toggle");
+  const composer = document.getElementById("dc-composer");
   const rteBody = document.getElementById("rte-body");
-  const composerStatus = document.getElementById("composer-status");
-  const publishBtn = document.getElementById("publish-btn");
-  const nameInput = document.getElementById("compose-name");
-  const titleInput = document.getElementById("compose-title");
-  const passwordInput = document.getElementById("compose-password");
+  const composerStatus = document.getElementById("dc-status");
+  const publishBtn = document.getElementById("dc-publish");
+  const nameInput = document.getElementById("dc-name");
+  const titleInput = document.getElementById("dc-title");
+  const passwordInput = document.getElementById("dc-password");
 
   if (!ENDPOINT_READY) {
     composeToggle.hidden = true;
@@ -667,12 +670,10 @@ try {
           slug: slugify(title) + "-" + Date.now(),
           order: Number.MAX_SAFE_INTEGER,
         };
-        renderEntries([newEntry, ...currentEntries]);
+        if (gridEl) renderEntries([newEntry, ...currentEntries]);
 
         clearComposer();
-        composer.classList.add("hidden");
-        composeToggle.setAttribute("aria-expanded", "false");
-        setComposerStatus("Published. (It may take a few minutes to also show up after the sheet\u2019s own refresh.)", "ok");
+        setComposerStatus("Published. It can take a few minutes to appear on Discourse.", "ok");
       } catch (err) {
         setComposerStatus("Couldn\u2019t reach the posting service. Check POST_ENDPOINT_URL in js/discourse.js.", "error");
         console.error(err);
@@ -686,4 +687,7 @@ try {
   console.error("Discourse composer failed to initialize:", err);
 }
 
-loadEntries();
+// The feed runs on its own page only. The guide loads this file for the form.
+if (gridEl) loadEntries();
+
+})();

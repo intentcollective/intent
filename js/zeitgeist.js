@@ -20,6 +20,8 @@
    Script Web App for this sheet and paste its URL into POST_ENDPOINT_URL.
    ========================================================================== */
 
+(function () {
+
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS8WbPtCB-oy-jEzMEaYbYaRblTYz_J14t6Vy7PzsxeooXoxJtCba41YTzAC_nmQzjyfNYgjB_YfrT0/pub?output=csv";
 
 // Web app URL from the Apps Script that appends new links to the sheet.
@@ -177,15 +179,15 @@ function renderEntries(entries) {
 
 function showList() {
   detailEl.hidden = true;
-  toolbarEl.hidden = false;
-  composerRegionEl.hidden = false;
+  if (toolbarEl) toolbarEl.hidden = false;
+  if (composerRegionEl) composerRegionEl.hidden = false;
   gridEl.hidden = currentEntries.length === 0;
   stateEl.hidden = currentEntries.length !== 0;
 }
 
 function showDetail(entry) {
-  toolbarEl.hidden = true;
-  composerRegionEl.hidden = true;
+  if (toolbarEl) toolbarEl.hidden = true;
+  if (composerRegionEl) composerRegionEl.hidden = true;
   gridEl.hidden = true;
   stateEl.hidden = true;
 
@@ -216,7 +218,7 @@ function handleHash() {
   showList();
 }
 
-window.addEventListener("hashchange", handleHash);
+if (gridEl) window.addEventListener("hashchange", handleHash);
 
 /* ---------------- loading the feed ---------------- */
 
@@ -248,11 +250,12 @@ async function loadEntries() {
 
 /* ---------------- compose form (part B) ---------------- */
 
-try {
-  const composeToggle = document.getElementById("compose-toggle");
-  const composer = document.getElementById("composer");
-  const composerStatus = document.getElementById("composer-status");
-  const publishBtn = document.getElementById("publish-btn");
+// The form lives in the Principal Design Fellow Guide (guide/index.html).
+if (document.getElementById("zg-toggle")) try {
+  const composeToggle = document.getElementById("zg-toggle");
+  const composer = document.getElementById("zg-composer");
+  const composerStatus = document.getElementById("zg-status");
+  const publishBtn = document.getElementById("zg-publish");
 
   if (!POST_ENDPOINT_URL || POST_ENDPOINT_URL.includes("PASTE_YOUR")) {
     composeToggle.hidden = true;
@@ -271,11 +274,11 @@ try {
 
   if (publishBtn) {
     publishBtn.addEventListener("click", async () => {
-      const nameInput = document.getElementById("compose-name");
-      const titleInput = document.getElementById("compose-title");
-      const linkInput = document.getElementById("compose-link");
-      const previewInput = document.getElementById("compose-preview");
-      const passwordInput = document.getElementById("compose-password");
+      const nameInput = document.getElementById("zg-name");
+      const titleInput = document.getElementById("zg-title");
+      const linkInput = document.getElementById("zg-link");
+      const previewInput = document.getElementById("zg-preview");
+      const passwordInput = document.getElementById("zg-password");
 
       const name = nameInput.value.trim();
       const title = titleInput.value.trim();
@@ -320,16 +323,14 @@ try {
           date: new Date().toISOString(),
           slug: slugify(title) + "-" + Date.now(),
         };
-        renderEntries([newEntry, ...currentEntries]);
+        if (gridEl) renderEntries([newEntry, ...currentEntries]);
 
         nameInput.value = "";
         titleInput.value = "";
         linkInput.value = "";
         previewInput.value = "";
         passwordInput.value = "";
-        composer.classList.add("hidden");
-        composeToggle.setAttribute("aria-expanded", "false");
-        setComposerStatus("Published. (It may take a few minutes to also show up after the sheet\u2019s own refresh.)", "ok");
+        setComposerStatus("Published. It can take a few minutes to appear on Zeitgeist.", "ok");
       } catch (err) {
         setComposerStatus("Couldn\u2019t reach the posting service. Check POST_ENDPOINT_URL in js/zeitgeist.js.", "error");
         console.error(err);
@@ -341,4 +342,7 @@ try {
   console.error("Zeitgeist composer failed to initialize:", err);
 }
 
-loadEntries();
+// The feed runs on its own page only. The guide loads this file for the form.
+if (gridEl) loadEntries();
+
+})();

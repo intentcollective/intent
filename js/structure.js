@@ -6,6 +6,10 @@
       lets a host add a session; the Apps Script then emails every fellow.
    B) Fellow registration: a password-gated form that adds a row to the
       private "Fellows" sheet. Nothing from that sheet is ever shown here.
+
+   The list (A) shows on structure.html and index.html. The two forms live
+   in the Principal Design Fellow Guide (guide/index.html), which loads
+   this file too. Each part runs only where its elements exist.
       The email address must be typed twice and its domain must be able to
       receive mail, so a typo can't create endless bounce notices.
 
@@ -327,6 +331,7 @@ function renderDebates() {
   const stateEl = $("debate-state");
   const upEl = $("debate-upcoming");
   const pastEl = $("debate-past");
+  if (!stateEl || !upEl || !pastEl) return;   // the guide has no list
   const now = Date.now();
 
   const upcoming = debates
@@ -374,7 +379,7 @@ function renderDebates() {
 }
 
 async function loadDebates() {
-  const stateEl = $("debate-state");
+  const stateEl = $("debate-state") || document.createElement("div");
   if (!DEBATE_CSV_URL || DEBATE_CSV_URL.includes("PASTE_YOUR")) {
     stateEl.textContent = "The debate schedule isn\u2019t connected yet. Paste the Debate Schedule CSV URL into js/structure.js.";
     stateEl.classList.add("is-error");
@@ -425,7 +430,7 @@ function postTime(p) {
 }
 
 function postUrl(slug) {
-  return new URL("discourse.html#post-" + slug, location.href).href;
+  return new URL("/discourse.html#post-" + slug, location.href).href;
 }
 
 function refreshPostResults() {
@@ -564,6 +569,7 @@ function initForms() {
   const endpointReady = POST_ENDPOINT_URL && !POST_ENDPOINT_URL.includes("PASTE_YOUR");
 
   // ----- debate form -----
+  if ($("d-submit")) {
   $("d-when").addEventListener("input", updateWhenPreview);
   $("d-post").addEventListener("input", refreshPostResults);
   $("d-post").addEventListener("focus", refreshPostResults);
@@ -641,8 +647,10 @@ function initForms() {
     }
     btn.disabled = false;
   });
+  }
 
   // ----- fellow registration form -----
+  if (!$("f-submit")) return;
   if (endpointReady) setupToggle("fellow-toggle", "fellow-composer");
 
   $("f-submit").addEventListener("click", async () => {
@@ -710,4 +718,4 @@ try {
 }
 
 loadDebates();
-loadDiscoursePosts();
+if ($("d-post")) loadDiscoursePosts();

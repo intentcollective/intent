@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@1&family=Poppins:wght@400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/style.css?v=20261116a">
+<link rel="stylesheet" href="/css/style.css?v=20261117a">
 <style>
   :root {
     --paper: #E4E1D6; --raised: #EDEAE0; --ink: #211F1A; --ink-soft: #55524A;
@@ -66,6 +66,12 @@
   a.link:hover { text-decoration: underline; }
   @media (max-width: 640px) { .agenda .row { grid-template-columns: minmax(0, 1fr); gap: 8px; } }
 
+  /* Forms fold open in place, under the step or section they belong to. */
+  .article .compose-toggle { display: block; padding: 16px 0 0; }
+  .article .composer { margin: 16px 0 0; max-width: var(--measure-wide); }
+  .article .composer p { max-width: none; }
+  .steps > li { max-width: var(--measure-wide); }
+
   .article footer { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: var(--fs-label); color: var(--ink-soft); }
   .article footer .online { margin: 0 0 16px; }
   .article footer .process { max-width: var(--measure); margin: 0 0 8px; }
@@ -101,8 +107,8 @@
   <section>
 <h2>Your role</h2>
 <ul>
-<li>Lead a pillar and host a debate every three to four months. You keep the role by&nbsp;hosting. <a class="link" href="/structure.html#pillars">Pillars&nbsp;&gt;</a> &middot; <a class="link" href="/structure.html#schedule">Schedule a debate&nbsp;&gt;</a></li>
-<li>Join other debates when you can. Posts on Discourse and news on Zeitgeist are always welcome. <a class="link" href="/discourse.html">Discourse&nbsp;&gt;</a> &middot; <a class="link" href="/zeitgeist.html">Zeitgeist&nbsp;&gt;</a></li>
+<li>Lead a pillar and host a debate every three to four months. You keep the role by&nbsp;hosting. <a class="link" href="/structure.html#pillars">Pillars&nbsp;&gt;</a> &middot; <a class="link" href="#schedule">Schedule a debate&nbsp;&gt;</a></li>
+<li>Join other debates when you can. Posts on Discourse and news on Zeitgeist are always welcome. <a class="link" href="#post">Share a post&nbsp;&gt;</a> &middot; <a class="link" href="#zeitgeist">Share a link&nbsp;&gt;</a></li>
 <li>When you step back, recommend your&nbsp;successor.</li>
 </ul>
   </section>
@@ -120,15 +126,80 @@
   <section>
 <h2>Prepare</h2>
 <ol class="steps">
-<li><strong>Post on Discourse.</strong> Choose Share a post and&nbsp;include
+<li id="post"><strong>Post on Discourse.</strong> Open Share a post below and&nbsp;include
 <ul>
 <li>One plain statement that designers at every level can argue for or&nbsp;against</li>
 <li>Background, enough to join the debate, not a&nbsp;lecture</li>
 <li>Up to three&nbsp;questions</li>
 </ul>
-Posts cannot be edited on the site, so make corrections in the sheet. <a class="link" href="/discourse.html">Discourse&nbsp;&gt;</a> &middot; <a class="link" target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/18iMENNfVjxmq6N_XQ1l2bf_UqOXvvqUdVeBfdLCwD3o/edit">Discourse sheet&nbsp;&gt;</a></li>
+Posts cannot be edited on the site, so make corrections in the sheet. <a class="link" href="/discourse.html">Discourse&nbsp;&gt;</a> &middot; <a class="link" target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/18iMENNfVjxmq6N_XQ1l2bf_UqOXvvqUdVeBfdLCwD3o/edit">Discourse sheet&nbsp;&gt;</a>
+    <button type="button" id="dc-toggle" class="compose-toggle" aria-expanded="false">Share a post</button>
+    <div id="dc-composer" class="composer hidden">
+      <div class="field">
+        <label for="dc-name">Name</label>
+        <input type="text" id="dc-name" placeholder="Your name">
+      </div>
+      <div class="field">
+        <label for="dc-title">Title</label>
+        <input type="text" id="dc-title" placeholder="Post title">
+      </div>
+      <div class="field">
+        <label for="rte-body">Content</label>
+        <div class="rte-toolbar" role="toolbar" aria-label="Formatting">
+          <button type="button" data-cmd="bold" title="Bold"><b>B</b></button>
+          <button type="button" data-cmd="italic" title="Italic"><i>I</i></button>
+          <button type="button" data-cmd="underline" title="Underline"><u>U</u></button>
+          <button type="button" data-cmd="insertHorizontalRule" title="Horizontal line">Line</button>
+          <button type="button" data-cmd="createLink" title="Insert link">Link</button>
+          <button type="button" data-cmd="image" title="Insert an image from a URL">Image</button>
+          <button type="button" data-cmd="video" title="Insert a YouTube or Vimeo video from a URL">Video</button>
+        </div>
+        <div id="rte-body" class="rte-body" contenteditable="true" aria-label="Post content"></div>
+      </div>
+      <div class="composer-actions">
+        <input type="password" id="dc-password" placeholder="Password to publish" autocomplete="off">
+        <button type="button" id="dc-publish" class="btn-primary">Publish</button>
+        <span id="dc-status" class="composer-status" aria-live="polite"></span>
+      </div>
+    </div>
+</li>
 <li><strong>Get a meeting link.</strong> Make it in Google Meet with your personal Google account, the default. Set Meeting access to Restricted, so people wait until you open. Zoom or another platform is fine if it runs a full hour with a waiting room. Zoom&rsquo;s free plan stops at 40&nbsp;minutes.</li>
-<li><strong>Put the debate on the site.</strong> On the Structure page, choose Schedule a debate. Enter the date and time in US&nbsp;Eastern, your Discourse post, and your meeting link. Each day holds one debate. Check the date first, because any change is emailed to everyone. <a class="link" href="/structure.html#schedule">Schedule a debate&nbsp;&gt;</a></li>
+<li id="schedule"><strong>Put the debate on the site.</strong> Open Schedule a debate below. Enter the date and time in US&nbsp;Eastern, your Discourse post, and your meeting link. Each day holds one debate. Check the date first, because any change is emailed to&nbsp;everyone.
+    <button type="button" id="debate-toggle" class="compose-toggle" hidden>Schedule a debate</button>
+    <div id="debate-composer" class="composer hidden">
+      <div class="field">
+        <label for="d-host">Host name</label>
+        <input type="text" id="d-host" placeholder="Your name" autocomplete="name">
+      </div>
+      <div class="field">
+        <label for="d-when">Date and time (US Eastern)</label>
+        <input type="datetime-local" id="d-when">
+        <p class="field-hint" id="d-when-preview" aria-live="polite"></p>
+        <p class="field-hint is-error" id="d-when-taken" aria-live="polite"></p>
+      </div>
+      <div class="field">
+        <label for="d-subject">Subject</label>
+        <input type="text" id="d-subject" maxlength="200" placeholder="One sentence describing the debate">
+      </div>
+      <div class="field">
+        <label for="d-post">Discourse post</label>
+        <div class="post-picker">
+          <input type="text" id="d-post" autocomplete="off" placeholder="Search your Discourse posts, or paste a link">
+          <div id="d-post-results" class="post-results" role="listbox" hidden></div>
+        </div>
+        <p class="field-hint" id="d-post-chosen"></p>
+      </div>
+      <div class="field">
+        <label for="d-meeting">Online meeting link</label>
+        <input type="text" id="d-meeting" placeholder="https://meet.google.com/…">
+      </div>
+      <div class="composer-actions">
+        <input type="password" id="d-password" placeholder="Password to publish" autocomplete="off">
+        <button type="button" id="d-submit" class="btn-primary">Schedule</button>
+        <span id="d-status" class="composer-status" aria-live="polite"></span>
+      </div>
+    </div>
+</li>
 </ol>
 <p>Each form asks for the posting password, which is in the Password tab of the Debate Schedule sheet. Never share it. <a class="link" target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1qurym1SkWPI0_CUCNIISxIXd4Pdf2Dz-KbMpYVQDiYs/edit">Debate Schedule sheet&nbsp;&gt;</a> Notices, a reminder 24 hours before, and the calendar entry go out automatically. Your meeting link appears on the site one hour before the start and is never&nbsp;emailed.</p>
   </section>
@@ -156,9 +227,80 @@ Posts cannot be edited on the site, so make corrections in the sheet. <a class="
 <p>For a new date or a cancellation, everyone will receive an email notice within an hour. Never delete a row, never edit the calendar, and leave the grey columns&nbsp;alone.</p>
   </section>
 
-  <section>
+  <section id="zeitgeist">
+<h2>Share on Zeitgeist</h2>
+<p>A link to news or ideas worth debating. Optional, and always&nbsp;welcome. <a class="link" href="/zeitgeist.html">Zeitgeist&nbsp;&gt;</a></p>
+    <button type="button" id="zg-toggle" class="compose-toggle" aria-expanded="false">Share a link</button>
+    <div id="zg-composer" class="composer hidden">
+      <div class="field">
+        <label for="zg-name">Name</label>
+        <input type="text" id="zg-name" placeholder="Your name">
+      </div>
+      <div class="field">
+        <label for="zg-title">Title</label>
+        <input type="text" id="zg-title" placeholder="Headline of what you&rsquo;re sharing">
+      </div>
+      <div class="field">
+        <label for="zg-link">Link</label>
+        <input type="text" id="zg-link" placeholder="https://…">
+      </div>
+      <div class="field">
+        <label for="zg-preview">Preview</label>
+        <textarea id="zg-preview" rows="4" placeholder="A couple of sentences describing it"></textarea>
+      </div>
+      <div class="composer-actions">
+        <input type="password" id="zg-password" placeholder="Password to publish" autocomplete="off">
+        <button type="button" id="zg-publish" class="btn-primary">Publish</button>
+        <span id="zg-status" class="composer-status" aria-live="polite"></span>
+      </div>
+    </div>
+  </section>
+
+  <section id="register">
 <h2>Register a Fellow</h2>
-<p>On the Structure page, under Become a Fellow, choose Register a Fellow. Use their Gmail, or another email with a Google account. The shared sheets open only for&nbsp;it. <a class="link" href="/structure.html#become">Register a Fellow&nbsp;&gt;</a></p>
+<p>Use their Gmail, or another email with a Google account. The shared sheets open only for&nbsp;it.</p>
+    <button type="button" id="fellow-toggle" class="compose-toggle" hidden>Register a Fellow</button>
+    <div id="fellow-composer" class="composer hidden">
+      <div class="field">
+        <label for="f-level">Fellowship</label>
+        <select id="f-level">
+          <option value="">Select a Fellowship</option>
+          <option>Principal Design Fellow</option>
+          <option>Design Fellow</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="f-first">First name</label>
+          <input type="text" id="f-first" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="f-last">Last name</label>
+          <input type="text" id="f-last" autocomplete="off">
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-email">Email address</label>
+        <input type="email" id="f-email" autocomplete="off" placeholder="name@gmail.com">
+      </div>
+      <div class="field">
+        <label for="f-email2">Confirm email address</label>
+        <input type="email" id="f-email2" autocomplete="off" placeholder="Retype the email address">
+      </div>
+      <div class="field">
+        <label for="f-linkedin">LinkedIn profile link</label>
+        <input type="text" id="f-linkedin" autocomplete="off" placeholder="https://www.linkedin.com/in/…">
+      </div>
+      <div class="field">
+        <label for="f-recommender">Recommending Fellow</label>
+        <input type="text" id="f-recommender" autocomplete="off">
+      </div>
+      <div class="composer-actions">
+        <input type="password" id="f-password" placeholder="Password to register" autocomplete="off">
+        <button type="button" id="f-submit" class="btn-primary">Register</button>
+        <span id="f-status" class="composer-status" aria-live="polite"></span>
+      </div>
+    </div>
   </section>
 
   <section>
@@ -186,6 +328,10 @@ Posts cannot be edited on the site, so make corrections in the sheet. <a class="
     <span><a href="mailto:intentcollectivedesign@gmail.com">intentcollectivedesign@gmail.com</a></span>
   </div>
 </footer>
+<script src="/js/config.js?v=20261117a"></script>
+<script src="/js/structure.js?v=20261117a"></script>
+<script src="/js/discourse.js?v=20261117a"></script>
+<script src="/js/zeitgeist.js?v=20261117a"></script>
 <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 </body>
 </html>

@@ -8,9 +8,10 @@ Static site on GitHub Pages, no build step. Push to the default branch to publis
 |---|---|
 | `index.html`, `structure.html`, `discourse.html`, `zeitgeist.html` | The four pages, each with its script in `js/` |
 | `principles/` | Visual Identity Principles, linked from every footer |
-| `guide/` | Principal Design Fellow Guide, shared by URL only, `noindex` |
+| `guide/` | Principal Design Fellow Guide, shared by URL only, `noindex`. Holds all four password forms (Discourse post, Zeitgeist link, schedule a debate, register a Fellow), folded in their sections. The public pages have none |
 | `js/config.js` | The Debate Schedule CSV and the Fellows + Debate endpoint |
 | `js/anchors.js`, `js/calendar.js`, `js/subscribe.js`, `js/typography.js` | Shared helpers |
+| `js/apply.js` | Design Fellow application on Structure (Roles). Emailed to the Gmail by the Fellows + Debate script (type `apply`), nothing stored |
 | `js/stone.js`, `assets/logo-base.png`, `assets/stone-in-hand.png`, `assets/stone.png` | Easter egg: the Index logo throws its stone, which lands as the principles title's period |
 | `css/style.css`, `assets/` | Styles, fonts, logo, wordmark |
 | `apps-script/` | Copies of the deployed Apps Scripts. The site never loads them |
