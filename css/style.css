@@ -271,8 +271,13 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
   min-height: calc(var(--header-h) - 1px);   /* the 1px rule completes it */
 }
 
-.wordmark-link { display: inline-block; grid-column: 1 / -5; justify-self: start; }
-.wordmark-link img { height: 32px; width: auto; }
+/* The wordmark spans the first two columns: the E of COLLECTIVE ends on
+   the line of column 2 and the ™ hangs past it, like punctuation. The
+   image is wider than the two columns by the ™ (281.1 / 258.54 of the
+   drawing's width). Where two columns are wide (tablets, large phones)
+   it stops growing at 32px tall (216px wide) and no longer aligns. */
+.wordmark-link { display: block; grid-column: 1 / span 2; }
+.wordmark-link img { display: block; width: min(calc(100% * 281.1 / 258.54), 216px); max-width: none; height: auto; }
 .wordmark-bottom { height: 28px; width: auto; margin-top: var(--s5); }
 
 /* The menu takes the last four columns, one label to a column, each set
@@ -1075,7 +1080,6 @@ details[open] > summary::before { transform: rotate(90deg); }
 @media (max-width: 640px) {
   .hero { padding: var(--s5) 0 var(--s5); }
   /* The menu drops below the wordmark and fills the four columns. */
-  .wordmark-link,
   .site-nav { grid-column: 1 / -1; }
   .site-header .wrap { row-gap: var(--s1); padding-top: var(--s2); padding-bottom: var(--s2); }
   .field-row { grid-template-columns: 1fr; }
