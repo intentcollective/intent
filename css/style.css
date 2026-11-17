@@ -400,11 +400,17 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
 }
 
 .jump-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--s1) var(--s3);
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  gap: var(--s1) var(--gutter);
   margin-top: var(--s3);
 }
+/* Each link starts on a column line: two columns each on a wide screen,
+   one on a tablet, two again on narrow tablets and phones. */
+.jump-links a { grid-column: span 2; justify-self: start; white-space: nowrap; }
+@media (max-width: 1023px) { .jump-links a { grid-column: span 1; } }
+/* Below 720px one column is narrower than Methodology. */
+@media (max-width: 719px)  { .jump-links a { grid-column: span 2; } }
 
 
 /* ---------- 6. sections and rules ---------- */
