@@ -31,13 +31,13 @@
 
   var link = document.querySelector('.logo-link');
 
-  // A hint, like a wave hello: three seconds in, her hand winds up
+  // A hint, like a wave hello: a moment in, her hand winds up
   // by itself, as it does on hover.
   var hand = link && link.querySelector('.logo-stone');
   if (hand && !still) setTimeout(function () {
     hand.classList.add('wind');
     hand.addEventListener('animationend', function () { hand.classList.remove('wind'); }, { once: true });
-  }, 3000);
+  }, 1500);
 
   if (link) link.addEventListener('click', function (e) {
     var stone = link.querySelector('.logo-stone');
