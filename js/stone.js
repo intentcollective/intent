@@ -30,6 +30,17 @@
   }
 
   var link = document.querySelector('.logo-link');
+
+  // A hint for those without hover: once per visit, three seconds in,
+  // her hand winds up by itself, as it does on hover.
+  var hand = link && link.querySelector('.logo-stone');
+  var seen = true;
+  try { seen = sessionStorage.getItem('ic-windup'); sessionStorage.setItem('ic-windup', '1'); } catch (err) {}
+  if (hand && !still && !seen) setTimeout(function () {
+    hand.classList.add('wind');
+    hand.addEventListener('animationend', function () { hand.classList.remove('wind'); }, { once: true });
+  }, 3000);
+
   if (link) link.addEventListener('click', function (e) {
     var stone = link.querySelector('.logo-stone');
     if (still || !stone || !stone.animate || e.metaKey || e.ctrlKey || e.shiftKey) return;

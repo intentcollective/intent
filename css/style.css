@@ -373,6 +373,7 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
    right corner), the way a throw begins, then settles back. */
 .logo-stone { position: absolute; left: 86.245%; top: 5.497%; width: 13.383%; transform-origin: 85% 100%; }
 @media (hover: hover) { .logo-link:hover .logo-stone { animation: stone-nudge 0.5s ease-in-out; } }
+.logo-stone.wind { animation: stone-nudge 0.5s ease-in-out; }
 @keyframes stone-nudge {
   40% { transform: rotate(16deg); }
   70% { transform: rotate(-3deg); }
