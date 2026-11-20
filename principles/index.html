@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@1&family=Poppins:wght@400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/style.css?v=20261119a">
+<link rel="stylesheet" href="/css/style.css?v=20261120a">
 <style>
   :root {
     --paper: #E4E1D6; --raised: #EDEAE0; --ink: #211F1A; --ink-soft: #55524A;
@@ -58,13 +58,13 @@
   p { margin: 0 0 16px; }
   ul, ol { margin: 0 0 16px; padding-left: 0; list-style: none; }
   li { margin: 0 0 8px; }
-  /* Hanging punctuation, as optical margin alignment sets it: the middle
-     of the mark sits just outside the column line, the text just inside. */
-  ul > li, ol > li { position: relative; padding-left: 0.4em; }
-  ul > li::before { content: "\00B7"; position: absolute; left: -0.2em; width: 0.3em; text-align: center; color: var(--ink-soft); }
+  /* Midpoints hung optically: the point halfway between the midpoint
+     and the first letter sits on the column line (see css/style.css). */
+  ul > li, ol > li { position: relative; padding-left: 0.3em; }
+  ul > li::before { content: "\00B7"; position: absolute; left: -0.45em; width: 0.3em; text-align: center; color: var(--ink-soft); }
   ol { counter-reset: item; }
   ol > li { counter-increment: item; }
-  ol > li::before { content: counter(item); position: absolute; left: -1.05em; width: 1.2em; text-align: right; font-weight: 700; color: var(--ink-soft); }
+  ol > li::before { content: counter(item); position: absolute; left: -1.15em; width: 1.2em; text-align: right; font-weight: 700; color: var(--ink-soft); }
   strong { font-weight: 700; }
   .soft { color: var(--ink-soft); }
   .nw { white-space: nowrap; }
@@ -214,7 +214,7 @@
       <figure><svg class="grid-diagram" viewBox="0 0 1204 800" role="img" aria-label="6 columns"><g class="gd-cols"><line x1="0" y1="120" x2="1204" y2="120"/><line x1="0" y1="680" x2="1204" y2="680"/><line x1="120.0" y1="120" x2="120.0" y2="680"/><line x1="260.7" y1="120" x2="260.7" y2="680"/><line x1="284.7" y1="120" x2="284.7" y2="680"/><line x1="425.3" y1="120" x2="425.3" y2="680"/><line x1="449.3" y1="120" x2="449.3" y2="680"/><line x1="590.0" y1="120" x2="590.0" y2="680"/><line x1="614.0" y1="120" x2="614.0" y2="680"/><line x1="754.7" y1="120" x2="754.7" y2="680"/><line x1="778.7" y1="120" x2="778.7" y2="680"/><line x1="919.3" y1="120" x2="919.3" y2="680"/><line x1="943.3" y1="120" x2="943.3" y2="680"/><line x1="1084.0" y1="120" x2="1084.0" y2="680"/></g><rect class="gd-page" x="0" y="0" width="1204" height="800"/></svg><figcaption>6 columns, tablets</figcaption></figure>
     </div>
 <p>The grid comes from the printed page. Medieval scribes ruled their pages before they wrote, and from the 1950s Swiss designers made the grid a system of columns, gutters, and margins. Josef M&uuml;ller-Brockmann set it down in <em>Grid Systems in Graphic Design</em> (1981). Our grid follows that tradition. Columns hold the elements and gutters only space them, so the gutters stay&nbsp;narrow.</p>
-<p>Digital media has no fixed page. Its structure shifts with every screen, unlike a sheet of paper. So the grid is drawn behind every page, from the same numbers that place the content, and the two stay aligned at every width. The page has 12 columns on a wide screen, 6 on a tablet, and 4 on a phone. Cards, lists, forms, and text span whole columns. The menu takes the last four columns, each label flush left on its column&rsquo;s line, as everything on the page starts on a column line. The dots and numbers of every list, and the mark beside each pillar, hang in the margin, as quotation marks hang in fine typesetting. Each mark sits just outside the column line and its text just inside, the way optical margin alignment sets them, so the edge reads as straight and each item still reads as its own&nbsp;line. Where a column is barely wider than a label, on the smallest phones, the menu spreads evenly instead. Rows are not drawn, because text and cards change height on every&nbsp;screen.</p>
+<p>Digital media has no fixed page. Its structure shifts with every screen, unlike a sheet of paper. So the grid is drawn behind every page, from the same numbers that place the content, and the two stay aligned at every width. The page has 12 columns on a wide screen, 6 on a tablet, and 4 on a phone. Cards, lists, forms, and text span whole columns. The menu takes the last four columns, each label flush left on its column&rsquo;s line, as everything on the page starts on a column line. The dots and numbers of every list, and the mark beside each pillar, hang in the margin, as quotation marks hang in fine typesetting, so the edge reads as straight and each item still reads as its own&nbsp;line. Where a column is barely wider than a label, on the smallest phones, the menu spreads evenly instead. Rows are not drawn, because text and cards change height on every&nbsp;screen.</p>
 <p>The grid is how a designer understands, analyzes, dissects, and organizes a subject. Drawn beneath every page, it shows that our design is grounded in rational visual communication, not in intuitive or spontaneous&nbsp;expression.</p>
 <h3>The number three</h3>
 <p>The logo shows three stones, two in Pyrrha&rsquo;s hands and one in Deucalion&rsquo;s. The structure of Intent Collective counts in threes, with a triangle in <span class="nw">M&#9651;NIFESTO</span>, three lines in <span class="nw">STRUCTUR&#19977;</span>, three disciplines in the Foundation, three methods in the Methodology, and three questions in every&nbsp;debate.</p>
@@ -362,7 +362,7 @@
 <li><strong>Verbs over descriptions</strong> for actions, such as &ldquo;Subscribe in&rdquo;, &ldquo;Join online&rdquo; and &ldquo;Get debate notices by&nbsp;email&rdquo;.</li>
 <li><strong>Plain type for credentials.</strong> Company names run A to Z, ending in &ldquo;and more&rdquo;, with the note that they are individual experience, not&nbsp;endorsement.</li>
 <li><strong>Footnote marks keep their references distinct</strong>, an asterisk for the experience note and a dagger for the image&nbsp;credit.</li>
-<li><strong>Lists use the midpoint (&#183;), never the bullet (&#8226;).</strong> The midpoint is quieter and more refined. It does its job without raising its voice. Each list is set with a hanging indent. The midpoint is hung at the edge of the text frame, and the turnover lines align with the start of the first line&rsquo;s text, not with the midpoint. The text of every item keeps one clean left edge, so the eye returns to the same place on every line. The same midpoint separates links that sit side by&nbsp;side.</li>
+<li><strong>Lists use the midpoint (&#183;), never the bullet (&#8226;).</strong> The midpoint is quieter and more refined. It does its job without raising its voice. Each midpoint is hung optically. The point halfway between the midpoint and the first letter sits on the text edge, so the text is set in a little and the midpoint hangs out by the same amount. The turnover lines align with the first letter, not with the midpoint, so the eye returns to the same place on every line. The same midpoint separates links that sit side by&nbsp;side.</li>
 <li><strong>We use the serial comma, also called the Oxford comma.</strong> In a list of three or more, a comma comes before the final &#8220;and&#8221; or &#8220;or&#8221;, as in &#8220;type, color, and space&#8221;. Every item stands equal, and no reader has to guess where one ends and the next&nbsp;begins.</li>
 <li><strong>Typographer&rsquo;s quotes and apostrophes</strong>, curly and facing the text (&#8216; &#8217; &#8220; &#8221;). Straight quotes are never used. Primes appear only for measurements, and an ellipsis is one character (&#8230;), never three&nbsp;periods.</li>
 </ul>

@@ -490,15 +490,15 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
 .bullet-list li {
   position: relative;
   margin: 0 0 var(--s0);
-  padding-left: 0.4em;
+  padding-left: 0.3em;
   color: var(--ink-soft);
 }
 
-/* Hanging punctuation, as optical margin alignment sets it: the middle
-   of the midpoint sits just outside the column line, and the text
-   starts just inside, so each item still reads as its own line. */
+/* Lists use the midpoint, hung optically. The point halfway between
+   the midpoint and the first letter sits on the column line, so the
+   text is set in 0.3em and the midpoint hangs out by the same amount. */
 .bullets li::before,
-.bullet-list li::before { content: "\00B7"; position: absolute; left: -0.2em; width: 0.3em; text-align: center; }
+.bullet-list li::before { content: "\00B7"; position: absolute; left: -0.45em; width: 0.3em; text-align: center; }
 
 .triad-item .bullet-list,
 .tier .bullet-list { margin: var(--s1) 0 0; }
@@ -513,10 +513,10 @@ h1, h3 { letter-spacing: -0.015em; }   /* bold headings set a touch tighter than
   padding: var(--s1) 0;
 }
 
-/* The mark hangs like a list mark: its middle just outside the column
-   line, the name just inside. Name in columns 1 to 8, people in 9 to 12. */
-.pillar-letter { position: absolute; top: var(--s1); left: -0.2em; width: 0.3em; text-align: center; }
-.pillar-name   { grid-column: 1 / span 8; padding-left: 0.4em; }
+/* The mark hangs like a list mark (see Lists). Name in columns 1 to 8,
+   people in 9 to 12. */
+.pillar-letter { position: absolute; top: var(--s1); left: -0.45em; width: 0.3em; text-align: center; }
+.pillar-name   { grid-column: 1 / span 8; padding-left: 0.3em; }
 
 .pillar-letter { font-weight: 700; color: var(--ink); font-size: var(--fs-large); line-height: 1.4; }
 .pillar-name { font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
@@ -857,10 +857,10 @@ details[open] > summary::before { transform: rotate(90deg); }
 .post-body p, .post-body div { margin: 0 0 1.1em; }
 .rte-body ul, .rte-body ol { margin: 0 0 0.8em 1.2em; }
 .post-body ul, .post-body ol { margin: 0 0 1.1em; padding: 0; list-style: none; counter-reset: item; }
-.post-body li { position: relative; padding-left: 0.4em; }
-.post-body ul > li::before { content: "\00B7"; position: absolute; left: -0.2em; width: 0.3em; text-align: center; }
+.post-body li { position: relative; padding-left: 0.3em; }
+.post-body ul > li::before { content: "\00B7"; position: absolute; left: -0.45em; width: 0.3em; text-align: center; }
 .post-body ol > li { counter-increment: item; }
-.post-body ol > li::before { content: counter(item); position: absolute; left: -1.05em; width: 1.2em; text-align: right; }
+.post-body ol > li::before { content: counter(item); position: absolute; left: -1.15em; width: 1.2em; text-align: right; }
 
 .rte-body blockquote,
 .post-body blockquote {
@@ -1073,7 +1073,7 @@ details[open] > summary::before { transform: rotate(90deg); }
   .debate-list > * { --span: 4; }
   .pillar-name,
   .pillar-people { grid-column: 1 / span 4; }
-  .pillar-people { padding-left: 0.4em; }   /* under the name, aligned with it */
+  .pillar-people { padding-left: calc(0.3 * var(--fs-large)); }   /* under the name, aligned with it */
 }
 
 /* ---------- 14. responsive ---------- */

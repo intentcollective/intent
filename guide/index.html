@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@1&family=Poppins:wght@400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/style.css?v=20261119a">
+<link rel="stylesheet" href="/css/style.css?v=20261120a">
 <style>
   :root {
     --paper: #E4E1D6; --raised: #EDEAE0; --ink: #211F1A; --ink-soft: #55524A;
@@ -47,13 +47,13 @@
   p { margin: 0 0 16px; }
   ul, ol { margin: 0 0 16px; padding-left: 0; list-style: none; }
   li { margin: 0 0 8px; }
-  /* Hanging punctuation, as optical margin alignment sets it: the middle
-     of the mark sits just outside the column line, the text just inside. */
-  ul > li, ol > li { position: relative; padding-left: 0.4em; }
-  ul > li::before { content: "\00B7"; position: absolute; left: -0.2em; width: 0.3em; text-align: center; color: var(--ink-soft); }
+  /* Midpoints hung optically: the point halfway between the midpoint
+     and the first letter sits on the column line (see css/style.css). */
+  ul > li, ol > li { position: relative; padding-left: 0.3em; }
+  ul > li::before { content: "\00B7"; position: absolute; left: -0.45em; width: 0.3em; text-align: center; color: var(--ink-soft); }
   ol { counter-reset: item; }
   ol > li { counter-increment: item; }
-  ol > li::before { content: counter(item) "."; position: absolute; left: -1.05em; width: 1.2em; text-align: right; font-weight: 700; color: var(--ink-soft); }
+  ol > li::before { content: counter(item) "."; position: absolute; left: -1.15em; width: 1.2em; text-align: right; font-weight: 700; color: var(--ink-soft); }
   strong { font-weight: 700; }
   .soft { color: var(--ink-soft); }
   .nw { white-space: nowrap; }
