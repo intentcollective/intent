@@ -186,7 +186,7 @@ function showDetail(entry) {
     <h1>${escapeHTML(entry.title)}</h1>
     <div class="post-meta">${entry.name ? escapeHTML(entry.name) : ""}${entry.date ? " · " + formatDate(entry.date) : ""}</div>
     <div class="post-body"><p>${escapeHTML(entry.preview)}</p></div>
-    <a class="btn-primary" href="${escapeHTML(entry.link)}" target="_blank" rel="noopener">Visit link →</a>
+    <a class="btn-primary" href="${escapeHTML(entry.link)}" target="_blank" rel="noopener">Visit link &gt;</a>
   `;
   document.getElementById("back-link").addEventListener("click", (ev) => {
     ev.preventDefault();
