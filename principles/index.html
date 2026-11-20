@@ -103,12 +103,8 @@
   .s-display { font-size: var(--fs-display); font-weight: 700; line-height: 1.15; }
   .s-quote { font-family: "EB Garamond", Georgia, serif; font-feature-settings: normal; font-style: italic; font-size: var(--fs-display); line-height: 1.2; }
 
-  /* Swatches */
-  .swatches { display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: var(--gutter); margin: 16px 0 24px; }
-  .swatches > * { grid-column: span 2; }
-  .swatch { background: var(--raised); border: 1px solid var(--rule); }
-  .swatch .chip { height: 64px; border-bottom: 1px solid var(--rule); }
-  .swatch .cap { padding: 8px; font-size: var(--fs-label); line-height: 1.4; }
+  /* Color chips, set in the line like a glyph */
+  .chip { display: inline-block; width: 0.75em; height: 0.75em; margin-right: 4px; border: 1px solid var(--rule); vertical-align: -0.05em; }
 
   /* Action marks, drawn as on the site */
   .marks { display: grid; gap: 16px; margin: 16px 0; }
@@ -265,19 +261,11 @@
   <section>
 <h2>Color and emphasis</h2>
 <p>A warm paper field with ink and one color. Color is semantic, never&nbsp;decorative.</p>
-    <div class="swatches">
-      <div class="swatch"><div class="chip" style="background:#E4E1D6"></div><div class="cap">#E4E1D6, the field</div></div>
-      <div class="swatch"><div class="chip" style="background:#EDEAE0"></div><div class="cap">#EDEAE0, cards</div></div>
-      <div class="swatch"><div class="chip" style="background:#211F1A"></div><div class="cap">#211F1A, text</div></div>
-      <div class="swatch"><div class="chip" style="background:#55524A"></div><div class="cap">#55524A, secondary text</div></div>
-      <div class="swatch"><div class="chip" style="background:#B23A2E"></div><div class="cap">#B23A2E, actions only</div></div>
-      <div class="swatch"><div class="chip" style="background:#5B6B5E"></div><div class="cap">#5B6B5E, metadata only</div></div>
-    </div>
 <ul>
-<li><strong>Paper</strong> #E4E1D6, and <strong>raised paper</strong> #EDEAE0 for&nbsp;cards.</li>
-<li><strong>Ink</strong> #211F1A for text, and <strong>soft ink</strong> #55524A for secondary text and&nbsp;lead-ins.</li>
-<li><strong>Brick red</strong> #B23A2E is the one color. It marks every action, and nothing that cannot be&nbsp;clicked.</li>
-<li><strong>Sage</strong> #5B6B5E marks non-clickable metadata, and never anything&nbsp;clickable.</li>
+<li><span class="chip" style="background:#E4E1D6" aria-hidden="true"></span><strong>Paper</strong> #E4E1D6, and <span class="chip" style="background:#EDEAE0" aria-hidden="true"></span><strong>raised paper</strong> #EDEAE0 for&nbsp;cards.</li>
+<li><span class="chip" style="background:#211F1A" aria-hidden="true"></span><strong>Ink</strong> #211F1A for text, and <span class="chip" style="background:#55524A" aria-hidden="true"></span><strong>soft ink</strong> #55524A for secondary text and&nbsp;lead-ins.</li>
+<li><span class="chip" style="background:#B23A2E" aria-hidden="true"></span><strong>Brick red</strong> #B23A2E is the one color. It marks every action, and nothing that cannot be&nbsp;clicked.</li>
+<li><span class="chip" style="background:#5B6B5E" aria-hidden="true"></span><strong>Sage</strong> #5B6B5E marks non-clickable metadata, and never anything&nbsp;clickable.</li>
 </ul>
 <p>Three levels of emphasis, each with one&nbsp;job.</p>
 <ol>
