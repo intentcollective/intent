@@ -16,7 +16,6 @@ Static site on GitHub Pages, no build step. Push to the default branch to publis
 | `css/style.css`, `assets/` | Styles, fonts, logo, wordmark |
 | `apps-script/` | Copies of the deployed Apps Scripts. The site never loads them |
 | `temporary/` | Design trials. See its README |
-| `henry/`, `graphicdesigndiscourse/` | Separate sites, not part of Intent Collective |
 
 Every file here is public. Never put a password or personal data in the repo.
 
